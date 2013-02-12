@@ -1,0 +1,11 @@
+{
+	"name": "theseus",
+	"description": "Theseus for Brackets",
+	"license": "MIT",
+	"version": "0.0.1",
+	"author": "Tom Lieber <tom@alltom.com>",
+	"dependencies" : {
+		"connect" : "2.3.4",
+		"mime" : "1.2.4"
+	}
+}

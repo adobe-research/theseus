@@ -1,0 +1,27 @@
+<script>
+function bar(x) {
+	console.log(x);
+}
+
+function foo() {
+	var p = Math.floor(Math.random() * 4);
+
+	switch (p) {
+		case 0:
+			bar(0);
+		case 1:
+			bar(1);
+			break;
+		case 2:
+		{
+			bar(2);
+			break;
+		}
+		case -1:
+		default:
+			bar("default");
+	}
+}
+
+foo();
+</script>

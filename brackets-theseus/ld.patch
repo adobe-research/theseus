@@ -1,0 +1,20 @@
+diff --git a/src/LiveDevelopment/LiveDevelopment.js b/src/LiveDevelopment/LiveDevelopment.js
+index ca1b883..edd2afe 100644
+--- a/src/LiveDevelopment/LiveDevelopment.js
++++ b/src/LiveDevelopment/LiveDevelopment.js
+@@ -167,7 +167,7 @@ define(function LiveDevelopment(require, exports, module) {
+             url = encodeURI(prefix + path);
+         }
+ 
+-        return url;
++        return url.replace("file://", "http://localhost:3000");
+     }
+ 
+     /** Augments the given Brackets document with information that's useful for live development. */
+@@ -707,4 +707,4 @@ define(function LiveDevelopment(require, exports, module) {
+     exports.hideHighlight       = hideHighlight;
+     exports.redrawHighlight     = redrawHighlight;
+     exports.init                = init;
+-});
+\ No newline at end of file
++});

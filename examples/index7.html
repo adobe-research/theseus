@@ -1,0 +1,58 @@
+<script type="text/javascript" src="jquery-1.7.js?prebug=false"></script>
+<script>
+var Stream = function (id) {
+	this.listeners = {};
+	this.id = id;
+};
+Stream.prototype.on = function(event, callback) {
+	this.listeners[event] = callback;
+};
+Stream.prototype.begin = function () {
+	var numbers = ['one', 'two', 'three', 'four', 'five', 'six', 'seven'];
+	var count = Math.random() * 3;
+    var i = 0;
+    var self = this;
+    var sendData = function () {
+        if (i < count) {
+            self.listeners['data'](numbers[i]);
+            i++;
+            setTimeout(sendData, Math.random() * 100);
+        } else {
+            setTimeout(sendClose, Math.random() * 100);
+        }
+    };
+    var sendClose = function () {
+        if (self.id % 2 === 0) {
+            self.listeners['end']();
+        } else {
+            self.listeners['error']('stream error');
+        }
+    };
+    setTimeout(sendData, Math.random() * 100);
+};
+
+///////////////////////////////////////////////////////////////
+
+function streamTest(id) {
+	var stream = new Stream(id);
+
+	stream.on('data', function (data) {
+		// console.log('got data', data);
+	});
+
+	stream.on('end', function () {
+		// console.log('stream end');
+	});
+
+	stream.on('error', function () {
+		// console.log('stream error');
+	});
+
+	return stream;
+}
+
+streamTest(1).begin();
+streamTest(2).begin();
+streamTest(3).begin();
+streamTest(4).begin();
+</script>

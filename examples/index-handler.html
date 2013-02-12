@@ -1,0 +1,122 @@
+<script>
+var $ = {
+    get: function (url, options) {
+        setTimeout(function () {
+            options.success("response data");
+        }, 1000);
+    }
+};
+
+var page = { render: function () { } };
+
+var listeners = { change: [], blah: [] };
+function register(type, f) {
+    listeners[type].push(f);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function dispatch(type, e) {
+    for (var i in listeners[type]) {
+        listeners[type][i](e);
+    }
+}
+
+function getExampleData() {
+    $.get("/example.json", { success: function (data) {
+        dispatch("changef", { "data" : data });
+    } });
+}
+
+register("change", function (e) {
+    page.render(e.data);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+getExampleData();
+getExampleData();
+getExampleData();
+register("blah", function () { });
+register("blah", function () { });
+register("blah", function () { });
+for (var i = 0; i < 23; i++) {
+    dispatch("blah", "foo");
+}
+dispatch("change", { "data" : "foo" });
+
+</script>

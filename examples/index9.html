@@ -1,0 +1,27 @@
+<script>
+setTimeout(function () {
+    document.write("<style>\nbody { font-size: 36pt; }\n</style>");
+    document.write("loading...<br />");
+    loadFirst(4);
+}, 100);
+
+function loadFirst(x) {
+    setTimeout(function () {
+        loadSecond(x * 2);
+        loadSecond(x / 2);
+    }, 9000);
+}
+
+function loadSecond(y) {
+    if (y > 4) {
+        setTimeout(function () {
+            display(y * 2);
+            display(y / 2);
+        }, 9000);
+    }
+}
+
+function display(z) {
+    document.write("finished! " + z + "<br />");
+}
+</script>

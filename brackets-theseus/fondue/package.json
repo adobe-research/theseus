@@ -1,0 +1,11 @@
+{
+	"name" : "fondue",
+	"description" : "instruments JavaScript code to collect partial traces",
+	"license" : "MIT",
+	"author" : "Tom Lieber <tom@alltom.com>",
+	"version" : "0.0.1",
+	"main" : "./lib/fondue",
+	"dependencies" : {
+		"falafel" : "0.1.4"
+	}
+}

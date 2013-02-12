@@ -1,0 +1,8 @@
+brackets
+	branch: cmv3
+	patch: git apply ld.patch
+	last tested: 94748575269e1bcb66a9aa6219f5515bc65f8473)
+
+brackets-shell:
+	branch: node-process-3
+	last tested: 08bd9c9bfbd58a31f48bf874853c8da9d8eda6b4

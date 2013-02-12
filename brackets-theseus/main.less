@@ -1,0 +1,186 @@
+/*
+ * Copyright (c) 2012 Adobe Systems Incorporated and other contributors.
+ * All rights reserved.
+ *  
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"), 
+ * to deal in the Software without restriction, including without limitation 
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+ * and/or sell copies of the Software, and to permit persons to whom the 
+ * Software is furnished to do so, subject to the following conditions:
+ *  
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *  
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+ * DEALINGS IN THE SOFTWARE.
+ * 
+ */
+
+.CodeMirror {
+    .CodeMirror-linenumbers {
+        width: 60px;
+    }
+
+    .theseus-active {
+        background: #dfd;
+    }
+
+    .theseus-live {
+        background: #fff;
+    }
+
+    .theseus-dead {
+        background: #e8e8e8;
+    }
+
+    .theseus-call-site {
+        background: #b7d6f2;
+        border: 1px solid #35b8fe;
+        border-radius: 4px;
+    }
+
+    .theseus-call-site-no-calls {
+        border: 1px solid #35b8fe;
+        border-radius: 4px;
+    }
+
+    .theseus-async-function-site {
+        background: #f2d6b7;
+    }
+    
+    .theseus-variable {
+        background: #e9f801;
+        border-radius: 4px;
+    }
+
+    .theseus-hover-select {
+        background: #b7d6f2;
+        cursor: pointer;
+    }
+
+    .theseus-popup {
+        position: absolute;
+        background: white;
+        border: 1px solid #aaa;
+        padding: 4px;
+        font-family: "Helvetica Neue", Helvetica, sans-serif;
+        max-width: 400px;
+        max-height: 300px;
+        overflow: auto;
+        z-index: 100;
+
+        table {
+            margin: 0;
+        }
+    }
+
+    .theseus-call-count {
+        color: #000;
+        font-family: sans-serif;
+        line-height: 0; /* otherwise sans-serif font pushes line height > 15px */
+        border: 1px solid #0186cc;
+        background: #b4e5ff;
+        border-radius: 10px;
+        padding: 0 7px;
+        cursor: pointer;
+        white-space: nowrap;
+
+        .star {
+            display: none;
+        }
+
+        &.uninitialized {
+        }
+
+        &.none {
+            border-width: 0;
+            background: #ddd;
+        }
+
+        &.set {
+            background: #0186cc;
+            color: #fff;
+
+            .star {
+                display: inline;
+            }
+        }
+    }
+    .theseus-call-count:hover {
+        background: #35b8fe;
+    }
+}
+
+.theseus-toolbar-button {
+    color: #ccc;
+    padding-right: 8px;
+
+    &.active {
+        color: red;
+    }
+}
+
+#theseus-panel {
+    position: relative;
+    overflow: auto;
+    padding-left: 3px;
+
+    table.vars-table {
+        // display: inline-table;
+        text-align: center;
+        vertical-align: middle;
+        border: 1px solid #ddd;
+        border-spacing: 0;
+        border-collapse: collapse;
+        margin: 0px;
+        width: auto;
+        color: black;
+
+        td, th {
+            border-width: 0px;
+            margin: 0;
+            padding: 4px 8px;
+        }
+
+        th.fn {
+            border: 1px solid #666;
+            border-width: 0 0 0 1px;
+            font-weight: normal;
+            cursor: pointer;
+
+            span.fn {
+                color: #1069d6;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+
+            span.path {
+                color: #888;
+            }
+        }
+
+        td.backtrace-link {
+            cursor: pointer;
+
+            a:hover {
+                text-decoration: underline;
+            }
+        }
+
+        .objects-bad {
+            cursor: not-allowed;
+        }
+    }
+
+    div.indented {
+        padding-left: 20px;
+    }
+}

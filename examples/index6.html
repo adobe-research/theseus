@@ -1,0 +1,48 @@
+<script type="text/javascript" src="jquery-1.7.js"></script>
+<script>
+function fakeAjax(url, data, callback) {
+  setTimeout(function () {
+    try {
+      if (data.key == 32) {
+        callback('{ "success" : "you win!" }');
+      } else {
+        callback('{ "error" : "invalid keyboard button" '); // missing closing brace
+      }
+    } catch (e) {
+    }
+  }, 1000);
+}
+
+///////////////////////////////////////////////////////////////
+
+function keyPressed(ev, callback) {
+  sendEvent({ key: ev.key }, callback);
+}
+
+function mouseClicked(ev, callback) {
+  sendEvent({ key: ev.button });
+  // 'key' should be 'mouse'
+}
+
+function sendEvent(ev, callback) {
+  fakeAjax('http://example.com/events', ev,
+    function (data) {
+      var r = JSON.parse(data); // XXX
+      callback();
+    });
+}
+
+///////////////////////////////////////////////////////////////
+
+mouseClicked({ button: 1 }, function () {
+  $('body').append('first click recorded!');
+});
+
+keyPressed({ key: 32 }, function () {
+  $('body').append('keystroke recorded!');
+});
+
+mouseClicked({ button: 1 }, function () {
+  $('body').append('second click recorded!');
+});
+</script>
