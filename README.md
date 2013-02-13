@@ -21,7 +21,7 @@ Using
 
 When you open a web page with Live Development (click the lightning bolt in the upper right of the Brackets window), Theseus shows call counts in the gutter next to every function definition. Click on one or more of them to show a log of all calls to those functions (with their arguments return values).
 
-![Screenshot of Theseus](https://raw.github.com/adobe-research/theseus/gh-pages/screenshot.png)
+![Screenshot of Theseus](http://adobe-research.github.com/theseus/screenshot.png)
 
 License
 -------
