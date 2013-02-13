@@ -564,10 +564,10 @@ if (typeof {name} === 'undefined') {
 			topLevelInvocationId: invocation.topLevelInvocationId,
 			nodeId: invocation.f.id,
 		};
-		if (invocation.returnValue) {
+		if (invocation.returnValue !== undefined) {
 			entry.returnValue = marshalForTransmission(invocation.returnValue);
 		}
-		if (invocation.exception) {
+		if (invocation.exception !== undefined) {
 			entry.exception = marshalForTransmission(invocation.exception);
 		}
 		if (invocation.f.params) {
@@ -586,7 +586,7 @@ if (typeof {name} === 'undefined') {
 				});
 			}
 		}
-		if (extra.this) {
+		if (extra.this !== undefined) {
 			entry.this = marshalForTransmission(extra.this);
 		}
 		if (parents.length > 0) {

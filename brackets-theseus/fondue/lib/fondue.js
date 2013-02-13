@@ -504,10 +504,8 @@ var traceFilter = function (content, options) {
 				}
 			} else if (/Statement$/.test(node.type)) {
 				var semiColonStatements = ["BreakStatement", "ContinueStatement", "ExpressionStatement", "ReturnStatement", "ThrowStatement"];
-				if (semiColonStatements.indexOf(node.type) !== -1) {
-					if (!/;$/.test(node.source())) {
-						node.update(node.source() + ";");
-					}
+				if (node.type === "ReturnStatement" && node.argument) {
+					node.argument.update(" " + options.tracer_name + ".traceReturnValue(" + node.argument.source() + ")");
 				} else if (node.type === 'IfStatement') {
 					if (options.trace_branches) {
 						traceBranch(node.consequent);
@@ -515,10 +513,10 @@ var traceFilter = function (content, options) {
 							traceBranch(node.alternate);
 						}
 					}
-				}
-
-				if (node.type === "ReturnStatement" && node.argument) {
-					node.argument.update(" " + options.tracer_name + ".traceReturnValue(" + node.argument.source() + ")");
+				} else if (semiColonStatements.indexOf(node.type) !== -1) {
+					if (!/;$/.test(node.source())) {
+						node.update(node.source() + ";");
+					}
 				}
 			} else if (node.type === 'SwitchStatement') {
 				if (options.trace_switches) {
