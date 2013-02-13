@@ -110,7 +110,7 @@ define(function (require, exports, module) {
             // add gutter markers showing call counts
             // console.log("gutters", editor._codeMirror.getOption("gutters"));
             _functionsInFile.forEach(function (node) {
-                var $image = $("<img />").attr("src", ExtensionUtils.getModuleUrl(module, "star.png")).addClass("star");
+                var $image = $("<img />").attr("src", ExtensionUtils.getModuleUrl(module, "images/star.png")).addClass("star");
                 var $dom = $("<span class='uninitialized none theseus-call-count' id='" + _domIdForNodeId(node.id) + "' data-node-id='" + node.id + "'> <span class='counts'>0 calls</span></span>");
                 $dom.prepend($image);
                 editor._codeMirror.setGutterMarker(node.start.line - 1, "CodeMirror-linenumbers", $dom.get(0));
@@ -361,7 +361,7 @@ define(function (require, exports, module) {
             }
 
             if (options.link && options.link.type === 'async') {
-                var $image = $("<img />").attr("src", ExtensionUtils.getModuleUrl(module, "async.png"));
+                var $image = $("<img />").attr("src", ExtensionUtils.getModuleUrl(module, "images/async.png"));
                 $image.css({
                     "margin-left" : 4,
                     "vertical-align" : "middle",
@@ -383,7 +383,7 @@ define(function (require, exports, module) {
             } else if (val.type === "object") {
                 return this._objectInspectorDom(val);
             } else if (val.type === "function") {
-                var $image = $("<img />").attr("src", ExtensionUtils.getModuleUrl(module, "arrow.png"));
+                var $image = $("<img />").attr("src", ExtensionUtils.getModuleUrl(module, "images/arrow.png"));
                 var $dom = $("<span />").toggleClass("objects-bad", true)
                                         .append($image)
                                         .append(" Function");
@@ -393,8 +393,8 @@ define(function (require, exports, module) {
         },
 
         _objectInspectorDom: function (val) {
-            var arrowURL = ExtensionUtils.getModuleUrl(module, "arrow.png");
-            var turnedArrowURL = ExtensionUtils.getModuleUrl(module, "arrow-turned.png");
+            var arrowURL = ExtensionUtils.getModuleUrl(module, "images/arrow.png");
+            var turnedArrowURL = ExtensionUtils.getModuleUrl(module, "images/arrow-turned.png");
 
             var $dom = $("<div />").css({ "display" : "inline-block", "vertical-align" : "top" });
             var $image = $("<img />").attr("src", arrowURL);
