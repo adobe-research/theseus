@@ -16,7 +16,9 @@ Use the `cmv3` branch of `brackets`, which includes CodeMirror 3. Apply the Thes
 
 Use the `node-process-3` branch of `brackets-shell`, which includes an API for launching node.js servers. Theseus uses this for its code-rewriting proxy. (Last tested with `08bd9c9bfbd58a31f48bf874853c8da9d8eda6b4`.)
 
-Finally, you can install the `brackets-theseus` extension like any other. Copy or symlink it into your extensions directory (Help > Show Extensions).
+Then, run `npm install` in the `brackets-theseus` and `brackets-theseus/fondue/` directories.
+
+Finally, you can install the `brackets-theseus` extension by copying or symlinking it into your extensions directory (Help > Show Extensions).
 
 Using
 -----
