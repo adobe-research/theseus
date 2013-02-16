@@ -5,7 +5,7 @@ Theseus is a new type of JavaScript debugger that makes it far easier to debug a
 
 Theseus is part of a collaboration between the [User Interface Design Group at MIT CSAIL](http://groups.csail.mit.edu/uid/) and [Adobe Research](http://research.adobe.com/).
 
-![Screenshot of Theseus](http://adobe-research.github.com/theseus/screenshot.png)
+![Screenshot of Theseus](https://raw.github.com/adobe-research/theseus/gh-pages/screenshot.png)
 
 Installing
 ----------
