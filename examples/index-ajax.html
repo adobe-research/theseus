@@ -1,0 +1,9 @@
+<script src="jquery-1.7.js"></script>
+<script>
+setInterval(function () { $(document.body).append("<p>wat</p>"); console.log("hi!", this); }, 1000);
+$(function () {
+//    $.getJSON("test.json", function (data) {});
+//    $.getJSON("test.jsonf", function (data) {});
+    setTimeout(function () { $.getJSON("test.jsonf", function (data) {}); }, 500);
+});
+</script>
