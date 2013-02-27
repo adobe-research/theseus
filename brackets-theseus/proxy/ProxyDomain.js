@@ -34,7 +34,8 @@ maxerr: 50, node: true */
         fs         = require('fs'),
         http       = require('http'),
         middleware = require('./middleware'),
-        url        = require('url');
+        url        = require('url'),
+        crypto     = require('crypto');
 
     /**
      * @private
@@ -50,6 +51,20 @@ maxerr: 50, node: true */
      */
     var _domainManager = null;
 
+    var cache = {};
+
+    function instrument(src, options) {
+        options = (options || {});
+        var md5 = crypto.createHash('md5');
+        md5.update(options.path + '||' + options.include_prefix + '||' + src);
+        var digest = md5.digest('hex');
+        if (digest in cache) {
+            return cache[digest];
+        } else {
+            return cache[digest] = fondue.instrument.apply(fondue, arguments);
+        }
+    }
+
     /**
      * connect shim that processes js files, adding instrumentation code
      * unless the file was requested with ?prebug=false (or another falsey
@@ -60,8 +75,8 @@ maxerr: 50, node: true */
         var content = fs.readFileSync(path, 'utf8');
 
         var prebug = url.parse(req.url, true).query.prebug;
-        if (prebug !== 'no' && prebug !== 'false' && prebug !== '0' && !/thirdparty/.test(req.url) && !/jquery/i.test(req.url)) {
-          content = fondue.instrument(content, { path: path, include_prefix: false });
+        if (prebug !== 'no' && prebug !== 'false' && prebug !== '0') {
+          content = instrument(content, { path: path, include_prefix: false });
         }
 
         res.setHeader('Content-Length', Buffer.byteLength(content, 'utf8'));
@@ -94,7 +109,7 @@ maxerr: 50, node: true */
           var loc = scriptLocs[i];
           var script = content.slice(loc.start, loc.end);
           var prefix = content.slice(0, loc.start).replace(/[^\n]/g, ' '); // padding it out so line numbers make sense
-          content = content.slice(0, loc.start) + fondue.instrument(prefix + script, { path: path, include_prefix: false }) + content.slice(loc.end);
+          content = content.slice(0, loc.start) + instrument(prefix + script, { path: path, include_prefix: false }) + content.slice(loc.end);
         }
 
         content = '<script>\n' + fondue.instrumentationPrefix() + '\n</script>\n' + content;
