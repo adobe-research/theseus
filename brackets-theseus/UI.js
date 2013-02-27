@@ -31,6 +31,7 @@ define(function (require, exports, module) {
     var ExtensionUtils  = brackets.getModule("utils/ExtensionUtils");
     var Main            = require("main");
     var Panel           = require("Panel");
+    var Popup           = require("Popup").Popup;
     var Util            = require("Util");
 
     var $exports = $(exports);
@@ -64,10 +65,16 @@ define(function (require, exports, module) {
         });
     }
 
-    function _gutterCallCountClicked() {
+    function _gutterCallCountClicked(e) {
         _resetLogQuery();
 
         var nodeId = $(this).attr("data-node-id");
+
+        // var popup = new Popup();
+        // popup.$dom.addClass("theseus-popup");
+        // popup.$dom.append("You win the game!");
+        // popup.show({ x: e.pageX + 10, y: e.pageY + 10 });
+
         if (_loggedNodes.indexOf(nodeId) === -1) {
             _loggedNodes.push(nodeId);
             $(this).toggleClass("set", true);
