@@ -209,6 +209,23 @@ define(function (require, exports, module) {
         Inspector.Page.enable();
         $(DOMAgent).on("getDocument", _gotDocument);
         $(Inspector.DOM).on("attributeModified", _onAttributeModified);
+
+        // AJAX testing
+
+        // Inspector.Debugger.enable();
+        // Inspector.Debugger.setBreakpointsActive(true);
+        // Inspector.DOMDebugger.setXHRBreakpoint("");
+        // $(Inspector.Debugger).on("paused", function (jqev, ev) {
+        //     console.log("XHR breakpoint", ev.callFrames, ev.data, ev.data.url);
+        //     Inspector.Runtime.getProperties(ev.callFrames[0].this.objectId, function () {
+        //         console.log("got properties", arguments, arguments[0].result.map(function (o) { return o.name }));
+        //         Inspector.Debugger.resume();
+        //     });
+        // });
+        // Inspector.Network.enable();
+        // $(Inspector.Network).on("responseReceived", function () {
+        //     console.log("Network responseReceived", arguments);
+        // });
     }
 
     function _clearInspectorCallbacks() {
