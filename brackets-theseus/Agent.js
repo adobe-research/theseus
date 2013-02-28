@@ -35,12 +35,15 @@
  */
 
 define(function (require, exports, module) {
-    var DOMAgent       = brackets.getModule("LiveDevelopment/Agents/DOMAgent");
-    var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
-    var Fsm            = require("fsm").Fsm;
-    var Inspector      = brackets.getModule("LiveDevelopment/Inspector/Inspector");
-    var NodeConnection = brackets.getModule("utils/NodeConnection");
-    var Util           = require("Util");
+    var AppInit              = brackets.getModule("utils/AppInit");
+    var DOMAgent             = brackets.getModule("LiveDevelopment/Agents/DOMAgent");
+    var ExtensionUtils       = brackets.getModule("utils/ExtensionUtils");
+    var Fsm                  = require("fsm").Fsm;
+    var Inspector            = brackets.getModule("LiveDevelopment/Inspector/Inspector");
+    var LiveDevServerManager = brackets.getModule("LiveDevelopment/LiveDevServerManager");
+    var NodeConnection       = brackets.getModule("utils/NodeConnection");
+    var ProjectManager       = brackets.getModule("project/ProjectManager");
+    var Util                 = require("Util");
 
     var $exports = $(exports);
 
@@ -48,6 +51,23 @@ define(function (require, exports, module) {
     var _tracerObjectId;
     var _defaultTrackingHandle;
     var _queuedScripts;
+    var _proxyServerProvider;
+
+    /**
+     * @private
+     * @type{jQuery.Deferred.<NodeConnection>}
+     * A deferred which is resolved with a NodeConnection or rejected if
+     * we are unable to connect to Node.
+     */
+    var _nodeConnectionDeferred = $.Deferred();
+
+    /**
+     * @const
+     * Amount of time to wait before automatically rejecting the connection
+     * deferred. If we hit this timeout, we'll never have a node connection
+     * for the static server in this run of Brackets.
+     */
+    var NODE_CONNECTION_TIMEOUT = 30000; // 30 seconds
 
     // instrumentation data
     var _nodes = {}; // id (string) -> {id: string, path: string, start: {line, column}, end: {line, column}, name: string (optional)}
@@ -56,9 +76,8 @@ define(function (require, exports, module) {
     var _nodeHitCounts = {};
 
     var fsm = new Fsm({
-        waitingForProxy: {
-            enter:                 function () { _resetAll(); _startProxy(); },
-            proxyStarted:          function () { this.goto("disconnected"); },
+        waitingForApp: {
+            appReady:              function () { _resetAll(); _startProxy(); this.goto("disconnected"); },
         },
         disconnected: {
             enter:                 function () { _resetConnection(); },
@@ -72,7 +91,7 @@ define(function (require, exports, module) {
         initializingTracer: {
             enter:                 function () { _resetConnection(); _connectToTracer(); },
             tracerConnected:       function () { this.goto("initializingHits"); },
-            tracerConnectFailed:   function () { this.goto("disconnected"); },
+            tracerConnectFailed:   function () { this.goto("waitingForPage"); },
 
             gotDocument:           function () { this.goto("initializingTracer"); }, // XXX: I think this case is tricky
             inspectorDisconnected: function () { this.goto("disconnected"); },
@@ -92,31 +111,87 @@ define(function (require, exports, module) {
             gotDocument:           function () { this.goto("initializingTracer"); },
             inspectorDisconnected: function () { this.goto("disconnected"); },
         },
-    }, "waitingForProxy");
+    }, "waitingForApp");
+
+    function ProxyServerProvider() {
+    }
+    ProxyServerProvider.prototype = {
+        canServe: function (localPath) {
+            return ["waitingForApp"].indexOf(fsm.state) === -1;
+        },
+
+        readyToServe: function () {
+            var readyToServeDeferred = $.Deferred();
+
+            _nodeConnectionDeferred.done(function (nodeConnection) {
+                if (nodeConnection.connected()) {
+                    nodeConnection.domains.theseusServer.getServer(
+                        ProjectManager.getProjectRoot().fullPath
+                    ).done(function (address) {
+                        _proxyURL = "http://" + address.address + ":" + address.port + "/";
+                        readyToServeDeferred.resolve();
+                    }).fail(function () {
+                        _proxyURL = undefined;
+                        readyToServeDeferred.reject();
+                    });
+                } else {
+                    // nodeConnection has been connected once (because the deferred
+                    // resolved, but is not currently connected).
+                    //
+                    // If we are in this case, then the node process has crashed
+                    // and is in the process of restarting. Once that happens, the
+                    // node connection will automatically reconnect and reload the
+                    // domain. Unfortunately, we don't have any promise to wait on
+                    // to know when that happens. The best we can do is reject this
+                    // readyToServe so that the user gets an error message to try
+                    // again later.
+                    //
+                    // The user will get the error immediately in this state, and
+                    // the new node process should start up in a matter of seconds
+                    // (assuming there isn't a more widespread error). So, asking
+                    // them to retry in a second is reasonable.
+                    readyToServeDeferred.reject();
+                }
+            });
+            
+            _nodeConnectionDeferred.fail(function () {
+                readyToServeDeferred.reject();
+            });
+            
+            return readyToServeDeferred.promise();
+        },
+
+        getBaseUrl: function () {
+            return _proxyURL;
+        },
+    };
 
     function _startProxy() {
-        var _nodeConnection = new NodeConnection();
-        _nodeConnection.connect(true).then(function () {
-            _nodeConnection.loadDomains(
+        _proxyServerProvider = new ProxyServerProvider;
+        LiveDevServerManager.registerProvider(_proxyServerProvider, 10);
+
+        // initialize Node connection
+        var connectionTimeout = setTimeout(function () {
+            console.error("[StaticServer] Timed out while trying to connect to node");
+            _nodeConnectionDeferred.reject();
+        }, NODE_CONNECTION_TIMEOUT);
+        
+        var nodeConnection = new NodeConnection();
+        nodeConnection.connect(true).then(function () {
+            nodeConnection.loadDomains(
                 [ExtensionUtils.getModulePath(module, "proxy/ProxyDomain")],
                 true
-            ).then(function () {
-                _nodeConnection.domains.connect.startServer("/").then(function (address) {
-                    _proxyPrefix = "http://" + address.address + ":" + address.port;
-                    fsm.trigger("proxyStarted");
-                });
-            });
+            ).then(
+                function () {
+                    clearTimeout(connectionTimeout);
+                    _nodeConnectionDeferred.resolveWith(null, [nodeConnection]);
+                },
+                function () { // Failed to connect
+                    console.error("[StaticServer] Failed to connect to node", arguments);
+                    _nodeConnectionDeferred.reject();
+                }
+            );
         });
-        $(_nodeConnection).on(
-            "base.log",
-            function (evt, level, timestamp, message) {
-                console.log("[theseus proxy]", {
-                    level: level,
-                    timestamp: timestamp,
-                    message: message
-                });
-            }
-        );
     }
 
     /** event handler for when a new page is loaded **/
@@ -352,6 +427,8 @@ define(function (require, exports, module) {
             fsm.trigger("inspectorDisconnected");
         });
     }
+
+    AppInit.appReady(function () { fsm.trigger("appReady"); });
 
     // exports
     exports.init = init;
