@@ -39,6 +39,7 @@ define(function (require, exports, module) {
     var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
     var Fsm            = require("fsm").Fsm;
     var Inspector      = brackets.getModule("LiveDevelopment/Inspector/Inspector");
+    var NodeConnection = brackets.getModule("utils/NodeConnection");
     var Util           = require("Util");
 
     var $exports = $(exports);
@@ -94,7 +95,7 @@ define(function (require, exports, module) {
     }, "waitingForProxy");
 
     function _startProxy() {
-        var _nodeConnection = new brackets.NodeConnection();
+        var _nodeConnection = new NodeConnection();
         _nodeConnection.connect(true).then(function () {
             _nodeConnection.loadDomains(
                 [ExtensionUtils.getModulePath(module, "proxy/ProxyDomain")],
