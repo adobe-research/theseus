@@ -10,13 +10,9 @@ Theseus is part of a collaboration between the [User Interface Design Group at M
 Installing
 ----------
 
-You currently need a special build of Brackets to use Theseus. Get started with Brackets' guide [How to Hack on Brackets](https://github.com/adobe/brackets/wiki/How-to-Hack-on-Brackets).
+You need to use the `master` branch of Brackets to use Theseus. Get started with Brackets' guide [How to Hack on Brackets](https://github.com/adobe/brackets/wiki/How-to-Hack-on-Brackets). Theseus was most recently tested with `96cdc87ab4112a7958f9444ef575a8dd8629935b`.
 
-Use the `cmv3` branch of `brackets`, which includes CodeMirror 3. Apply the Theseus patch with `git apply ld.patch`. (Last tested with `94748575269e1bcb66a9aa6219f5515bc65f8473`.)
-
-Use the `node-process-3` branch of `brackets-shell`, which includes an API for launching node.js servers. Theseus uses this for its code-rewriting proxy. (Last tested with `08bd9c9bfbd58a31f48bf874853c8da9d8eda6b4`.)
-
-Then, run `npm install` in the `brackets-theseus/` and `brackets-theseus/fondue/` directories.
+Once you've built Brackets, run `npm install` in the extension's `brackets-theseus/` and `brackets-theseus/fondue/` directories.
 
 Finally, you can install the `brackets-theseus` extension by copying or symlinking it into your extensions directory (Help > Show Extensions).
 
