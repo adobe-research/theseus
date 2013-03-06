@@ -523,6 +523,7 @@ if (typeof {name} === 'undefined') {
 	}
 
 	this.connect = function () {
+		console.log("Opening the Developer Console will break the connection with Brackets!");
 		_connected = true;
 		_sendNodes(nodes);
 		return this;
