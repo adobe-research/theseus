@@ -78,12 +78,6 @@ define(function (require, exports, module) {
         });
     }
 
-    function _mark(editor, start, end, klass) {
-        return editor._codeMirror.markText({ line: start.line - 1, ch: start.column },
-                                           { line: end.line - 1,   ch: end.column },
-                                           klass);
-    }
-
     function currentEditor() {
         return _editor;
     }
@@ -93,30 +87,6 @@ define(function (require, exports, module) {
         if (_editor) {
             return _removeURLScheme(_editor.document.file.fullPath);
         }
-    }
-
-    /**
-     * highlights the function if it's in the current file
-     * @return a CodeMirror mark with a clear() you can call to erase the mark
-     */
-    function markFunction(f) {
-        if (f.path === currentPath()) {
-            return _mark(_editor, f.start, f.end, "current-function");
-        }
-    }
-
-    /**
-     * highlights the call site if it's in the current file
-     * @return a CodeMirror mark with a clear() you can call to erase the mark
-     */
-    function markCallSite(callSite) {
-        if (callSite.path === currentPath()) {
-            return _mark(_editor, callSite.start, callSite.end, "current-call-site");
-        }
-    }
-
-    function mark(editor, start, end, klass) {
-        return _mark(editor, start, end, klass);
     }
     
     /**
@@ -172,9 +142,6 @@ define(function (require, exports, module) {
     exports.unload = unload;
     exports.currentEditor = currentEditor;
     exports.currentPath = currentPath;
-    exports.markFunction = markFunction;
-    exports.markCallSite = markCallSite;
-    exports.mark = mark;
     exports.switchToEditorFor = switchToEditorFor;
     exports.revealFunction = revealFunction;
 });
