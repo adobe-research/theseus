@@ -86,3 +86,16 @@ module.exports = function (root, options) {
     });
   }
 }
+
+proxy.on('proxyError', function (err, req, res) {
+  console.log('whoops!');
+
+  res.writeHead(500, { 'Content-Type': 'text/plain' });
+
+  if (req.method !== 'HEAD') {
+    res.write('An error has occurred (have you started a Rails server on port 3000?): ' + JSON.stringify(err));
+  }
+
+  try { res.end() }
+  catch (ex) { console.error("res.end error: %s", ex.message) }
+});
