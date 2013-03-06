@@ -112,11 +112,15 @@ define(function (require, exports, module) {
 
         function setupEditor(editor) {
             // get the functions in this file
-            _functionsInFile = Agent.functionsInFile(path);
+            _functionsInFile = Agent.functionsInFile(path).sort(function (a, b) { return a.start.line - b.start.line });
 
             // add gutter markers showing call counts
             // console.log("gutters", editor._codeMirror.getOption("gutters"));
+            var usedLines = {};
             _functionsInFile.forEach(function (node) {
+                if (usedLines[node.start.line]) return;
+                usedLines[node.start.line] = true;
+
                 var $image = $("<img />").attr("src", ExtensionUtils.getModuleUrl(module, "images/star.png")).addClass("star");
                 var $dom = $("<span class='uninitialized none theseus-call-count' id='" + _domIdForNodeId(node.id) + "' data-node-id='" + node.id + "'> <span class='counts'>0 calls</span></span>");
                 $dom.prepend($image);
