@@ -10,7 +10,7 @@ Theseus is part of a collaboration between the [User Interface Design Group at M
 Installing
 ----------
 
-1. You need to use a current revision of the `master` branch of Brackets to use Theseus. Get started with Brackets' guide [How to Hack on Brackets](https://github.com/adobe/brackets/wiki/How-to-Hack-on-Brackets). Theseus was most recently tested with `96cdc87ab4112a7958f9444ef575a8dd8629935b`.
+1. You need to use a current revision of the `master` branch of Brackets to use Theseus. Get started with Brackets' guide [How to Hack on Brackets](https://github.com/adobe/brackets/wiki/How-to-Hack-on-Brackets). Theseus was most recently tested with `0cc3e5f411264c94dea7b0c7d3809a5259deb609`.
 2. Once you've built Brackets, run `npm install` in the extension's `brackets-theseus/` and `brackets-theseus/fondue/` directories.
 3. Finally, you can install the `brackets-theseus` extension by copying or symlinking it into your extensions directory (Help > Show Extensions).
 
