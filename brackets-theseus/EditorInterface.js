@@ -37,7 +37,6 @@ define(function (require, exports, module) {
     var DocumentManager = brackets.getModule("document/DocumentManager");
     var EditorManager   = brackets.getModule("editor/EditorManager");
     var ProjectManager  = brackets.getModule("project/ProjectManager");
-    var Agent           = require("Agent");
     var Main            = require("main");
 
     var $exports = $(exports);
@@ -94,14 +93,19 @@ define(function (require, exports, module) {
      * the editor (or no arguments if the path couldn't be opened)
      */
     function switchToEditorFor(path, callback) {
-        if (currentPath() === path) {
-            callback(currentEditor());
-        } else if (ProjectManager.isWithinProject(path)) {
-            DocumentManager.getDocumentForPath(path).done(function (doc) {
-                DocumentManager.setCurrentDocument(doc);
-                callback(EditorManager.getCurrentFullEditor());
-            });
-        } else {
+        var _try = function (path) {
+            if (currentPath() === path) {
+                callback(currentEditor());
+                return true;
+            } else if (ProjectManager.isWithinProject(path)) {
+                DocumentManager.getDocumentForPath(path).done(function (doc) {
+                    DocumentManager.setCurrentDocument(doc);
+                    callback(EditorManager.getCurrentFullEditor());
+                });
+                return true;
+            }
+        };
+        if (!_try(path) && !_try(ProjectManager.getProjectRoot().fullPath + path)) {
             callback();
         }
     }
