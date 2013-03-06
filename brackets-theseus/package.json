@@ -7,6 +7,7 @@
 	"dependencies" : {
 		"connect" : "2.3.4",
 		"mime" : "1.2.4",
-		"http-proxy" : "0.8.7"
+		"http-proxy" : "0.8.7",
+		"fondue" : "0.1.1"
 	}
 }

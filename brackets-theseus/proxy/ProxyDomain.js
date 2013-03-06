@@ -31,7 +31,7 @@ maxerr: 50, node: true */
     
     var connect          = require('connect'),
         crypto           = require('crypto'),
-        fondue           = require('../fondue'),
+        fondue           = require('fondue'),
         fs               = require('fs'),
         http             = require('http'),
         railsMiddleware  = require('./middleware-rails'),
