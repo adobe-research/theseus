@@ -88,8 +88,6 @@ module.exports = function (root, options) {
 }
 
 proxy.on('proxyError', function (err, req, res) {
-  console.log('whoops!');
-
   res.writeHead(500, { 'Content-Type': 'text/plain' });
 
   if (req.method !== 'HEAD') {
