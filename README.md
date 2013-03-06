@@ -26,7 +26,9 @@ Brackets doesn't officially support server-side technologies where there's no 1:
 
 1. Start Rails in development mode on port 3000 (run `rails server`)
 2. Open `config/application.rb` in Brackets and start Live Development mode by clicking the lightning bolt in the upper-right corner.
-3. Chrome should start and redirect you to the root of your rails site.
+3. Chrome should start and redirect you to the root of your Rails site.
+
+Rails support **relies on undocumented bugs in Brackets** (specifically, the remote debugging connection to Chrome persists even when the Live Development connection times out (I guess this is documented now (please don't fix it yet))), so it could stop working at any time.
 
 License
 -------
