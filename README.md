@@ -10,16 +10,23 @@ Theseus is part of a collaboration between the [User Interface Design Group at M
 Installing
 ----------
 
-You need to use the `master` branch of Brackets to use Theseus. Get started with Brackets' guide [How to Hack on Brackets](https://github.com/adobe/brackets/wiki/How-to-Hack-on-Brackets). Theseus was most recently tested with `96cdc87ab4112a7958f9444ef575a8dd8629935b`.
-
-Once you've built Brackets, run `npm install` in the extension's `brackets-theseus/` and `brackets-theseus/fondue/` directories.
-
-Finally, you can install the `brackets-theseus` extension by copying or symlinking it into your extensions directory (Help > Show Extensions).
+1. You need to use a current revision of the `master` branch of Brackets to use Theseus. Get started with Brackets' guide [How to Hack on Brackets](https://github.com/adobe/brackets/wiki/How-to-Hack-on-Brackets). Theseus was most recently tested with `96cdc87ab4112a7958f9444ef575a8dd8629935b`.
+2. Once you've built Brackets, run `npm install` in the extension's `brackets-theseus/` and `brackets-theseus/fondue/` directories.
+3. Finally, you can install the `brackets-theseus` extension by copying or symlinking it into your extensions directory (Help > Show Extensions).
 
 Using
 -----
 
 When you open a web page with Live Development (click the lightning bolt in the upper right of the Brackets window), Theseus shows call counts in the gutter next to every function definition. Click on one or more of them to show a log of all calls to those functions (with their arguments return values).
+
+Using with Rails
+----------------
+
+Brackets doesn't officially support server-side technologies where there's no 1:1 mapping between URL structure and local file structure (https://github.com/adobe/brackets/issues/2103). However, Theseus has some support for *JavaScript files served from `/assets/` and `/public/` in development mode*.
+
+1. Start Rails in development mode on port 3000 (run `rails server`)
+2. Open `config/application.rb` in Brackets and start Live Development mode by clicking the lightning bolt in the upper-right corner.
+3. Chrome should start and redirect you to the root of your rails site.
 
 License
 -------

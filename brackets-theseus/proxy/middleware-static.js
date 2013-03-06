@@ -30,6 +30,17 @@
  *   MIT Licensed
  */
 
+/*
+ middleware that works just like connect.static, but with callbacks for
+ filtering the response body
+
+ var staticMiddleware = require('middleware-static');
+ var app = connect().use(staticMiddleware(rootDir, {
+   accept: function (req, contentType) { return true },
+   filter: function (req, contentType, content) { return content.replace(/foo/g, 'bar') }
+ }));
+ */
+
 var fs = require('fs'),
     path = require('path'),
     join = path.join,
@@ -38,7 +49,7 @@ var fs = require('fs'),
     parse = require('url').parse,
     mime = require('mime');
 
-exports.staticWithFilter = function (root, options){
+module.exports = function (root, options){
   options = options || {};
 
   // root required
@@ -171,7 +182,10 @@ var send = exports.send = function(req, res, next, options){
     // transfer
     if (head) return res.end();
 
-    if (options.filter && options.filter(req, res, path, type)) {
+    if (options.accept(req, type)) {
+      var content = options.filter(req, type, fs.readFileSync(path, 'utf8'));
+      res.setHeader('Content-Length', Buffer.byteLength(content, 'utf8'));
+      res.end(content);
       return;
     }
 

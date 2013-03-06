@@ -117,7 +117,7 @@ define(function (require, exports, module) {
     }
     ProxyServerProvider.prototype = {
         canServe: function (localPath) {
-            return ["waitingForApp"].indexOf(fsm.state) === -1;
+            return fsm.state !== "waitingForApp";
         },
 
         readyToServe: function () {
@@ -360,20 +360,15 @@ define(function (require, exports, module) {
     }
 
     function functionsInFile(path) {
-        return (_nodesByFilePath[path] || []).filter(function (n) { return n.type === "function" });
+        var possibleRemotePaths = possibleRemotePathsForLocalPath(path);
+        for (var i in possibleRemotePaths) {
+            var nodes = _nodesByFilePath[possibleRemotePaths[i]];
+            if (nodes) {
+                return nodes.filter(function (n) { return n.type === "function" });
+            }
+        }
+        return [];
     }
-
-    /**
-     * returns all functions in the file at the given path containing the given
-     * line/column, in order of appearance in the file (so the last one will
-     * be the inner-most function)
-     * TODO: document whether line and column are 0-indexed
-     */
-    var functionsContaining = function (path, line, column) {
-        var funcs = _objectValueGrep(functionsInFile(path), Util.containsFilter(path, line, column));
-        funcs.sort(Util.startPositionComparator);
-        return funcs;
-    };
 
     function cachedHitCounts() {
         return _nodeHitCounts;
@@ -417,6 +412,21 @@ define(function (require, exports, module) {
         return fsm.state === "connected";
     }
 
+    function possibleRemotePathsForLocalPath(path) {
+        var relativePath = ProjectManager.makeProjectRelativeIfPossible(path);
+        var pathComponents = relativePath.split("/");
+        return [
+            path,
+            relativePath,
+            "assets/" + pathComponents[pathComponents.length - 1],
+            relativePath.replace(/^public\//, ''),
+        ];
+    }
+
+    function couldBeRemotePath(localPath, remotePath) {
+        return possibleRemotePathsForLocalPath(localPath).indexOf(remotePath) !== -1;
+    }
+
     function init() {
         Inspector.on("connect", function () {
             _setInspectorCallbacks();
@@ -433,12 +443,13 @@ define(function (require, exports, module) {
     // exports
     exports.init = init;
     exports.isReady = isReady;
+    exports.possibleRemotePathsForLocalPath = possibleRemotePathsForLocalPath;
+    exports.couldBeRemotePath = couldBeRemotePath;
 
     // satisfied from locally cached data
     // (read-only once received from browser)
     exports.functionWithId = functionWithId;
     exports.functionsInFile = functionsInFile;
-    exports.functionsContaining = functionsContaining;
 
     // fetch data from the browser
     exports.trackHits = trackHits;

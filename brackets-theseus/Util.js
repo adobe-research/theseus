@@ -54,20 +54,6 @@ define(function (require, exports, module) {
         }
     }
 
-    /**
-     * returns a function which accepts an object with properties path,
-     * start {line, column}, and end {line, column} (for example, a call site
-     * info or a function info object), and returns true if it's within the file
-     * at the given path, and surrounds the given file position
-     */
-    function containsFilter(path, line, column) {
-        return function (obj) {
-            if (obj.path === path && contains(obj.start, obj.end, line, column)) {
-                return true;
-            }
-        };
-    }
-
     function summarizePath(path) {
         var components = path.split("/");
         return components[components.length - 1];
@@ -84,7 +70,6 @@ define(function (require, exports, module) {
     exports.comparePositions = comparePositions;
     exports.startPositionComparator = startPositionComparator;
     exports.contains = contains;
-    exports.containsFilter = containsFilter;
     exports.summarizePath = summarizePath;
     exports.mergeInto = mergeInto;
 });

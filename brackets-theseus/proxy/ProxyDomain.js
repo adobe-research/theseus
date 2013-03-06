@@ -29,13 +29,14 @@ maxerr: 50, node: true */
 (function () {
     "use strict";
     
-    var connect    = require('connect'),
-        crypto     = require('crypto'),
-        fondue     = require('../fondue'),
-        fs         = require('fs'),
-        http       = require('http'),
-        middleware = require('./middleware'),
-        url        = require('url');
+    var connect          = require('connect'),
+        crypto           = require('crypto'),
+        fondue           = require('../fondue'),
+        fs               = require('fs'),
+        http             = require('http'),
+        railsMiddleware  = require('./middleware-rails'),
+        staticMiddleware = require('./middleware-static'),
+        url              = require('url');
 
     /**
      * When Chrome has a css stylesheet replaced over live development,
@@ -80,60 +81,56 @@ maxerr: 50, node: true */
         }
     }
 
-    /**
-     * connect shim that processes js files, adding instrumentation code
-     * unless the file was requested with ?prebug=false (or another falsey
-     * value)
-     */
-    function _filter(req, res, path, type) {
-      if (type == 'application/javascript') {
-        var content = fs.readFileSync(path, 'utf8');
-
+    function _accept(req, contentType) {
         var prebug = url.parse(req.url, true).query.prebug;
-        if (prebug !== 'no' && prebug !== 'false' && prebug !== '0') {
-          content = _instrument(content, { path: path, include_prefix: false });
+        if (prebug === 'no' || prebug === 'false' || prebug === '0') {
+            return false;
         }
+        return ['application/javascript', 'text/html'].indexOf(contentType) !== -1;
+    }
 
-        res.setHeader('Content-Length', Buffer.byteLength(content, 'utf8'));
-        res.end(content);
-        return true;
-      } else if (type == 'text/html') {
-        var content = fs.readFileSync(path, 'utf8');
+    function _filter(req, contentType, content) {
+        var path = url.parse(req.url, true).pathname.slice(1);
+        if (path === "config/index.html") {
+            return "<META http-equiv=\"refresh\" content=\"0;URL=/\">";
+        } else if (contentType == 'application/javascript') {
+            return _instrument(content, { path: path, include_prefix: false });
+        } else if (contentType == 'text/html') {
+            var scriptLocs = [];
+            var scriptBeginRegexp = /<\s*script[^>]*>/ig;
+            var scriptEndRegexp = /<\s*\/\s*script/i;
+            var lastScriptEnd = 0;
+            var match;
+            while (match = scriptBeginRegexp.exec(content)) {
+                var scriptBegin = match.index + match[0].length;
+                if (scriptBegin < lastScriptEnd) {
+                    continue;
+                }
+                var endMatch = scriptEndRegexp.exec(content.slice(scriptBegin));
+                if (endMatch) {
+                    var scriptEnd = scriptBegin + endMatch.index;
+                    scriptLocs.push({ start: scriptBegin, end: scriptEnd });
+                    lastScriptEnd = scriptEnd;
+                }
+            }
 
-        var scriptLocs = [];
-        var scriptBeginRegexp = /<\s*script[^>]*>/ig;
-        var scriptEndRegexp = /<\s*\/\s*script/i;
-        var lastScriptEnd = 0;
-        var match;
-        while (match = scriptBeginRegexp.exec(content))
-        {
-          var scriptBegin = match.index + match[0].length;
-          if (scriptBegin < lastScriptEnd) {
-            continue;
-          }
-          var endMatch = scriptEndRegexp.exec(content.slice(scriptBegin));
-          if (endMatch) {
-            var scriptEnd = scriptBegin + endMatch.index;
-            scriptLocs.push({ start: scriptBegin, end: scriptEnd });
-            lastScriptEnd = scriptEnd;
-          }
+            // process the scripts in reverse order
+            for (var i = scriptLocs.length - 1; i >= 0; i--) {
+                var loc = scriptLocs[i];
+                var script = content.slice(loc.start, loc.end);
+                var prefix = content.slice(0, loc.start).replace(/[^\n]/g, ' '); // padding it out so line numbers make sense
+                content = content.slice(0, loc.start) + _instrument(prefix + script, { path: path, include_prefix: false }) + content.slice(loc.end);
+            }
+
+            content = '<script>\n' + fondue.instrumentationPrefix() + '\n</script>\n' + content;
+            return content;
         }
+    }
 
-        // process the scripts in reverse order
-        for (var i = scriptLocs.length - 1; i >= 0; i--) {
-          var loc = scriptLocs[i];
-          var script = content.slice(loc.start, loc.end);
-          var prefix = content.slice(0, loc.start).replace(/[^\n]/g, ' '); // padding it out so line numbers make sense
-          content = content.slice(0, loc.start) + _instrument(prefix + script, { path: path, include_prefix: false }) + content.slice(loc.end);
-        }
-
-        content = '<script>\n' + fondue.instrumentationPrefix() + '\n</script>\n' + content;
-
-        res.setHeader('Content-Length', Buffer.byteLength(content, 'utf8'));
-        res.end(content);
-
-        return true;
-      }
+    function _isRailsDirectory(path, callback) {
+        fs.exists(path + "/config/application.rb", function (exists) {
+            callback(exists);
+        });
     }
 
     /**
@@ -162,23 +159,29 @@ maxerr: 50, node: true */
             });
         }
         
-        var app = connect().use(middleware.staticWithFilter(path, {
-            filter: _filter,
-            maxAge: STATIC_CACHE_MAX_AGE
-        }));
+        _isRailsDirectory(path, function (isRails) {
+            var middleware = isRails ? railsMiddleware : staticMiddleware;
+            console.log("making server for " + path + " (" + (isRails ? "Rails" : "not Rails") + ")");
 
-        var server = http.createServer(app);
-        server.listen(0, "127.0.0.1", function () {
-            requestRoot(
-                server,
-                function (err, res) {
-                    if (err) {
-                        createCompleteCallback("Could not GET root after launching server", null);
-                    } else {
-                        createCompleteCallback(null, server);
+            var app = connect().use(middleware(path, {
+                accept: _accept,
+                filter: _filter,
+                maxAge: STATIC_CACHE_MAX_AGE
+            }));
+
+            var server = http.createServer(app);
+            server.listen(0, "127.0.0.1", function () {
+                requestRoot(
+                    server,
+                    function (err, res) {
+                        if (err) {
+                            createCompleteCallback("Could not GET root after launching server", null);
+                        } else {
+                            createCompleteCallback(null, server);
+                        }
                     }
-                }
-            );
+                );
+            });
         });
     }
 

@@ -192,7 +192,7 @@ define(function (require, exports, module) {
     }, 100);
 
     function _receivedScriptInfo(event, path) {
-        if (path === EditorInterface.currentPath()) {
+        if (Agent.couldBeRemotePath(EditorInterface.currentPath(), path)) {
             _editorChanged(undefined, EditorInterface.currentEditor(), EditorInterface.currentEditor(), EditorInterface.currentPath());
         }
 
