@@ -403,11 +403,17 @@ define(function (require, exports, module) {
             var arrowURL = ExtensionUtils.getModuleUrl(module, "images/arrow.png");
             var turnedArrowURL = ExtensionUtils.getModuleUrl(module, "images/arrow-turned.png");
 
+            var preview = val.preview;
+            if (preview === null || preview === undefined) preview = "";
+            preview = preview.trim();
+            if (preview.length === 0) preview = "[Object]";
+            if (preview.length > 20) preview = val.preview.slice(0, 20) + "...";
+
             var $dom = $("<div />").css({ "display" : "inline-block", "vertical-align" : "top" });
             var $image = $("<img />").attr("src", arrowURL);
             var $title = $("<span />").appendTo($dom)
                                       .append($image)
-                                      .append($("<span />").text(" " + (val.preview.length > 20 ? (val.preview.slice(0, 20) + "...") : val.preview)))
+                                      .append($("<span />").text(" " + preview))
                                       .attr("title", val.preview);
             var $expanded = $("<div />").appendTo($dom);
             if ("ownProperties" in val) {
