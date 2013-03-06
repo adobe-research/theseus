@@ -128,8 +128,11 @@ define(function (require, exports, module) {
             });
 
             // mark dead functions
+            var start = new Date();
+            var timeSinceStart = function () { return (new Date() - start) / 1000 };
             var hits = Agent.cachedHitCounts();
-            _functionsInFile.forEach(function (node) {
+            for (var i in _functionsInFile) {
+                var node = _functionsInFile[i];
                 if (!(node.id in hits)) {
                     var from = { line: node.start.line - 1, ch: node.start.column };
                     var to = { line: node.end.line - 1, ch: node.end.column };
@@ -140,7 +143,9 @@ define(function (require, exports, module) {
                     };
                     _deadCodeMarks[node.id] = editor._codeMirror.markText(from, to, markOptions);
                 }
-            });
+
+                if (timeSinceStart() > 1) break;
+            }
         }
 
         if (oldEditor) {
