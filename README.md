@@ -10,7 +10,7 @@ Theseus is part of a collaboration between the [User Interface Design Group at M
 Download & Install
 ------------------
 
-Theseus works with Brackets as of Sprint 21.
+Theseus works with Brackets on OS X as of Sprint 21. It should work on Windows shortly.
 
 Download version 0.1: https://s3.amazonaws.com/alltom/theseus/theseus-0.1.0.zip (1.7 MB)
 
