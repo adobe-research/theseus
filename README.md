@@ -14,7 +14,7 @@ Theseus works with Brackets on OS X as of Sprint 21. It should work on Windows s
 
 Download version 0.1: https://s3.amazonaws.com/alltom/theseus/theseus-0.1.0.zip (1.7 MB)
 
-Copy the `brackets-theseus` directory into your extnesions folder (`Help > Show Extensions Folder` in Brackets).
+Copy the `brackets-theseus` directory into your extensions folder (`Help > Show Extensions Folder` in Brackets).
 
 Using
 -----
