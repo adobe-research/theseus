@@ -10,6 +10,8 @@ Theseus is part of a collaboration between the [User Interface Design Group at M
 Download & Install
 ------------------
 
+Theseus works with Brackets as of Sprint 21.
+
 Download version 0.1: https://s3.amazonaws.com/alltom/theseus/theseus-0.1.0.zip (1.7 MB)
 
 Copy the `brackets-theseus` directory into your extnesions folder (`Help > Show Extensions Folder` in Brackets).
@@ -22,7 +24,7 @@ When you open a web page with Live Development (click the lightning bolt in the 
 Using with Rails
 ----------------
 
-Brackets doesn't officially support server-side technologies where there's no 1:1 mapping between URL structure and local file structure (https://github.com/adobe/brackets/issues/2103). However, Theseus has some support for *JavaScript files served from `/assets/` and `/public/` in development mode*.
+Brackets doesn't officially support server-side technologies where there's no 1:1 mapping between URL structure and local file structure (https://github.com/adobe/brackets/issues/2103). However, Theseus has some support for **JavaScript files served from `/assets/` and `/public/` in development mode**.
 
 1. Start Rails in development mode on port 3000 (run `rails server`)
 2. Open `config/application.rb` in Brackets and start Live Development mode by clicking the lightning bolt in the upper-right corner.
