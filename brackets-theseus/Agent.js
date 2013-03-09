@@ -44,6 +44,7 @@ define(function (require, exports, module) {
     var NodeConnection       = brackets.getModule("utils/NodeConnection");
     var ProjectManager       = brackets.getModule("project/ProjectManager");
     var Util                 = require("Util");
+    var main                 = require("main");
 
     var $exports = $(exports);
 
@@ -117,7 +118,7 @@ define(function (require, exports, module) {
     }
     ProxyServerProvider.prototype = {
         canServe: function (localPath) {
-            return fsm.state !== "waitingForApp";
+            return main.enabled && fsm.state !== "waitingForApp";
         },
 
         readyToServe: function () {
