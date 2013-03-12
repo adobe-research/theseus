@@ -32,15 +32,16 @@
  */
 
 define(function (require, exports, module) {
-    var Agent           = require("Agent");
-    var CommandManager  = brackets.getModule("command/CommandManager");
-    var Commands        = brackets.getModule("command/Commands");
-    var EditorInterface = require("EditorInterface");
-    var ExtensionUtils  = brackets.getModule("utils/ExtensionUtils");
-    var Inspector       = brackets.getModule("LiveDevelopment/Inspector/Inspector");
-    var Menus           = brackets.getModule("command/Menus");
-    var Panel           = require("Panel");
-    var UI              = require("UI");
+    var Agent              = require("Agent");
+    var CommandManager     = brackets.getModule("command/CommandManager");
+    var Commands           = brackets.getModule("command/Commands");
+    var EditorInterface    = require("EditorInterface");
+    var ExtensionUtils     = brackets.getModule("utils/ExtensionUtils");
+    var Inspector          = brackets.getModule("LiveDevelopment/Inspector/Inspector");
+    var Menus              = brackets.getModule("command/Menus");
+    var Panel              = require("Panel");
+    var PreferencesManager = brackets.getModule("preferences/PreferencesManager")
+    var UI                 = require("UI");
 
     var $exports = $(exports);
 
@@ -51,6 +52,7 @@ define(function (require, exports, module) {
     var NAME_THESEUS_ENABLE = "Enable Theseus";
 
     var _enabled = false;
+    var _prefs;
 
     function _connected() {
         $exports.triggerHandler("enable");
@@ -62,11 +64,17 @@ define(function (require, exports, module) {
 
     function _toggleEnabled() {
         _enabled = !_enabled;
+        _prefs.setValue("enabled", _enabled);
         CommandManager.get(ID_THESEUS_ENABLE).setChecked(_enabled);
     }
 
     function _sendFeedback() {
         window.open(ExtensionUtils.getModuleUrl(module, "feedback.html"));
+    }
+
+    function _loadPreferences() {
+        _prefs = PreferencesManager.getPreferenceStorage("com.adobe.theseus", { enabled: true });
+        _enabled = _prefs.getValue("enabled");
     }
 
     function _setupMenu() {
@@ -96,14 +104,16 @@ define(function (require, exports, module) {
     }
 
     // initialize the extension
+
+    _loadPreferences();
+    _setupMenu();
+
     ExtensionUtils.loadStyleSheet(module, "main.less");
 
     Agent.init();
     EditorInterface.init();
     UI.init();
     Panel.init();
-
-    _setupMenu();
 
     $(Agent).on("connect", _connected);
     $(Agent).on("disconnect", _disconnected);
