@@ -34,6 +34,7 @@
 define(function (require, exports, module) {
     var Agent           = require("Agent");
     var CommandManager  = brackets.getModule("command/CommandManager");
+    var Commands        = brackets.getModule("command/Commands");
     var EditorInterface = require("EditorInterface");
     var ExtensionUtils  = brackets.getModule("utils/ExtensionUtils");
     var Inspector       = brackets.getModule("LiveDevelopment/Inspector/Inspector");
@@ -43,6 +44,14 @@ define(function (require, exports, module) {
 
     var $exports = $(exports);
 
+    var ID_THESEUS_SEND_FEEDBACK   = "brackets.theseus.sendFeedback";
+    var NAME_THESEUS_SEND_FEEDBACK = "Send Theseus Feedback...";
+            
+    var ID_THESEUS_ENABLE = "brackets.theseus.enable";
+    var NAME_THESEUS_ENABLE = "Enable Theseus";
+    
+    exports.enabled = false;
+    
     function _connected() {
         $exports.triggerHandler("enable");
     }
@@ -51,13 +60,16 @@ define(function (require, exports, module) {
         $exports.triggerHandler("disable");
     }
 
+    function _toggleEnabled() {
+        exports.enabled = !exports.enabled;
+        CommandManager.get(ID_THESEUS_ENABLE).setChecked(exports.enabled);
+    }
+    
     function _sendFeedback() {
         window.open(ExtensionUtils.getModuleUrl(module, "feedback.html"));
     }
 
     function _setupMenu() {
-        var ID_THESEUS_SEND_FEEDBACK   = "brackets.theseus.sendFeedback";
-        var NAME_THESEUS_SEND_FEEDBACK = "Send Theseus Feedback...";
 
         CommandManager.register(
             NAME_THESEUS_SEND_FEEDBACK,
@@ -65,9 +77,21 @@ define(function (require, exports, module) {
             _sendFeedback
         );
 
+        CommandManager.register(
+            NAME_THESEUS_ENABLE,
+            ID_THESEUS_ENABLE,
+            _toggleEnabled
+        );
+            
+        
         var menu = Menus.getMenu(Menus.AppMenuBar.HELP_MENU);
         menu.addMenuDivider(Menus.LAST, null);
         menu.addMenuItem(ID_THESEUS_SEND_FEEDBACK, null, Menus.LAST, null);
+        
+        var fileMenu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
+        fileMenu.addMenuItem(ID_THESEUS_ENABLE, null, Menus.AFTER, Commands.FILE_LIVE_HIGHLIGHT);
+        CommandManager.get(ID_THESEUS_ENABLE).setChecked(exports.enabled);
+        
     }
 
     // initialize the extension
