@@ -46,12 +46,12 @@ define(function (require, exports, module) {
 
     var ID_THESEUS_SEND_FEEDBACK   = "brackets.theseus.sendFeedback";
     var NAME_THESEUS_SEND_FEEDBACK = "Send Theseus Feedback...";
-            
+
     var ID_THESEUS_ENABLE = "brackets.theseus.enable";
     var NAME_THESEUS_ENABLE = "Enable Theseus";
-    
-    exports.enabled = false;
-    
+
+    var _enabled = false;
+
     function _connected() {
         $exports.triggerHandler("enable");
     }
@@ -61,16 +61,15 @@ define(function (require, exports, module) {
     }
 
     function _toggleEnabled() {
-        exports.enabled = !exports.enabled;
-        CommandManager.get(ID_THESEUS_ENABLE).setChecked(exports.enabled);
+        _enabled = !_enabled;
+        CommandManager.get(ID_THESEUS_ENABLE).setChecked(_enabled);
     }
-    
+
     function _sendFeedback() {
         window.open(ExtensionUtils.getModuleUrl(module, "feedback.html"));
     }
 
     function _setupMenu() {
-
         CommandManager.register(
             NAME_THESEUS_SEND_FEEDBACK,
             ID_THESEUS_SEND_FEEDBACK,
@@ -82,16 +81,18 @@ define(function (require, exports, module) {
             ID_THESEUS_ENABLE,
             _toggleEnabled
         );
-            
-        
+
         var menu = Menus.getMenu(Menus.AppMenuBar.HELP_MENU);
         menu.addMenuDivider(Menus.LAST, null);
         menu.addMenuItem(ID_THESEUS_SEND_FEEDBACK, null, Menus.LAST, null);
-        
+
         var fileMenu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
         fileMenu.addMenuItem(ID_THESEUS_ENABLE, null, Menus.AFTER, Commands.FILE_LIVE_HIGHLIGHT);
-        CommandManager.get(ID_THESEUS_ENABLE).setChecked(exports.enabled);
-        
+        CommandManager.get(ID_THESEUS_ENABLE).setChecked(_enabled);
+    }
+
+    function isEnabled() {
+        return _enabled;
     }
 
     // initialize the extension
@@ -106,4 +107,6 @@ define(function (require, exports, module) {
 
     $(Agent).on("connect", _connected);
     $(Agent).on("disconnect", _disconnected);
+
+    exports.isEnabled = isEnabled;
 });

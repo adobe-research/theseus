@@ -118,7 +118,7 @@ define(function (require, exports, module) {
     }
     ProxyServerProvider.prototype = {
         canServe: function (localPath) {
-            return main.enabled && fsm.state !== "waitingForApp";
+            return main.isEnabled() && fsm.state !== "waitingForApp";
         },
 
         readyToServe: function () {
