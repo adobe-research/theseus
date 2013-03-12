@@ -34,7 +34,7 @@ maxerr: 50, node: true */
         fondue           = require('fondue'),
         fs               = require('fs'),
         http             = require('http'),
-        railsMiddleware  = require('./middleware-rails'),
+        proxyMiddleware  = require('./middleware-proxy'),
         staticMiddleware = require('./middleware-static'),
         url              = require('url');
 
@@ -131,7 +131,7 @@ maxerr: 50, node: true */
      * @private
      * Helper function to create a new server.
      * @param {string} path The absolute path that should be the document root
-     * @param {string} modeName The name of the mode to use ('static' or 'rails')
+     * @param {string} modeName The name of the mode to use ('static' or 'proxy')
      * @param {function(?string, ?httpServer)} cb Callback function that receives
      *    an error (or null if there was no error) and the server (or null if there
      *    was an error). 
@@ -154,7 +154,7 @@ maxerr: 50, node: true */
             });
         }
         
-        var middlewares = { "static" : staticMiddleware, "rails" : railsMiddleware };
+        var middlewares = { "static" : staticMiddleware, "proxy" : proxyMiddleware };
         var middleware = middlewares[modeName];
         console.log("making server for " + path + " (" + modeName + ")");
 
@@ -192,7 +192,7 @@ maxerr: 50, node: true */
      * already exists for the given path, returns that, otherwise starts a new
      * one.
      * @param {string} path The absolute path that should be the document root
-     * @param {string} modeName The name of the mode ('static' or 'rails')
+     * @param {string} modeName The name of the mode ('static' or 'proxy')
      * @param {function(?string, ?{address: string, family: string,
      *    port: number})} cb Callback that should receive the address information
      *    for the server. First argument is the error string (or null if no error),
@@ -264,7 +264,7 @@ maxerr: 50, node: true */
                 {
                     name: "modeName",
                     type: "string",
-                    description: "name of the mode ('static' or 'rails')"
+                    description: "name of the mode ('static' or 'proxy')"
                 }
             ],
             [{

@@ -47,9 +47,9 @@ define(function (require, exports, module) {
 
     var _modes = {
         "static" : { name: "static", displayName: "Static" },
-        "rails" : { name: "rails", displayName: "Rails" },
+        "proxy" : { name: "proxy", displayName: "Proxy" },
     };
-    var _orderedModes = [_modes["static"], _modes["rails"]];
+    var _orderedModes = [_modes["static"], _modes["proxy"]];
     var DEFAULT_MODE = _modes["static"];
 
     var ID_THESEUS_SEND_FEEDBACK   = "brackets.theseus.sendFeedback";

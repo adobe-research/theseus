@@ -26,8 +26,8 @@
  middleware that proxies to http://localhost:3000/ with callbacks for filtering
  the response body
 
- var railsMiddleware = require('middleware-rails');
- var app = connect().use(railsMiddleware(rootDir, {
+ var proxyMiddleware = require('middleware-proxy');
+ var app = connect().use(proxyMiddleware(rootDir, {
    accept: function (req, contentType) { return true },
    filter: function (req, contentType, content) { return content.replace(/foo/g, 'bar') }
  }));
@@ -91,7 +91,7 @@ proxy.on('proxyError', function (err, req, res) {
   res.writeHead(500, { 'Content-Type': 'text/plain' });
 
   if (req.method !== 'HEAD') {
-    res.write('An error has occurred (have you started a Rails server on port 3000?): ' + JSON.stringify(err));
+    res.write('An error has occurred (have you started a server on port 3000?): ' + JSON.stringify(err));
   }
 
   try { res.end() }
