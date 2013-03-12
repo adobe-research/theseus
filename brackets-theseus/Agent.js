@@ -127,7 +127,8 @@ define(function (require, exports, module) {
             _nodeConnectionDeferred.done(function (nodeConnection) {
                 if (nodeConnection.connected()) {
                     nodeConnection.domains.theseusServer.getServer(
-                        ProjectManager.getProjectRoot().fullPath
+                        ProjectManager.getProjectRoot().fullPath,
+                        main.getModeName()
                     ).done(function (address) {
                         _proxyURL = "http://" + address.address + ":" + address.port + "/";
                         readyToServeDeferred.resolve();

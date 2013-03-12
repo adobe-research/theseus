@@ -45,13 +45,24 @@ define(function (require, exports, module) {
 
     var $exports = $(exports);
 
+    var _modes = {
+        "static" : { name: "static", displayName: "Static" },
+        "rails" : { name: "rails", displayName: "Rails" },
+    };
+    var _orderedModes = [_modes["static"], _modes["rails"]];
+    var DEFAULT_MODE = _modes["static"];
+
     var ID_THESEUS_SEND_FEEDBACK   = "brackets.theseus.sendFeedback";
     var NAME_THESEUS_SEND_FEEDBACK = "Send Theseus Feedback...";
 
     var ID_THESEUS_ENABLE = "brackets.theseus.enable";
     var NAME_THESEUS_ENABLE = "Enable Theseus";
 
+    var ID_THESEUS_MODES = _orderedModes.map(function (mode) { return "brackets.theseus.mode." + mode.name });
+    var NAME_THESEUS_MODES = _orderedModes.map(function (mode) { return "   Theseus Mode: " + mode.displayName });
+
     var _enabled = false;
+    var _mode = DEFAULT_MODE;
     var _prefs;
 
     function _connected() {
@@ -63,9 +74,21 @@ define(function (require, exports, module) {
     }
 
     function _toggleEnabled() {
+        // TODO: disable or enable immediately
         _enabled = !_enabled;
         _prefs.setValue("enabled", _enabled);
-        CommandManager.get(ID_THESEUS_ENABLE).setChecked(_enabled);
+        _updateMenuStates();
+    }
+
+    function _setMode(modeName) {
+        // TODO: warn user that connection will need to be restarted
+        _mode = _modes[modeName] || DEFAULT_MODE;
+        _prefs.setValue("mode", _mode.name);
+        _updateMenuStates();
+    }
+
+    function _setModeHandler(modeName) {
+        return function () { _setMode(modeName) };
     }
 
     function _sendFeedback() {
@@ -73,8 +96,9 @@ define(function (require, exports, module) {
     }
 
     function _loadPreferences() {
-        _prefs = PreferencesManager.getPreferenceStorage("com.adobe.theseus", { enabled: true });
+        _prefs = PreferencesManager.getPreferenceStorage("com.adobe.theseus", { enabled: true, mode: "static" });
         _enabled = _prefs.getValue("enabled");
+        _mode = _modes[_prefs.getValue("mode")] || DEFAULT_MODE;
     }
 
     function _setupMenu() {
@@ -90,17 +114,41 @@ define(function (require, exports, module) {
             _toggleEnabled
         );
 
+        _orderedModes.forEach(function (mode, i) {
+            CommandManager.register(
+                NAME_THESEUS_MODES[i],
+                ID_THESEUS_MODES[i],
+                _setModeHandler(mode.name)
+            );
+        });
+
         var menu = Menus.getMenu(Menus.AppMenuBar.HELP_MENU);
         menu.addMenuDivider(Menus.LAST, null);
         menu.addMenuItem(ID_THESEUS_SEND_FEEDBACK, null, Menus.LAST, null);
 
         var fileMenu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
         fileMenu.addMenuItem(ID_THESEUS_ENABLE, null, Menus.AFTER, Commands.FILE_LIVE_HIGHLIGHT);
+        fileMenu.addMenuItem(ID_THESEUS_MODES[0], null, Menus.AFTER, ID_THESEUS_ENABLE);
+        fileMenu.addMenuItem(ID_THESEUS_MODES[1], null, Menus.AFTER, ID_THESEUS_MODES[0]);
+
+        _updateMenuStates();
+    }
+
+    function _updateMenuStates() {
         CommandManager.get(ID_THESEUS_ENABLE).setChecked(_enabled);
+        _orderedModes.forEach(function (mode, i) {
+            var cmd = CommandManager.get(ID_THESEUS_MODES[i]);
+            cmd.setChecked(_mode.name === mode.name);
+            cmd.setEnabled(_enabled);
+        });
     }
 
     function isEnabled() {
         return _enabled;
+    }
+
+    function getModeName() {
+        return _mode.name;
     }
 
     // initialize the extension
@@ -119,4 +167,5 @@ define(function (require, exports, module) {
     $(Agent).on("disconnect", _disconnected);
 
     exports.isEnabled = isEnabled;
+    exports.getModeName = getModeName;
 });

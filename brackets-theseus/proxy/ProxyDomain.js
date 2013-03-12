@@ -127,21 +127,16 @@ maxerr: 50, node: true */
         }
     }
 
-    function _isRailsDirectory(path, callback) {
-        fs.exists(path + "/config/application.rb", function (exists) {
-            callback(exists);
-        });
-    }
-
     /**
      * @private
      * Helper function to create a new server.
      * @param {string} path The absolute path that should be the document root
+     * @param {string} modeName The name of the mode to use ('static' or 'rails')
      * @param {function(?string, ?httpServer)} cb Callback function that receives
      *    an error (or null if there was no error) and the server (or null if there
      *    was an error). 
      */
-    function _createServer(path, createCompleteCallback) {
+    function _createServer(path, modeName, createCompleteCallback) {
         function requestRoot(server, cb) {
             var address = server.address();
             
@@ -159,29 +154,33 @@ maxerr: 50, node: true */
             });
         }
         
-        _isRailsDirectory(path, function (isRails) {
-            var middleware = isRails ? railsMiddleware : staticMiddleware;
-            console.log("making server for " + path + " (" + (isRails ? "Rails" : "not Rails") + ")");
+        var middlewares = { "static" : staticMiddleware, "rails" : railsMiddleware };
+        var middleware = middlewares[modeName];
+        console.log("making server for " + path + " (" + modeName + ")");
 
-            var app = connect().use(middleware(path, {
-                accept: _accept,
-                filter: _filter,
-                maxAge: STATIC_CACHE_MAX_AGE
-            }));
+        if (!middleware) {
+            createCompleteCallback("Could not get middleware for mode '" + modeName + "'", null);
+            return;
+        }
 
-            var server = http.createServer(app);
-            server.listen(0, "127.0.0.1", function () {
-                requestRoot(
-                    server,
-                    function (err, res) {
-                        if (err) {
-                            createCompleteCallback("Could not GET root after launching server", null);
-                        } else {
-                            createCompleteCallback(null, server);
-                        }
+        var app = connect().use(middleware(path, {
+            accept: _accept,
+            filter: _filter,
+            maxAge: STATIC_CACHE_MAX_AGE
+        }));
+
+        var server = http.createServer(app);
+        server.listen(0, "127.0.0.1", function () {
+            requestRoot(
+                server,
+                function (err, res) {
+                    if (err) {
+                        createCompleteCallback("Could not GET root after launching server", null);
+                    } else {
+                        createCompleteCallback(null, server);
                     }
-                );
-            });
+                }
+            );
         });
     }
 
@@ -193,6 +192,7 @@ maxerr: 50, node: true */
      * already exists for the given path, returns that, otherwise starts a new
      * one.
      * @param {string} path The absolute path that should be the document root
+     * @param {string} modeName The name of the mode ('static' or 'rails')
      * @param {function(?string, ?{address: string, family: string,
      *    port: number})} cb Callback that should receive the address information
      *    for the server. First argument is the error string (or null if no error),
@@ -200,13 +200,13 @@ maxerr: 50, node: true */
      *    The "family" property of the address indicates whether the address is,
      *    for example, IPv4, IPv6, or a UNIX socket.
      */
-    function _cmdGetServer(path, cb) {
+    function _cmdGetServer(path, modeName, cb) {
         // Make sure the key doesn't conflict with some built-in property of Object.
-        var pathKey = PATH_KEY_PREFIX + path;
+        var pathKey = PATH_KEY_PREFIX + "-" + path + "-" + modeName;
         if (_servers[pathKey]) {
             cb(null, _servers[pathKey].address());
         } else {
-            _createServer(path, function (err, server) {
+            _createServer(path, modeName, function (err, server) {
                 if (err) {
                     cb(err, null);
                 } else {
@@ -255,11 +255,18 @@ maxerr: 50, node: true */
             _cmdGetServer,
             true,
             "Starts or returns an existing Theseus server for the given path.",
-            [{
-                name: "path",
-                type: "string",
-                description: "absolute filesystem path for root of server"
-            }],
+            [
+                {
+                    name: "path",
+                    type: "string",
+                    description: "absolute filesystem path for root of server"
+                },
+                {
+                    name: "modeName",
+                    type: "string",
+                    description: "name of the mode ('static' or 'rails')"
+                }
+            ],
             [{
                 name: "address",
                 type: "{address: string, family: string, port: number}",
