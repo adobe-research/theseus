@@ -59,7 +59,7 @@ define(function (require, exports, module) {
     var NAME_THESEUS_ENABLE = "Enable Theseus";
 
     var ID_THESEUS_MODES = _orderedModes.map(function (mode) { return "brackets.theseus.mode." + mode.name });
-    var NAME_THESEUS_MODES = _orderedModes.map(function (mode) { return "   Theseus Mode: " + mode.displayName });
+    var NAME_THESEUS_MODES = _orderedModes.map(function (mode) { return "   Mode: " + mode.displayName });
 
     var _enabled = false;
     var _mode = DEFAULT_MODE;
@@ -128,8 +128,10 @@ define(function (require, exports, module) {
 
         var fileMenu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
         fileMenu.addMenuItem(ID_THESEUS_ENABLE, null, Menus.AFTER, Commands.FILE_LIVE_HIGHLIGHT);
-        fileMenu.addMenuItem(ID_THESEUS_MODES[0], null, Menus.AFTER, ID_THESEUS_ENABLE);
-        fileMenu.addMenuItem(ID_THESEUS_MODES[1], null, Menus.AFTER, ID_THESEUS_MODES[0]);
+        _orderedModes.forEach(function (mode, i) {
+            var prev = (i == 0) ? ID_THESEUS_ENABLE : ID_THESEUS_MODES[i - 1];
+            fileMenu.addMenuItem(ID_THESEUS_MODES[i], null, Menus.AFTER, prev);
+        });
 
         _updateMenuStates();
     }
