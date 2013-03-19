@@ -225,6 +225,14 @@ define(function (require, exports, module) {
         }
     }
 
+    function _scriptWentAway(event, path) {
+        if (Agent.couldBeRemotePath(EditorInterface.currentPath(), path)) {
+            _editorChanged(undefined, EditorInterface.currentEditor(), EditorInterface.currentEditor(), EditorInterface.currentPath());
+        }
+
+        // TODO: remove relevant nodes from _loggedNodes and call _refreshLogQuery
+    }
+
     _variablesPanel = {
         add: function ($parent) {
             this.$dom = $("<div />").appendTo($parent);
@@ -472,6 +480,7 @@ define(function (require, exports, module) {
         _enabled = true;
 
         $(Agent).on("receivedScriptInfo", _receivedScriptInfo);
+        $(Agent).on("scriptWentAway", _scriptWentAway);
         $(EditorInterface).on("editorChanged", _editorChanged);
 
         _editorChanged(undefined, EditorInterface.currentEditor(), EditorInterface.currentEditor(), EditorInterface.currentPath());
@@ -483,6 +492,7 @@ define(function (require, exports, module) {
         _enabled = false;
 
         $(Agent).off("receivedScriptInfo", _receivedScriptInfo);
+        $(Agent).off("scriptWentAway", _scriptWentAway);
         $(EditorInterface).off("editorChanged", _editorChanged);
 
         _reset();
