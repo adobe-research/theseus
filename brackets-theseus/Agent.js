@@ -76,6 +76,7 @@ define(function (require, exports, module) {
             "assets/" + pathComponents[pathComponents.length - 1],
             "assets/" + relativePath.replace(/^app\/assets\/[^\/]+\//, ''),
             relativePath.replace(/^public\//, ''),
+            pathComponents[pathComponents.length - 1],
         ];
     }
 
