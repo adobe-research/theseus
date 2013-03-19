@@ -231,9 +231,21 @@ define(function (require, exports, module) {
             _editorChanged(undefined, EditorInterface.currentEditor(), EditorInterface.currentEditor(), EditorInterface.currentPath());
         }
 
-        _variablesPanel.clearDeadLogs();
+        var countBefore = _loggedNodes.length;
+        _loggedNodes = _loggedNodes.filter(function (nodeId) {
+            return Agent.functionWithId(nodeId);
+        });
 
-        // TODO: remove relevant nodes from _loggedNodes and call _refreshLogQuery
+        if (_loggedNodes.length !== countBefore) {
+            _resetLogQuery();
+
+            if (_loggedNodes.length === 0) {
+                Panel.toggle(false);
+            } else {
+                _variablesPanel.clearDeadLogs(); // do this immediately so that the user can't click on functions that are no longer there
+                _refreshLogQuery();
+            }
+        }
     }
 
     _variablesPanel = {
