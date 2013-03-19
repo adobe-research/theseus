@@ -182,6 +182,7 @@ define(function (require, exports, module) {
         });
 
         masterPromise.always(function () {
+            logs.sort(function (a, b) { return a.timestamp - b.timestamp });
             callback(logs);
         });
     }

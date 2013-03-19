@@ -323,6 +323,7 @@ define(function (require, exports, module) {
 
             // TODO: don't draw the tree from scratch every time!
             this.$log.empty();
+            this.rootLogs.sort(function (a, b) { return a.timestamp - b.timestamp });
             this.rootLogs.forEach(function (log) {
                 this._appendLogTree(log, true, this.$log);
             }.bind(this));
@@ -336,8 +337,18 @@ define(function (require, exports, module) {
             $parent.append(this._entryDom(log, { link: link }));
             if (log.childrenLinks.length > 0) {
                 var $indented = $("<div class='indented' />").appendTo($parent);
-                log.childrenLinks.forEach(function (link) {
-                    var child = this.logsByInvocationId[link.invocationId];
+
+                var children = log.childrenLinks.map(function (link) {
+                    return this.logsByInvocationId[link.invocationId];
+                }.bind(this));
+                children.sort(function (a, b) {
+                    // XXX: this check should not be necessary
+                    if (a && b) {
+                        return a.timestamp - b.timestamp;
+                    }
+                    return 0;
+                });
+                children.forEach(function (child) {
                     this._appendLogTree(child, false, $indented, link);
                 }.bind(this));
             }
