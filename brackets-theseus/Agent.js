@@ -44,6 +44,7 @@ define(function (require, exports, module) {
 
     function init() {
         NodeAgent.init();
+        ChromeAgent.init();
 
         $(NodeAgent).on("receivedScriptInfo", function (ev, path) {
             $exports.triggerHandler("receivedScriptInfo", path);
@@ -51,10 +52,19 @@ define(function (require, exports, module) {
         $(NodeAgent).on("scriptWentAway", function (ev, path) {
             $exports.triggerHandler("scriptWentAway", path);
         });
+
+        $(ChromeAgent).on("receivedScriptInfo", function (ev, path) {
+            console.log("chrome got script", path);
+            $exports.triggerHandler("receivedScriptInfo", path);
+        });
+        $(ChromeAgent).on("scriptWentAway", function (ev, path) {
+            console.log("chrome lost script", path);
+            $exports.triggerHandler("scriptWentAway", path);
+        });
     }
 
     function isReady() {
-        return NodeAgent.isReady();
+        return ChromeAgent.isReady() || NodeAgent.isReady();
     }
 
     function possibleRemotePathsForLocalPath(path) {
@@ -78,11 +88,32 @@ define(function (require, exports, module) {
     }
 
     function functionsInFile(path) {
-        return NodeAgent.functionsInFile(path);
+        var functions = [];
+        functions.push.apply(functions, NodeAgent.functionsInFile(path));
+        functions.push.apply(functions, ChromeAgent.functionsInFile(path));
+        return functions;
     }
 
     function refreshHitCounts(callback) {
-        return NodeAgent.refreshHitCounts(callback);
+        NodeAgent.refreshHitCounts(function (nodeHits, nodeDeltas) {
+            ChromeAgent.refreshHitCounts(function (chromeHits, chromeDeltas) {
+                var hits = {};
+                var deltas = {};
+                if (nodeHits) {
+                    for (var i in nodeHits) { hits[i] = nodeHits[i] }
+                    for (var i in nodeDeltas) { deltas[i] = nodeDeltas[i] }
+                }
+                if (chromeHits) {
+                    for (var i in chromeHits) { hits[i] = chromeHits[i] }
+                    for (var i in chromeDeltas) { deltas[i] = chromeDeltas[i] }
+                }
+                if (nodeHits || chromeHits) {
+                    callback(hits, deltas);
+                } else {
+                    callback();
+                }
+            });
+        });
     }
 
     function cachedHitCounts() {

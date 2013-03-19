@@ -334,14 +334,18 @@ define(function (require, exports, module) {
      * TODO: the first argument to the callback should be err, dude
      */
     function _invoke(functionName, args, callback) {
-        Inspector.Runtime.callFunctionOn(_tracerObjectId, "tracer." + functionName, args, true, true, function (res) {
-            if (!res.wasThrown) {
-                callback && callback(res.result.value);
-            } else {
-                console.log('Inspector.Runtime.callFunctionOn exception', res);
-                callback && callback();
-            }
-        });
+        if (["initializingTracer", "initializingHits", "connected"].indexOf(fsm.state) !== -1) {
+            Inspector.Runtime.callFunctionOn(_tracerObjectId, "tracer." + functionName, args, true, true, function (res) {
+                if (!res.wasThrown) {
+                    callback && callback(res.result.value);
+                } else {
+                    console.log('Inspector.Runtime.callFunctionOn exception', res);
+                    callback && callback();
+                }
+            });
+        } else {
+            callback && callback();
+        }
     }
 
     /**

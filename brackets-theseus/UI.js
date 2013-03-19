@@ -158,6 +158,7 @@ define(function (require, exports, module) {
 
     setInterval(function () {
         if (Agent.isReady()) {
+            // TODO: don't call again if still waiting on a response
             Agent.refreshHitCounts(function (hits, hitDeltas) {
                 // remove the marks for functions that are no longer dead
                 for (var id in _deadCodeMarks) {
