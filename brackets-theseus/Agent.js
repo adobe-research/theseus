@@ -37,10 +37,13 @@
  */
 
 define(function (require, exports, module) {
+    var Async = brackets.getModule("utils/Async");
     var NodeAgent = require("Agent-node");
     var ChromeAgent = require("Agent-chrome");
     var ProjectManager = brackets.getModule("project/ProjectManager");
     var $exports = $(exports);
+
+    var _logHandles = [];
 
     function init() {
         NodeAgent.init();
@@ -54,11 +57,9 @@ define(function (require, exports, module) {
         });
 
         $(ChromeAgent).on("receivedScriptInfo", function (ev, path) {
-            console.log("chrome got script", path);
             $exports.triggerHandler("receivedScriptInfo", path);
         });
         $(ChromeAgent).on("scriptWentAway", function (ev, path) {
-            console.log("chrome lost script", path);
             $exports.triggerHandler("scriptWentAway", path);
         });
     }
@@ -85,7 +86,7 @@ define(function (require, exports, module) {
     }
 
     function functionWithId(fid) {
-        return NodeAgent.functionWithId(fid);
+        return NodeAgent.functionWithId(fid) || ChromeAgent.functionWithId(fid);
     }
 
     function functionsInFile(path) {
@@ -118,19 +119,75 @@ define(function (require, exports, module) {
     }
 
     function cachedHitCounts() {
-        return NodeAgent.cachedHitCounts();
+        var hits = {};
+        var nodeHits = NodeAgent.cachedHitCounts();
+        var chromeHits = ChromeAgent.cachedHitCounts();
+
+        for (var i in nodeHits) { hits[i] = nodeHits[i] }
+        for (var i in chromeHits) { hits[i] = chromeHits[i] }
+
+        return hits;
     }
 
     function trackLogs(query, callback) {
-        return NodeAgent.trackLogs(query, callback);
+        var handle = {};
+        var handleId = _logHandles.push(handle) - 1;
+
+        NodeAgent.trackLogs(query, function (nodeHandle) {
+            if (nodeHandle !== undefined) {
+                handle.node = nodeHandle;
+            }
+        });
+
+        ChromeAgent.trackLogs(query, function (chromeHandle) {
+            if (chromeHandle !== undefined) {
+                handle.chrome = chromeHandle;
+            }
+        });
+
+        callback(handleId);
     }
 
-    function refreshLogs(handle, maxResults, callback) {
-        return NodeAgent.refreshLogs(handle, maxResults, callback);
+    function refreshLogs(handleId, maxResults, callback) {
+        var handle = _logHandles[handleId];
+        if (!handle) {
+            callback(); // error
+            return;
+        }
+
+        var agents = [];
+        if ("node" in handle) {
+            agents.push({ agent: NodeAgent, handle: handle.node });
+        }
+        if ("chrome" in handle) {
+            agents.push({ agent: ChromeAgent, handle: handle.chrome });
+        }
+
+        var logs = [];
+
+        var masterPromise = Async.doInParallel(agents, function (agent, index) {
+
+            var deferred = new $.Deferred();
+
+            agent.agent.refreshLogs(agent.handle, maxResults, function (results) {
+                if (results) {
+                    logs.push.apply(logs, results);
+                    deferred.resolve();
+                } else {
+                    deferred.reject();
+                }
+            });
+
+            return deferred.promise();
+        });
+
+        masterPromise.always(function () {
+            callback(logs);
+        });
     }
 
     function backtrace(options, callback) {
-        return NodeAgent.backtrace(options, callback);
+        NodeAgent.backtrace(options, callback);
     }
 
     exports.init = init;
