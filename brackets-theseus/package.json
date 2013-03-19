@@ -2,7 +2,7 @@
 	"name": "theseus",
 	"description": "Theseus for Brackets",
 	"license": "MIT",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"author": "Tom Lieber <tom@alltom.com>",
 	"dependencies" : {
 		"connect" : "2.3.4",
