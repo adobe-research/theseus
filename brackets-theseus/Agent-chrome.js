@@ -108,7 +108,7 @@ define(function (require, exports, module) {
         },
         connected: {
             enter:                 function () { $exports.triggerHandler("connect"); _sendQueuedEvents(); },
-            exit:                  function () { $exports.triggerHandler("disconnect"); },
+            exit:                  function () { _onDisconnect(); },
 
             gotDocument:           function () { this.goto("initializingTracer"); },
             inspectorDisconnected: function () { this.goto("disconnected"); },
@@ -222,6 +222,23 @@ define(function (require, exports, module) {
                 _defaultTrackingHandle = handle;
                 fsm.trigger("trackingHits");
             }
+        });
+    }
+
+    function _onDisconnect() {
+        $exports.triggerHandler("disconnect");
+
+        var paths = [];
+        for (var path in _nodesByFilePath) {
+            paths.push(path);
+        }
+
+        _resetConnection(); // note: this will happen again when we enter the disconnected state
+
+        // only fire this event after the connection has been reset
+        // since the UI will immediately ask for the new set of functions in the open file
+        paths.forEach(function (path) {
+            $exports.triggerHandler("scriptWentAway", path);
         });
     }
 
