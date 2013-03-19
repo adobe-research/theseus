@@ -43,6 +43,8 @@ define(function (require, exports, module) {
     var ProjectManager = brackets.getModule("project/ProjectManager");
     var $exports = $(exports);
 
+    var AGENTS = [ChromeAgent, NodeAgent];
+
     var _logHandles = [];
 
     function init() {
@@ -188,7 +190,32 @@ define(function (require, exports, module) {
     }
 
     function backtrace(options, callback) {
-        NodeAgent.backtrace(options, callback);
+        var trace;
+
+        // it would be nice if this promise could resolve if *any* task resolved
+        var masterPromise = Async.doInParallel(AGENTS, function (agent, index) {
+
+            var deferred = new $.Deferred();
+
+            agent.backtrace(options, function (thisTrace) {
+                if (thisTrace) {
+                    trace = thisTrace;
+                    deferred.resolve();
+                } else {
+                    deferred.reject();
+                }
+            });
+
+            return deferred.promise();
+        });
+
+        masterPromise.always(function () {
+            if (trace) {
+                callback(trace);
+            } else {
+                callback();
+            }
+        });
     }
 
     exports.init = init;
