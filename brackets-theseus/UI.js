@@ -231,6 +231,8 @@ define(function (require, exports, module) {
             _editorChanged(undefined, EditorInterface.currentEditor(), EditorInterface.currentEditor(), EditorInterface.currentPath());
         }
 
+        _variablesPanel.clearDeadLogs();
+
         // TODO: remove relevant nodes from _loggedNodes and call _refreshLogQuery
     }
 
@@ -257,6 +259,20 @@ define(function (require, exports, module) {
             this.logs = [];
             this.rootLogs = [];
             this.logsByInvocationId = {};
+        },
+
+        clearDeadLogs: function () {
+            var isActive = function (log) { return Agent.functionWithId(log.nodeId); };
+
+            this.logs.filter(isActive);
+            this.rootLogs.filter(isActive);
+            for (var id in this.logsByInvocationId) {
+                if (!isActive(this.logsByInvocationId[id])) {
+                    delete this.logsByInvocationId[id];
+                }
+            }
+
+            this.render();
         },
 
         appendLogs: function (logs) {
@@ -287,6 +303,7 @@ define(function (require, exports, module) {
             this.render(logs);
         },
 
+        // call with no argument to clear the log an render everything over
         render: function (newLogs) {
             if (!newLogs) {
                 this.$log.empty();
@@ -309,7 +326,9 @@ define(function (require, exports, module) {
                 var $indented = $("<div class='indented' />").appendTo($parent);
                 log.childrenLinks.forEach(function (link) {
                     var child = this.logsByInvocationId[link.invocationId];
-                    this._appendLogTree(child, false, $indented, link);
+                    if (child) { // XXX: this check shouldn't be necessary
+                        this._appendLogTree(child, false, $indented, link);
+                    }
                 }.bind(this));
             }
         },
@@ -336,6 +355,9 @@ define(function (require, exports, module) {
             });
 
             var f = Agent.functionWithId(log.nodeId);
+            if (!f) {
+                return $("<div />");
+            }
 
             var $container = $("<div />");
             var $table = $("<table class='vars-table' />").appendTo($container);
