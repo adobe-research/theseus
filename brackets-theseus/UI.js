@@ -158,6 +158,7 @@ define(function (require, exports, module) {
 
     setInterval(function () {
         if (Agent.isReady()) {
+            // TODO: don't call again if still waiting on a response
             Agent.refreshHitCounts(function (hits, hitDeltas) {
                 // remove the marks for functions that are no longer dead
                 for (var id in _deadCodeMarks) {
@@ -225,6 +226,28 @@ define(function (require, exports, module) {
         }
     }
 
+    function _scriptWentAway(event, path) {
+        if (Agent.couldBeRemotePath(EditorInterface.currentPath(), path)) {
+            _editorChanged(undefined, EditorInterface.currentEditor(), EditorInterface.currentEditor(), EditorInterface.currentPath());
+        }
+
+        var countBefore = _loggedNodes.length;
+        _loggedNodes = _loggedNodes.filter(function (nodeId) {
+            return Agent.functionWithId(nodeId);
+        });
+
+        if (_loggedNodes.length !== countBefore) {
+            _resetLogQuery();
+
+            if (_loggedNodes.length === 0) {
+                Panel.toggle(false);
+            } else {
+                _variablesPanel.clearDeadLogs(); // do this immediately so that the user can't click on functions that are no longer there
+                _refreshLogQuery();
+            }
+        }
+    }
+
     _variablesPanel = {
         add: function ($parent) {
             this.$dom = $("<div />").appendTo($parent);
@@ -248,6 +271,20 @@ define(function (require, exports, module) {
             this.logs = [];
             this.rootLogs = [];
             this.logsByInvocationId = {};
+        },
+
+        clearDeadLogs: function () {
+            var isActive = function (log) { return Agent.functionWithId(log.nodeId); };
+
+            this.logs = this.logs.filter(isActive);
+            this.rootLogs = this.rootLogs.filter(isActive);
+            for (var id in this.logsByInvocationId) {
+                if (!isActive(this.logsByInvocationId[id])) {
+                    delete this.logsByInvocationId[id];
+                }
+            }
+
+            this.render();
         },
 
         appendLogs: function (logs) {
@@ -278,6 +315,7 @@ define(function (require, exports, module) {
             this.render(logs);
         },
 
+        // call with no argument to clear the log an render everything over
         render: function (newLogs) {
             if (!newLogs) {
                 this.$log.empty();
@@ -285,6 +323,7 @@ define(function (require, exports, module) {
 
             // TODO: don't draw the tree from scratch every time!
             this.$log.empty();
+            this.rootLogs.sort(function (a, b) { return a.timestamp - b.timestamp });
             this.rootLogs.forEach(function (log) {
                 this._appendLogTree(log, true, this.$log);
             }.bind(this));
@@ -298,8 +337,18 @@ define(function (require, exports, module) {
             $parent.append(this._entryDom(log, { link: link }));
             if (log.childrenLinks.length > 0) {
                 var $indented = $("<div class='indented' />").appendTo($parent);
-                log.childrenLinks.forEach(function (link) {
-                    var child = this.logsByInvocationId[link.invocationId];
+
+                var children = log.childrenLinks.map(function (link) {
+                    return this.logsByInvocationId[link.invocationId];
+                }.bind(this));
+                children.sort(function (a, b) {
+                    // XXX: this check should not be necessary
+                    if (a && b) {
+                        return a.timestamp - b.timestamp;
+                    }
+                    return 0;
+                });
+                children.forEach(function (child) {
                     this._appendLogTree(child, false, $indented, link);
                 }.bind(this));
             }
@@ -327,6 +376,9 @@ define(function (require, exports, module) {
             });
 
             var f = Agent.functionWithId(log.nodeId);
+            if (!f) {
+                return $("<div />");
+            }
 
             var $container = $("<div />");
             var $table = $("<table class='vars-table' />").appendTo($container);
@@ -472,6 +524,7 @@ define(function (require, exports, module) {
         _enabled = true;
 
         $(Agent).on("receivedScriptInfo", _receivedScriptInfo);
+        $(Agent).on("scriptWentAway", _scriptWentAway);
         $(EditorInterface).on("editorChanged", _editorChanged);
 
         _editorChanged(undefined, EditorInterface.currentEditor(), EditorInterface.currentEditor(), EditorInterface.currentPath());
@@ -483,6 +536,7 @@ define(function (require, exports, module) {
         _enabled = false;
 
         $(Agent).off("receivedScriptInfo", _receivedScriptInfo);
+        $(Agent).off("scriptWentAway", _scriptWentAway);
         $(EditorInterface).off("editorChanged", _editorChanged);
 
         _reset();

@@ -65,11 +65,11 @@ define(function (require, exports, module) {
     var _mode = DEFAULT_MODE;
     var _prefs;
 
-    function _connected() {
+    function _enable() {
         $exports.triggerHandler("enable");
     }
 
-    function _disconnected() {
+    function _disable() {
         $exports.triggerHandler("disable");
     }
 
@@ -78,6 +78,12 @@ define(function (require, exports, module) {
         _enabled = !_enabled;
         _prefs.setValue("enabled", _enabled);
         _updateMenuStates();
+
+        if (_enabled) {
+            _enable();
+        } else {
+            _disable();
+        }
     }
 
     function _setMode(modeName) {
@@ -153,6 +159,11 @@ define(function (require, exports, module) {
         return _mode.name;
     }
 
+    // exports
+
+    exports.isEnabled = isEnabled;
+    exports.getModeName = getModeName;
+
     // initialize the extension
 
     _loadPreferences();
@@ -165,9 +176,7 @@ define(function (require, exports, module) {
     UI.init();
     Panel.init();
 
-    $(Agent).on("connect", _connected);
-    $(Agent).on("disconnect", _disconnected);
-
-    exports.isEnabled = isEnabled;
-    exports.getModeName = getModeName;
+    if (_enabled) {
+        _enable();
+    }
 });
