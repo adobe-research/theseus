@@ -264,8 +264,8 @@ define(function (require, exports, module) {
         clearDeadLogs: function () {
             var isActive = function (log) { return Agent.functionWithId(log.nodeId); };
 
-            this.logs.filter(isActive);
-            this.rootLogs.filter(isActive);
+            this.logs = this.logs.filter(isActive);
+            this.rootLogs = this.rootLogs.filter(isActive);
             for (var id in this.logsByInvocationId) {
                 if (!isActive(this.logsByInvocationId[id])) {
                     delete this.logsByInvocationId[id];
@@ -326,9 +326,7 @@ define(function (require, exports, module) {
                 var $indented = $("<div class='indented' />").appendTo($parent);
                 log.childrenLinks.forEach(function (link) {
                     var child = this.logsByInvocationId[link.invocationId];
-                    if (child) { // XXX: this check shouldn't be necessary
-                        this._appendLogTree(child, false, $indented, link);
-                    }
+                    this._appendLogTree(child, false, $indented, link);
                 }.bind(this));
             }
         },
