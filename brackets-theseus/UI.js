@@ -66,6 +66,8 @@ define(function (require, exports, module) {
     }
 
     function _gutterCallCountClicked(e) {
+        $exports.triggerHandler("_gutterCallCountClicked");
+
         _resetLogQuery();
 
         var nodeId = $(this).attr("data-node-id");
@@ -78,9 +80,11 @@ define(function (require, exports, module) {
         if (_loggedNodes.indexOf(nodeId) === -1) {
             _loggedNodes.push(nodeId);
             $(this).toggleClass("set", true);
+            $exports.triggerHandler("_functionAddedToQuery", { nodeId: nodeId, allNodes: _loggedNodes.slice() });
         } else {
             _loggedNodes.splice(_loggedNodes.indexOf(nodeId), 1);
             $(this).toggleClass("set", false);
+            $exports.triggerHandler("_functionRemovedFromQuery", { nodeId: nodeId, allNodes: _loggedNodes.slice() });
         }
 
         if (_loggedNodes.length === 0) {
