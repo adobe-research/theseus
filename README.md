@@ -10,27 +10,46 @@ Theseus is part of a collaboration between the [User Interface Design Group at M
 Download & Install
 ------------------
 
-Theseus works with Brackets on OS X as of Sprint 21. It should work on Windows shortly.
+Theseus works with Brackets on OS X as of Sprint 21. It should *almost* work on Windows, but this has not been tested.
 
-Download version 0.1: https://s3.amazonaws.com/alltom/theseus/theseus-0.1.0.zip (1.7 MB)
+Download version 0.2: https://s3.amazonaws.com/alltom/theseus/theseus-0.2.0.zip (1.7 MB)
 
 Copy the `brackets-theseus` directory into your extensions folder (`Help > Show Extensions Folder` in Brackets).
 
-Using
------
+Using with Static HTML
+----------------------
 
-When you open a web page with Live Development (click the lightning bolt in the upper right of the Brackets window), Theseus shows call counts in the gutter next to every function definition. Click on one or more of them to show a log of all calls to those functions with their arguments return values.
+1. Open an HTML file in Brackets.
+2. Switch Theseus to Static mode by clicking the menu item `File > Mode: Static`
+3. Click the lightning bolt in the upper-right hand corner of Brackets to start Live Development mode. Your page will open in Chrome.
 
-Using with Rails
-----------------
+Theseus will show call counts in the gutter next to every function definition in the HTML file and any included `.js` files. Click on one or more of them to show a log of all calls to those functions with their arguments and return values.
 
-Brackets doesn't officially support server-side technologies where there's no 1:1 mapping between URL structure and local file structure (https://github.com/adobe/brackets/issues/2103). However, Theseus has some support for **JavaScript files served from `/assets/` and `/public/` in development mode**.
+Using with Node.js
+------------------
 
-1. Start Rails in development mode on port 3000 (run `rails server`)
-2. Open `config/application.rb` in Brackets and start Live Development mode by clicking the lightning bolt in the upper-right corner.
-3. Chrome should start and redirect you to the root of your Rails site.
+1. Open your node project directory in Brackets.
+2. Install `node-theseus` with `npm install -g node-theseus`
+3. Start your Node program with `node-theseus app.js` (instead of `node app.js` as you normally would)
 
-Rails support **relies on undocumented bugs in Brackets** (specifically, the remote debugging connection to Chrome persists even when the Live Development connection times out (I guess this is documented now (please don't fix it yet))), so it could stop working at any time.
+Theseus will show call counts in the gutter next to every function definition in all JavaScript files in your project (even files in the `node_modules` sub-directory). Click on one or more of them to show a log of all calls to those functions with their arguments and return values.
+
+Using with JavaScript on a Custom Web Server (including Node.js and Rails)
+--------------------------------------------------------------------------
+
+Theseus lets you inspect the JavaScript running on a web page served by a web server as well. If that web server happens to be written with Node.js, you'll be able to inspect the client and server simultaneously if you also follow the steps in the previous section.
+
+**Warning:** Theseus is experimental software, but **this feature in particular is not well-supported and relies on at least one bug in Brackets in order to work.**
+
+To try anyway:
+
+1. Start your web server on port 3000. Rails should be started in development mode so that JavaScript assets will not be compressed into a single file.
+2. Switch Theseus to Proxy mode by clicking the menu item `File > Mode: Proxy`
+3. Open any file in the project directory with Brackets.
+4. Click the lightning bolt in the upper-right hand corner of the Brackets window to start Live Development mode.
+5. Change the URL in the Chrome tab that opens to the page you would like to debug. Do not change the host or port.
+
+**Note:** The mapping between files served from your web server and files in Brackets can be difficult to figure out. (See the relevant issue in Brackets' tracker: https://github.com/adobe/brackets/issues/2103) However, Theseus will try to make educated guesses. In particular, it tries to recognize the `/app/assets/` and `/public/` directory structures used by Rails and some Node.js projects.
 
 Installing From Source
 ----------------------
