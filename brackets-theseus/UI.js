@@ -488,10 +488,15 @@ define(function (require, exports, module) {
                         $expanded.empty();
                         $image.attr("src", arrowURL);
                     } else {
+                        var names = [];
                         for (var name in val.ownProperties) {
+                            names.push(name);
+                        }
+                        names.sort();
+                        names.forEach(function (name) {
                             $expanded.append($("<div />").append($("<strong />").text(name + " = "))
                                                          .append(this._valueDom(val.ownProperties[name])));
-                        }
+                        }.bind(this));
                         $image.attr("src", turnedArrowURL);
                     }
                     showing = !showing;
