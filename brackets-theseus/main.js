@@ -33,6 +33,7 @@
 
 define(function (require, exports, module) {
     var Agent              = require("Agent");
+    var AppInit            = brackets.getModule("utils/AppInit");
     var CommandManager     = brackets.getModule("command/CommandManager");
     var Commands           = brackets.getModule("command/Commands");
     var EditorInterface    = require("EditorInterface");
@@ -159,6 +160,22 @@ define(function (require, exports, module) {
         return _mode.name;
     }
 
+    function _init() {
+        _loadPreferences();
+        _setupMenu();
+
+        ExtensionUtils.loadStyleSheet(module, "main.less");
+
+        Agent.init();
+        EditorInterface.init();
+        UI.init();
+        Panel.init();
+
+        if (_enabled) {
+            _enable();
+        }
+    }
+
     // exports
 
     exports.isEnabled = isEnabled;
@@ -166,17 +183,5 @@ define(function (require, exports, module) {
 
     // initialize the extension
 
-    _loadPreferences();
-    _setupMenu();
-
-    ExtensionUtils.loadStyleSheet(module, "main.less");
-
-    Agent.init();
-    EditorInterface.init();
-    UI.init();
-    Panel.init();
-
-    if (_enabled) {
-        _enable();
-    }
+    AppInit.appReady(_init);
 });
