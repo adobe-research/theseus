@@ -31,6 +31,7 @@ define(function (require, exports, module) {
 	var EditorManager = brackets.getModule("editor/EditorManager");
 	var Inspector     = brackets.getModule("LiveDevelopment/Inspector/Inspector");
 	var Main          = require("main");
+	var Resizer       = brackets.getModule("utils/Resizer");
 
 	var $panel, $toolbar;
 	var _panel, _shown = false;
@@ -48,13 +49,14 @@ define(function (require, exports, module) {
 
 	/** Toggle the display of the panel */
 	function toggle(show) {
-		if (arguments.length > 0) {
-			_shown = show;
+		if (show === undefined) {
+			Resizer.toggle($panel.get(0));
+		} else if (show) {
+			Resizer.show($panel.get(0));
 		} else {
-			_shown = !_shown;
+			Resizer.hide($panel.get(0));
 		}
 		$panel.toggle(show);
-		EditorManager.resizeEditor();
 	}
 
 	function _enable() {
@@ -67,10 +69,17 @@ define(function (require, exports, module) {
 
 	/** Initialize the panel */
 	function init() {
-		$panel = $("<div id='theseus-panel' class='bottom-panel' />").appendTo(".main-view .content");
+		$panel = $("<div id='theseus-panel' class='bottom-panel' />").insertAfter(".bottom-panel:last");
 		$toolbar = $("<div class='toolbar simple-toolbar-layout' />").appendTo($panel);
 		$("<div class='title' />").appendTo($toolbar).text("Log");
 		$("<a href='#' class='close' />").appendTo($toolbar).html("&times;");
+
+		Resizer.makeResizable($panel.get(0),
+		                      "vert" /* Resizer.DIRECTION_VERTICAL */,
+		                      "top" /* Resizer.POSITION_TOP */,
+		                      100, // minSize
+		                      false // collapsible
+		                      );
 
 		$(Main).on("enable", _enable);
 		$(Main).on("disable", _disable);
