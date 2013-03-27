@@ -70,6 +70,12 @@ maxerr: 50, node: true */
     var _instrumentedFileCache = {};
 
     function _instrument(src, options) {
+        var charPerLine = src.length / src.split("\n").length;
+        if (charPerLine > 300) {
+            console.log(options.path + " probably minified (" + charPerLine + " char/line); skipping");
+            return src;
+        }
+
         options = (options || {});
         var md5 = crypto.createHash('md5');
         md5.update(options.path + '||' + options.include_prefix + '||' + src);
