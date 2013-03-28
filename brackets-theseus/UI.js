@@ -111,12 +111,13 @@ define(function (require, exports, module) {
         // popup.$dom.append("You win the game!");
         // popup.show({ x: e.pageX + 10, y: e.pageY + 10 });
 
-        if (_loggedNodes.indexOf(nodeId) === -1) {
+        var idx = _loggedNodes.indexOf(nodeId);
+        if (idx === -1) {
             _loggedNodes.push(nodeId);
             $(this).toggleClass("set", true);
             $exports.triggerHandler("_functionAddedToQuery", { nodeId: nodeId, allNodes: _loggedNodes.slice() });
         } else {
-            _loggedNodes.splice(_loggedNodes.indexOf(nodeId), 1);
+            _loggedNodes.splice(idx, 1);
             $(this).toggleClass("set", false);
             $exports.triggerHandler("_functionRemovedFromQuery", { nodeId: nodeId, allNodes: _loggedNodes.slice() });
         }
