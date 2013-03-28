@@ -72,7 +72,6 @@ define(function (require, exports, module) {
 		$panel = $("<div id='theseus-panel' class='bottom-panel' />").insertAfter(".bottom-panel:last");
 		$toolbar = $("<div class='toolbar simple-toolbar-layout' />").appendTo($panel);
 		$("<div class='title' />").appendTo($toolbar).text("Log");
-		$("<a href='#' class='close' />").appendTo($toolbar).html("&times;");
 
 		Resizer.makeResizable($panel.get(0),
 		                      "vert" /* Resizer.DIRECTION_VERTICAL */,
