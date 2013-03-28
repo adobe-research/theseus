@@ -92,7 +92,7 @@
         cursor: pointer;
         white-space: nowrap;
 
-        .star {
+        .glyph {
             display: none;
         }
 
@@ -105,11 +105,12 @@
         }
 
         &.set {
-            background: #0186cc;
-            color: #fff;
+            background: #fff;
 
-            .star {
+            .glyph {
                 display: inline;
+                position: relative;
+                top: 1px;
             }
         }
     }

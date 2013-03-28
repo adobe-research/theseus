@@ -40,7 +40,13 @@ define(function (require, exports, module) {
     var _deadCodeMarks = {}; // node id -> mark
     var _logHandle;
     var _loggedNodes = [], _previouslyLoggedNodes = [];
+    var _nodeGlyphs = {}; // node id -> glyph object
     var _variablesPanel;
+
+    var _colors = "#000000 #1f77b4 #ff7f0e #2ca02c #d62728 #9467bd #8c564b #e377c2 #7f7f7f #bcbd22 #17becf".split(" ");
+    var _nextColor = 0;
+    var _shapes = ["circle", "square"];
+    var _nextShape = 0;
 
     function _sanitizeId(id) {
         return id.replace(/[^a-z0-9]/g, "_");
@@ -52,6 +58,34 @@ define(function (require, exports, module) {
 
     function _getNodeMarker(id) {
         return $(document.getElementById(_domIdForNodeId(id)));
+    }
+
+    function _nodeGlyph(nodeId) {
+        if (!(nodeId in _nodeGlyphs)) {
+            _nodeGlyphs[nodeId] = {
+                shape: _shapes[_nextShape],
+                color: _colors[_nextColor],
+            };
+            _nextShape = (_nextShape + 1) % _shapes.length;
+            _nextColor = (_nextColor + 1) % _colors.length;
+        }
+        return _nodeGlyphs[nodeId];
+    }
+
+    function _svgForGlyph(glyph, size) {
+        if (glyph.shape === "circle") {
+            if (size === "tiny") {
+                return '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" class="glyph"><circle cx="5" cy="5" r="5" fill="' + glyph.color + '" /></svg>';
+            } else {
+                return '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="10"><circle cx="5" cy="5" r="5" fill="' + glyph.color + '" /></svg>';
+            }
+        } else if (glyph.shape === "square") {
+            if (size === "tiny") {
+                return '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" class="glyph"><rect x="1" y="1" width="8" height="8" fill="' + glyph.color + '" /></svg>';
+            } else {
+                return '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="10"><rect x="1" y="1" width="8" height="8" fill="' + glyph.color + '" /></svg>';
+            }
+        }
     }
 
     function _resetLogQuery() {
@@ -125,9 +159,9 @@ define(function (require, exports, module) {
                 if (usedLines[node.start.line]) return;
                 usedLines[node.start.line] = true;
 
-                var $image = $("<img />").attr("src", ExtensionUtils.getModuleUrl(module, "images/star.png")).addClass("star");
+                var $glyph = $(_svgForGlyph(_nodeGlyph(node.id), "tiny"));
                 var $dom = $("<span class='uninitialized none theseus-call-count' id='" + _domIdForNodeId(node.id) + "' data-node-id='" + node.id + "'> <span class='counts'>0 calls</span></span>");
-                $dom.prepend($image);
+                $dom.prepend($glyph);
                 editor._codeMirror.setGutterMarker(node.start.line - 1, "CodeMirror-linenumbers", $dom.get(0));
             });
 
@@ -388,6 +422,8 @@ define(function (require, exports, module) {
             var $table = $("<table class='vars-table' />").appendTo($container);
             var $row1 = $("<tr />").appendTo($table);
             var $nameCell = $("<th class='fn' />").appendTo($row1);
+
+            $nameCell.append(_svgForGlyph(_nodeGlyph(log.nodeId)));
 
             if (log.nodeId === "log") {
                 $nameCell.append("console.log")
