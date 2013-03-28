@@ -45,6 +45,14 @@ define(function (require, exports, module) {
 		}
 		_panel = panel;
 		_panel.add($panel);
+
+		// XXX: it may not be okay to call this multiple times
+		Resizer.makeResizable($panel.get(0),
+		                      "vert" /* Resizer.DIRECTION_VERTICAL */,
+		                      "top" /* Resizer.POSITION_TOP */,
+		                      100, // minSize
+		                      false // collapsible
+		                      );
 	}
 
 	/** Toggle the display of the panel */
@@ -69,16 +77,9 @@ define(function (require, exports, module) {
 
 	/** Initialize the panel */
 	function init() {
-		$panel = $("<div id='theseus-panel' class='bottom-panel' />").insertAfter(".bottom-panel:last");
+		$panel = $("<div id='theseus-panel' class='bottom-panel vert-resizable top-resizer no-focus' />").insertAfter(".bottom-panel:last");
 		$toolbar = $("<div class='toolbar simple-toolbar-layout' />").appendTo($panel);
 		$("<div class='title' />").appendTo($toolbar).text("Log");
-
-		Resizer.makeResizable($panel.get(0),
-		                      "vert" /* Resizer.DIRECTION_VERTICAL */,
-		                      "top" /* Resizer.POSITION_TOP */,
-		                      100, // minSize
-		                      false // collapsible
-		                      );
 
 		$(Main).on("enable", _enable);
 		$(Main).on("disable", _disable);

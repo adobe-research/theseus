@@ -289,7 +289,7 @@ define(function (require, exports, module) {
 
     _variablesPanel = {
         add: function ($parent) {
-            this.$dom = $("<div />").appendTo($parent);
+            this.$dom = $("<div class='resizable-content' />").appendTo($parent);
             this.$log = $("<div />").appendTo(this.$dom);
             this.$backtrace = $("<div />").appendTo(this.$dom).hide();
             this.logs = [];
