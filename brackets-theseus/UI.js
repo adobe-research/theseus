@@ -34,6 +34,8 @@ define(function (require, exports, module) {
     var Popup           = require("Popup").Popup;
     var Util            = require("Util");
 
+    require("./lib/moment");
+
     var $exports = $(exports);
     var _enabled = false;
     var _functionsInFile = [];
@@ -423,8 +425,13 @@ define(function (require, exports, module) {
             var $table = $("<table class='vars-table' />").appendTo($container);
             var $row1 = $("<tr />").appendTo($table);
             var $nameCell = $("<th class='fn' />").appendTo($row1);
+            var $timeCell = $("<th class='timestamp' />").appendTo($row1);
 
             $nameCell.append(_svgForGlyph(_nodeGlyph(log.nodeId)));
+
+            var ts = new Date();
+            ts.setTime(log.timestamp);
+            $timeCell.text(moment(ts).format("h:mm:ssa"));
 
             if (log.nodeId === "log") {
                 $nameCell.append("console.log")
