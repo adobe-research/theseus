@@ -488,7 +488,9 @@ define(function (require, exports, module) {
             } else if (val.type === "string") {
                 return $("<span />").text(JSON.stringify(val.value));
             } else if (val.type === "undefined") {
-                return $("<span />").text(JSON.stringify(val.value));
+                return $("<span />").text("undefined");
+            } else if (val.type === "null") {
+                return $("<span />").text("null");
             } else if (val.type === "object") {
                 return this._objectInspectorDom(val);
             } else if (val.type === "function") {
