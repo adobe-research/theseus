@@ -431,7 +431,7 @@ define(function (require, exports, module) {
 
             var ts = new Date();
             ts.setTime(log.timestamp);
-            $timeCell.text(moment(ts).format("h:mm:ssa"));
+            $timeCell.text(moment(ts).format("h:mm:ss.SSS"));
 
             if (log.nodeId === "log") {
                 $nameCell.append("console.log")
