@@ -453,7 +453,7 @@ define(function (require, exports, module) {
                 if (log.nodeId === "log") {
                     $row1.append($("<td />").append(this._valueDom(arg.value)));
                 } else {
-                    var name = arg.name || ("Argument " + i);
+                    var name = arg.name || ("arguments[" + i + "]");
                     $row1.append($("<td />").append($("<strong />").text(name + " = "))
                                             .append(this._valueDom(arg.value)));
                 }
