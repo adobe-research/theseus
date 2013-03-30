@@ -463,7 +463,7 @@ define(function (require, exports, module) {
                                         .append(this._valueDom(log.returnValue)));
             } else if (log.exception) {
                 $row1.append($("<td />").append($("<strong style='color: red' />").text("exception = "))
-                                        .append(this._valueDom(log.exception)));
+                                        .append(this._valueDom(log.exception, { wholePreview: true })));
             }
             if (log.this) {
                 $row1.append($("<td />").append($("<strong />").text("this = "))
@@ -489,7 +489,7 @@ define(function (require, exports, module) {
             return $container;
         },
 
-        _valueDom: function (val) {
+        _valueDom: function (val, options) {
             if (val.type === "number" || val.type === "boolean") {
                 return $("<span />").text(val.value);
             } else if (val.type === "string") {
@@ -499,7 +499,7 @@ define(function (require, exports, module) {
             } else if (val.type === "null") {
                 return $("<span />").text("null");
             } else if (val.type === "object") {
-                return this._objectInspectorDom(val);
+                return this._objectInspectorDom(val, options);
             } else if (val.type === "function") {
                 var $image = $("<img />").attr("src", ExtensionUtils.getModuleUrl(module, "images/arrow.png"));
                 var $dom = $("<span />").toggleClass("objects-bad", true)
@@ -510,7 +510,9 @@ define(function (require, exports, module) {
             return $("<span />").text(JSON.stringify(val));
         },
 
-        _objectInspectorDom: function (val) {
+        _objectInspectorDom: function (val, options) {
+            options = (options || {});
+
             var arrowURL = ExtensionUtils.getModuleUrl(module, "images/arrow.png");
             var turnedArrowURL = ExtensionUtils.getModuleUrl(module, "images/arrow-turned.png");
 
@@ -518,7 +520,7 @@ define(function (require, exports, module) {
             if (preview === null || preview === undefined) preview = "";
             preview = preview.trim();
             if (preview.length === 0) preview = "[Object]";
-            if (preview.length > 20) preview = val.preview.slice(0, 20) + "...";
+            if (preview.length > 20 && !options.wholePreview) preview = val.preview.slice(0, 20) + "...";
 
             var $dom = $("<div />").css({ "display" : "inline-block", "vertical-align" : "top" });
             var $image = $("<img />").attr("src", arrowURL);
