@@ -364,6 +364,7 @@ define(function (require, exports, module) {
 
             // TODO: don't draw the tree from scratch every time!
             this.$log.empty();
+            // TODO: when timestamps are equal, compare ticks (so log items from the same agent will get the correct order relative to each other)
             this.rootLogs.sort(function (a, b) { return a.timestamp - b.timestamp });
             this.rootLogs.forEach(function (log) {
                 this._appendLogTree(log, true, this.$log);
