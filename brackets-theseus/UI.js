@@ -381,17 +381,17 @@ define(function (require, exports, module) {
                 var $indented = $("<div class='indented' />").appendTo($parent);
 
                 var children = log.childrenLinks.map(function (link) {
-                    return this.logsByInvocationId[link.invocationId];
+                    return { invocation: this.logsByInvocationId[link.invocationId], link: link };
                 }.bind(this));
                 children.sort(function (a, b) {
                     // XXX: this check should not be necessary
-                    if (a && b) {
-                        return a.timestamp - b.timestamp;
+                    if (a.invocation && b.invocation) {
+                        return a.invocation.timestamp - b.invocation.timestamp;
                     }
                     return 0;
                 });
                 children.forEach(function (child) {
-                    this._appendLogTree(child, false, $indented, link);
+                    this._appendLogTree(child.invocation, false, $indented, child.link);
                 }.bind(this));
             }
         },
