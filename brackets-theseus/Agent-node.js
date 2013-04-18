@@ -116,6 +116,7 @@ define(function (require, exports, module) {
 
         for (var i in nodes) {
             var n = nodes[i];
+            n.path = n.path.replace(/\\/g, "/"); // XXX: "Windows support"
             _nodes[n.id] = n;
             indexByPath(n, n.path, _nodesByFilePath);
         }
