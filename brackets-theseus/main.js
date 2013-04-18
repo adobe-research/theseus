@@ -38,11 +38,11 @@ define(function (require, exports, module) {
     var Commands           = brackets.getModule("command/Commands");
     var EditorInterface    = require("EditorInterface");
     var ExtensionUtils     = brackets.getModule("utils/ExtensionUtils");
-    var Inspector          = brackets.getModule("LiveDevelopment/Inspector/Inspector");
     var Menus              = brackets.getModule("command/Menus");
     var Panel              = require("Panel");
     var PreferencesManager = brackets.getModule("preferences/PreferencesManager")
     var UI                 = require("UI");
+    var Usage              = require("Usage");
 
     var $exports = $(exports);
 
@@ -168,6 +168,7 @@ define(function (require, exports, module) {
 
         ExtensionUtils.loadStyleSheet(module, "main.less");
 
+        // Usage.init();
         Agent.init();
         EditorInterface.init();
         UI.init();
