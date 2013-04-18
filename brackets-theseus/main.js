@@ -46,6 +46,8 @@ define(function (require, exports, module) {
 
     var $exports = $(exports);
 
+    var THESEUS_VERSION = JSON.parse(require("text!package.json")).version;
+
     var _modes = {
         "static" : { name: "static", displayName: "Static" },
         "proxy" : { name: "proxy", displayName: "Proxy" },
@@ -180,6 +182,7 @@ define(function (require, exports, module) {
 
     exports.isEnabled = isEnabled;
     exports.getModeName = getModeName;
+    exports.version = THESEUS_VERSION;
 
     // initialize the extension
 
