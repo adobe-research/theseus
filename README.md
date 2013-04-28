@@ -12,7 +12,7 @@ Download & Install
 
 Theseus works with Brackets (Sprint 21) on OS X. It has not been tested with Sprint 22. It should *almost* work on Windows, but this has not been tested.
 
-Download version 0.2.3: https://s3.amazonaws.com/alltom/theseus/theseus-0.2.3.zip (1.6 MB)
+Download version 0.2.6: https://s3.amazonaws.com/alltom/theseus/theseus-0.2.6.zip (1.6 MB)
 
 Copy the `brackets-theseus` directory into your extensions folder (`Help > Show Extensions Folder` in Brackets).
 
