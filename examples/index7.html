@@ -33,26 +33,27 @@ Stream.prototype.begin = function () {
 
 ///////////////////////////////////////////////////////////////
 
-function streamTest(id) {
+function fetch(id, callback) {
 	var stream = new Stream(id);
+	var allData = '';
 
 	stream.on('data', function (data) {
-		// console.log('got data', data);
+		allData += data;
 	});
 
 	stream.on('end', function () {
-		// console.log('stream end');
+		callback(null, allData);
 	});
 
-	stream.on('error', function () {
-		// console.log('stream error');
+	stream.on('error', function (err) {
+		callback(err);
 	});
 
 	return stream;
 }
 
-streamTest(1).begin();
-streamTest(2).begin();
-streamTest(3).begin();
-streamTest(4).begin();
+fetch(1, function () { }).begin();
+fetch(2, function () { }).begin();
+fetch(3, function () { }).begin();
+fetch(4, function () { }).begin();
 </script>
