@@ -40,6 +40,10 @@ define(function (require, exports, module) {
 
     var _properties = {};
     var _eventQueue = [];
+    var _anonymousIds = {};
+
+    var UPLOAD_CHECK_INTERVAL = 10000;
+    var UPLOAD_RETRY_INTERVAL = 60000;
 
     function _loadPreferences() {
         _prefs = PreferencesManager.getPreferenceStorage("com.adobe.theseus.usage-reporting", {
@@ -64,6 +68,24 @@ define(function (require, exports, module) {
 
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
                s4() + '-' + s4() + s4() + s4();
+    }
+
+    /**
+     * we want to be able to correlate all the events relating to a particular
+     * node, but the node ID includes the filename. instead of sending the node
+     * ID, the _anonymousIds has maps them to GUIDs.
+     **/
+    function _anonymousId(str) {
+        var key = '_!' + str;
+        if (!(key in _anonymousIds)) {
+            _anonymousIds[key] = _guid();
+            if (/\.js$/.test(str)) {
+                _anonymousIds[key] += '.js';
+            } else if (/\.html$/.test(str)) {
+                _anonymousIds[key] += '.html';
+            }
+        }
+        return _anonymousIds[key];
     }
 
     /**
@@ -106,43 +128,44 @@ define(function (require, exports, module) {
 
             post.fail(function () {
                 _eventQueue = events.concat(_eventQueue);
+                setTimeout(_uploadEvents, UPLOAD_RETRY_INTERVAL);
             });
 
-            post.always(function () {
-                setTimeout(_uploadEvents, 1000);
+            post.done(function () {
+                setTimeout(_uploadEvents, UPLOAD_CHECK_INTERVAL);
             });
         } else {
-            setTimeout(_uploadEvents, 1000);
+            setTimeout(_uploadEvents, UPLOAD_CHECK_INTERVAL);
         }
     }
 
-    function _listen() {
-        $(Main).on("enable", function () { _recordEvent("Theseus Enable"); _registerProperties({ theseus_enable: true }); });
-        $(Main).on("disable", function () { _recordEvent("Theseus Disable"); _registerProperties({ theseus_enable: false }); });
+    function _listenForEvents() {
+        $(Main).on("enable", function () { _recordEvent("Theseus Enable"); _registerProperties({ theseusEnabled: true }); });
+        $(Main).on("disable", function () { _recordEvent("Theseus Disable"); _registerProperties({ theseusEnabled: false }); });
 
-        $(Agent).on("receivedScriptInfo", function (e, path) { _recordEvent("Script Connected", { path: path }) });
-        $(Agent).on("scriptWentAway", function (e, path) { _recordEvent("Script Went Away", { path: path }) });
+        $(Agent).on("receivedScriptInfo", function (e, path) { _recordEvent("Script Connected", { scriptPath: _anonymousId(path) }) });
+        $(Agent).on("scriptWentAway", function (e, path) { _recordEvent("Script Went Away", { scriptPath: _anonymousId(path) }) });
 
-        $(UI).on("_gutterCallCountClicked", function () { _recordEvent("Gutter Call Count Clicked"); });
-        $(UI).on("_functionAddedToQuery", function (ev, o) { _recordEvent("Function Added To Query", { added_node: o.nodeId }); _registerProperties({ selected_nodes: o.allNodes }); });
-        $(UI).on("_functionRemovedFromQuery", function (ev, o) { _recordEvent("Function Removed From Query", { removed_node: o.nodeId }); _registerProperties({ selected_nodes: o.allNodes }); });
+        $(UI).on("_gutterCallCountClicked", function (e, node) { _recordEvent("Gutter Call Count Clicked", { nodeType: node.type, nodeId: _anonymousId(node.id), nodePath: _anonymousId(node.path) }); });
+        $(UI).on("_functionAddedToQuery", function (ev, o) { _recordEvent("Function Added To Query", { nodeId: _anonymousId(o.node.id), nodePath: _anonymousId(o.node.path) }); _registerProperties({ selectedNodes: o.allNodeIds.map(_anonymousId) }); });
+        $(UI).on("_functionRemovedFromQuery", function (ev, o) { _registerProperties({ selectedNodes: o.allNodeIds.map(_anonymousId) }); _recordEvent("Function Removed From Query", { nodeId: _anonymousId(o.node.id), nodePath: _anonymousId(o.node.path) }); });
 
-        $(EditorInterface).on("editorChanged", function (ev, ed, preved, path) { _recordEvent("File Opened", { path: path }); _registerProperties({ open_file_path: path }); });
+        $(EditorInterface).on("editorChanged", function (ev, ed, preved, path) { _recordEvent("File Opened", { filePath: _anonymousId(path) }); _registerProperties({ openFilePath: _anonymousId(path) }); });
     }
 
     function init() {
         _loadPreferences();
 
         _registerProperties({
-            theseusVersion: Main.version,
-            userId: _prefs.getValue("user_id"),
-            sessionId: _guid(),
+            _theseusVersion: Main.version,
+            _userId: _prefs.getValue("user_id"),
+            _sessionId: _guid(),
         });
         _recordEvent("Theseus Usage Reporting Init");
 
-        _listen();
+        _listenForEvents();
 
-        _uploadEvents();
+        _uploadEvents(); // kick-off
     }
 
     exports.init = init;

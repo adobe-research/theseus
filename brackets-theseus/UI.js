@@ -102,11 +102,12 @@ define(function (require, exports, module) {
     }
 
     function _gutterCallCountClicked(e) {
-        $exports.triggerHandler("_gutterCallCountClicked");
-
         _resetLogQuery();
 
         var nodeId = $(this).attr("data-node-id");
+
+        var node = Agent.functionWithId(nodeId);
+        $exports.triggerHandler("_gutterCallCountClicked", node);
 
         // var popup = new Popup();
         // popup.$dom.addClass("theseus-popup");
@@ -117,11 +118,11 @@ define(function (require, exports, module) {
         if (idx === -1) {
             _loggedNodes.push(nodeId);
             $(this).toggleClass("set", true);
-            $exports.triggerHandler("_functionAddedToQuery", { nodeId: nodeId, allNodes: _loggedNodes.slice() });
+            $exports.triggerHandler("_functionAddedToQuery", { node: node, allNodeIds: _loggedNodes.slice() });
         } else {
             _loggedNodes.splice(idx, 1);
             $(this).toggleClass("set", false);
-            $exports.triggerHandler("_functionRemovedFromQuery", { nodeId: nodeId, allNodes: _loggedNodes.slice() });
+            $exports.triggerHandler("_functionRemovedFromQuery", { node: node, allNodeIds: _loggedNodes.slice() });
         }
 
         if (_loggedNodes.length === 0) {
