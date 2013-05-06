@@ -25,8 +25,8 @@ Features
 Download & Install
 ------------------
 
-[![Download Theseus](https://raw.github.com/adobe-research/theseus/gh-pages/download-button.png)](https://s3.amazonaws.com/alltom/theseus/theseus-0.2.6.zip)  
-Current version: 0.2.6
+[![Download Theseus](https://raw.github.com/adobe-research/theseus/gh-pages/download-button.png)](https://s3.amazonaws.com/alltom/theseus/theseus-0.2.7.zip)  
+Current version: 0.2.7
 
 Unzip, then copy the `brackets-theseus` directory into your extensions folder (*Help > Show Extensions Folder* in Brackets).
 
