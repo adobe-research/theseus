@@ -49,7 +49,7 @@ define(function (require, exports, module) {
     var THESEUS_VERSION = JSON.parse(require("text!package.json")).version;
 
     var _modes = {
-        "static" : { name: "static", displayName: "Serve files on disk" },
+        "static" : { name: "static", displayName: "Serve files from disk" },
         "proxy" : { name: "proxy", displayName: "Proxy to localhost:3000" },
     };
     var _orderedModes = [_modes["static"], _modes["proxy"]];
