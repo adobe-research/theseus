@@ -14,7 +14,7 @@ Features
 
 ![Screenshot of call counts and dead code coloring](https://raw.github.com/adobe-research/theseus/gh-pages/call-counts.png)
 
-**Retroactive inspection:** Click a call count to see the values of parameters, the return values, and any exceptions that have been thrown from that function. It's like retroactively adding `console.log`.
+**Retroactive inspection:** Click a call count to see the values of parameters, return values, and any exceptions that have been thrown from that function. It's like adding `console.log` without having to save and reload.
 
 ![Screenshot of a single function being logged](https://raw.github.com/adobe-research/theseus/gh-pages/log1.png)
 
