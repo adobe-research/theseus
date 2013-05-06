@@ -1,7 +1,7 @@
 Theseus
 =======
 
-Theseus is a new type of JavaScript debugger that helps you debug asynchronous code. It is an extension for the [Brackets](https://github.com/adobe/brackets) code editor.
+Theseus is a new type of JavaScript debugger that helps you understand asynchronous code. It is an extension for the [Brackets](https://github.com/adobe/brackets) code editor.
 
 Theseus is part of a collaboration between the [User Interface Design Group at MIT CSAIL](http://groups.csail.mit.edu/uid/) and [Adobe Research](http://research.adobe.com/).
 
