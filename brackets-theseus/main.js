@@ -50,7 +50,7 @@ define(function (require, exports, module) {
 
     var _modes = {
         "static" : { name: "static", displayName: "Serve files from disk" },
-        "proxy" : { name: "proxy", displayName: "Proxy to localhost:3000" },
+        "proxy" : { name: "proxy", displayName: "Proxy to localhost:3000 (experimental)" },
     };
     var _orderedModes = [_modes["static"], _modes["proxy"]];
     var DEFAULT_MODE = _modes["static"];

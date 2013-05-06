@@ -37,9 +37,9 @@ Usage: Debugging Node.js
 
 ![Brackets + Node.js](https://raw.github.com/adobe-research/theseus/gh-pages/theseus-node.png)
 
-Start your program with `node-theseus app.js` (instead of `node app.js` as you normally would). Theseus will automatically connect to that process.
+Start your program by running `node-theseus app.js` (instead of `node app.js` as you normally would). Theseus will automatically connect to that process.
 
-(You can install `node-theseus` with `npm install -g node-theseus`)
+(You install `node-theseus` with `npm install -g node-theseus`)
 
 Usage: Debugging JavaScript in Chrome
 -------------------------------------
