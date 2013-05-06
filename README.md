@@ -1,60 +1,60 @@
 Theseus
 =======
 
-Theseus is a new type of JavaScript debugger that makes it far easier to debug asynchronous code. Theseus is an extension for the code editor [Brackets](https://github.com/adobe/brackets).
+Theseus is a new type of JavaScript debugger that helps you debug asynchronous code. It is an extension for the [Brackets](https://github.com/adobe/brackets) code editor.
 
 Theseus is part of a collaboration between the [User Interface Design Group at MIT CSAIL](http://groups.csail.mit.edu/uid/) and [Adobe Research](http://research.adobe.com/).
 
 ![Screenshot of Theseus](https://raw.github.com/adobe-research/theseus/gh-pages/screenshot.png)
 
+Features
+--------
+
+**Real-time code coverage:** Theseus shows the number of times that every function has been called next to its definition. Functions that have never been called are also given a gray background. You can watch the code execute as you interact with the web page.
+
+![Screenshot of call counts and dead code coloring](https://raw.github.com/adobe-research/theseus/gh-pages/call-counts.png)
+
+**Retroactive inspection:** Click a call count to see the values of parameters, the return values, and any exceptions that have been thrown from that function. It's like retroactively adding `console.log`.
+
+![Screenshot of a single function being logged](https://raw.github.com/adobe-research/theseus/gh-pages/log1.png)
+
+**Asynchronous call tree:** If you click multiple call counts, all invocations of those functions are shown in a tree. When callback functions are executed, they show up in the call tree under the function that created them, regardless of whether they were called immediately or many ticks later.
+
+![Screenshot of multiple functions being logged](https://raw.github.com/adobe-research/theseus/gh-pages/log2.png)
+
 Download & Install
 ------------------
 
-Theseus works with Brackets on OS X. It *has worked* on Windows, but this is not regularly tested.
+[![Download Theseus](https://raw.github.com/adobe-research/theseus/gh-pages/download-button.png)](https://s3.amazonaws.com/alltom/theseus/theseus-0.2.6.zip)  
+Current version: 0.2.6
 
-Download version 0.2.6: https://s3.amazonaws.com/alltom/theseus/theseus-0.2.6.zip (1.6 MB)
+Unzip, then copy the `brackets-theseus` directory into your extensions folder (*Help > Show Extensions Folder* in Brackets).
 
-Copy the `brackets-theseus` directory into your extensions folder (`Help > Show Extensions Folder` in Brackets).
+For Node.js support, also run: `npm install -g node-theseus` to get the command-line helper.
 
-Using with Static HTML
-----------------------
+Usage: Debugging Node.js
+------------------------
 
-1. Open an HTML file in Brackets.
-2. Switch Theseus to Static mode by clicking the menu item `File > Mode: Static`
-3. Click the lightning bolt in the upper-right hand corner of Brackets to start Live Development mode. Your page will open in Chrome.
+![Brackets + Node.js](https://raw.github.com/adobe-research/theseus/gh-pages/theseus-node.png)
 
-Theseus will show call counts in the gutter next to every function definition in the HTML file and any included `.js` files. Click on one or more of them to show a log of all calls to those functions with their arguments and return values.
+Start your program with `node-theseus app.js` (instead of `node app.js` as you normally would). Theseus will automatically connect to that process.
 
-Using with Node.js
-------------------
+(You can install `node-theseus` with `npm install -g node-theseus`)
 
-1. Open your node project directory in Brackets.
-2. Install `node-theseus` with `npm install -g node-theseus`
-3. Start your Node program with `node-theseus app.js` (instead of `node app.js` as you normally would)
+Usage: Debugging JavaScript in Chrome
+-------------------------------------
 
-Theseus will show call counts in the gutter next to every function definition in all JavaScript files in your project (even files in the `node_modules` sub-directory). Click on one or more of them to show a log of all calls to those functions with their arguments and return values.
+![Brackets + Chrome](https://raw.github.com/adobe-research/theseus/gh-pages/theseus-chrome.png)
 
-Using with JavaScript on a Custom Web Server (including Node.js and Rails)
---------------------------------------------------------------------------
+Open the File menu and put Theseus into the mode for static HTML files:
 
-Theseus lets you inspect the JavaScript running on a web page served by a web server as well. If that web server happens to be written with Node.js, you'll be able to inspect the client and server simultaneously if you also follow the steps in the previous section.
+![Brackets + Chrome](https://raw.github.com/adobe-research/theseus/gh-pages/theseus-mode-static.png)
 
-**Warning:** Theseus is experimental software, but **this feature in particular is not well-supported and relies on at least one bug in Brackets in order to work.**
+Then open an HTML file and start Brackets' Live Development mode by clicking the lightning bolt in the top right corner of the window:
 
-To try anyway:
+![Brackets' lightning bolt](https://raw.github.com/adobe-research/theseus/gh-pages/lightning-bolt.png)
 
-1. Start your web server on port 3000. Rails should be started in development mode so that JavaScript assets will not be compressed into a single file.
-2. Switch Theseus to Proxy mode by clicking the menu item `File > Mode: Proxy`
-3. Open any file in the project directory with Brackets.
-4. Click the lightning bolt in the upper-right hand corner of the Brackets window to start Live Development mode.
-5. Change the URL in the Chrome tab that opens to the page you would like to debug. Do not change the host or port.
-
-**Note:** The mapping between files served from your web server and files in Brackets can be difficult to figure out. (See the relevant issue in Brackets' tracker: https://github.com/adobe/brackets/issues/2103) However, Theseus will try to make educated guesses. In particular, it tries to recognize the `/app/assets/` and `/public/` directory structures used by Rails and some Node.js projects.
-
-Installing From Source
-----------------------
-
-The `build.sh` script clones the current `master` branch, uses `npm` to install its dependencies, then creates a zip file in the `build` directory.
+Your page will open in Chrome.
 
 License
 -------
