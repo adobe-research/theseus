@@ -18,7 +18,7 @@ Features
 
 ![Screenshot of a single function being logged](https://raw.github.com/adobe-research/theseus/gh-pages/log1.png)
 
-**Asynchronous call tree:** If you click multiple call counts, all invocations of those functions are shown in a tree. When callback functions are executed, they show up in the call tree under the function that created them, regardless of whether they were called immediately or many ticks later.
+**Asynchronous call tree:** If you click multiple call counts, all invocations of those functions are shown in a tree. When callback functions are called, they show up in the tree under the function that created them, regardless of whether they were called immediately or many ticks later.
 
 ![Screenshot of multiple functions being logged](https://raw.github.com/adobe-research/theseus/gh-pages/log2.png)
 
