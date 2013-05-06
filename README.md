@@ -56,6 +56,11 @@ Then open an HTML file and start Brackets' Live Development mode by clicking the
 
 Your page will open in Chrome.
 
+Bugs
+----
+
+If you come across a bug, submit an issue on GitHub. Include a list of steps we can follow to reproduce the problem, a description of what you saw that seemed broken, and a description of what you expected to see.
+
 License
 -------
 
