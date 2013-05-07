@@ -1,25 +1,25 @@
 /*
- * Copyright (c) 2012 Adobe Systems Incorporated and other contributors.
- * All rights reserved.
- *  
+ * Copyright (c) 2012 Massachusetts Institute of Technology, Adobe Systems
+ * Incorporated, and other contributors. All rights reserved.
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"), 
- * to deal in the Software without restriction, including without limitation 
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, 
- * and/or sell copies of the Software, and to permit persons to whom the 
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
- *  
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *  
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- * 
+ *
  */
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4,
@@ -28,7 +28,7 @@ maxerr: 50, node: true */
 
 (function () {
     "use strict";
-    
+
     var connect          = require('connect'),
         crypto           = require('crypto'),
         fondue           = require('fondue'),
@@ -51,14 +51,14 @@ maxerr: 50, node: true */
      * @type {number}
      */
     var STATIC_CACHE_MAX_AGE = 5000; // 5 seconds
-    
+
     /**
      * @private
      * @type {Object.<string, http.Server>}
      * A map from root paths to server instances.
      */
     var _servers = {};
-    
+
     /**
      * @private
      * @type {DomainManager}
@@ -140,12 +140,12 @@ maxerr: 50, node: true */
      * @param {string} modeName The name of the mode to use ('static' or 'proxy')
      * @param {function(?string, ?httpServer)} cb Callback function that receives
      *    an error (or null if there was no error) and the server (or null if there
-     *    was an error). 
+     *    was an error).
      */
     function _createServer(path, modeName, createCompleteCallback) {
         function requestRoot(server, cb) {
             var address = server.address();
-            
+
             // Request the root file from the project in order to ensure that the
             // server is actually initialized. If we don't do this, it seems like
             // connect takes time to warm up the server.
@@ -159,7 +159,7 @@ maxerr: 50, node: true */
                 cb(err, null);
             });
         }
-        
+
         var middlewares = { "static" : staticMiddleware, "proxy" : proxyMiddleware };
         var middleware = middlewares[modeName];
         console.log("making server for " + path + " (" + modeName + ")");
@@ -191,7 +191,7 @@ maxerr: 50, node: true */
     }
 
     var PATH_KEY_PREFIX = "LiveDev_";
-    
+
     /**
      * @private
      * Handler function for the theseusServer.getServer command. If a server
@@ -222,7 +222,7 @@ maxerr: 50, node: true */
             });
         }
     }
-    
+
     /**
      * @private
      * Handler function for the theseusServer.closeServer command. If a server
@@ -245,7 +245,7 @@ maxerr: 50, node: true */
         }
         return false;
     }
-    
+
     /**
      * Initializes the theseusServer domain with its commands.
      * @param {DomainManager} DomainManager The DomainManager for the server
@@ -297,7 +297,7 @@ maxerr: 50, node: true */
             }]
         );
     }
-    
+
     exports.init = init;
-    
+
 }());
