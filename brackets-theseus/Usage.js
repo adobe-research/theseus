@@ -156,7 +156,7 @@ define(function (require, exports, module) {
         $(UI).on("_functionAddedToQuery", function (ev, o) { _recordEvent("Function Added To Query", { nodeId: _anonymousId(o.node.id), nodePath: _anonymousId(o.node.path) }); _registerProperties({ selectedNodes: o.allNodeIds.map(_anonymousId) }); });
         $(UI).on("_functionRemovedFromQuery", function (ev, o) { _registerProperties({ selectedNodes: o.allNodeIds.map(_anonymousId) }); _recordEvent("Function Removed From Query", { nodeId: _anonymousId(o.node.id), nodePath: _anonymousId(o.node.path) }); });
 
-        $(EditorInterface).on("editorChanged", function (ev, ed, preved, path) { _recordEvent("File Opened", { filePath: _anonymousId(path) }); _registerProperties({ openFilePath: _anonymousId(path) }); });
+        // $(EditorInterface).on("editorChanged", function (ev, ed, preved, path) { _recordEvent("File Opened", { filePath: _anonymousId(path) }); _registerProperties({ openFilePath: _anonymousId(path) }); });
     }
 
     function init() {
