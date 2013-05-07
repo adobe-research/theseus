@@ -168,7 +168,7 @@ define(function (require, exports, module) {
 
         ExtensionUtils.loadStyleSheet(module, "main.less");
 
-        // Usage.init();
+        Usage.init();
         Agent.init();
         EditorInterface.init();
         UI.init();
