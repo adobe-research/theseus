@@ -37,7 +37,7 @@
  */
 
 define(function (require, exports, module) {
-    var Agent          = require("Agent");
+    var Agent = require("Agent");
 
     var _conn;
     var _connected = false;

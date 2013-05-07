@@ -124,7 +124,7 @@ define(function (require, exports, module) {
         _eventQueue = [];
 
         if (events.length > 0) {
-            var post = $.post("http://alltom.com:9999/events", { events: events });
+            var post = $.post("http://theseus-usage.alltom.com/v1/events", { events: events });
 
             post.fail(function () {
                 _eventQueue = events.concat(_eventQueue);
