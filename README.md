@@ -1,7 +1,7 @@
 Theseus
 =======
 
-Theseus is a new type of JavaScript debugger that helps you understand asynchronous code. It is an extension for the [Brackets](https://github.com/adobe/brackets) code editor.
+Theseus is a new type of JavaScript debugger for Node.js, Chrome, and both simultaneously. It is an extension for the [Brackets](https://github.com/adobe/brackets) code editor.
 
 Theseus is part of a collaboration between the [User Interface Design Group at MIT CSAIL](http://groups.csail.mit.edu/uid/) and [Adobe Research](http://research.adobe.com/).
 
@@ -10,7 +10,7 @@ Theseus is part of a collaboration between the [User Interface Design Group at M
 Features
 --------
 
-**Real-time code coverage:** Theseus shows the number of times that every function has been called next to its definition. Functions that have never been called are also given a gray background. You can watch the code execute as you interact with the web page.
+**Real-time code coverage:** Theseus shows the number of times that every function has been called next to its definition. Functions that have never been called are also given a gray background. You can watch the code light up as you interact with the web page.
 
 ![Screenshot of call counts and dead code coloring](https://raw.github.com/adobe-research/theseus/gh-pages/call-counts.png)
 
@@ -64,4 +64,4 @@ If you come across a bug, submit an issue on GitHub. Include a list of steps we 
 License
 -------
 
-Theseus is MIT licensed.
+Theseus is released under the [MIT license](http://opensource.org/licenses/MIT).
