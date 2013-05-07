@@ -1,11 +1,14 @@
 <script src="jquery-1.7.js"></script>
 <script>
+$(document).ready(function () {
+    $(document.body).on("click", "button", function () {
+        onclick();
+    });
+});
 function onclick() {
-    $.getJSON("test.json", function () {
+    $.getJSON("test.jsfon", function (data) {
+        console.log(data);
     });
 }
-$(document).ready(function () {
-    onclick();
-    onclick();
-});
 </script>
+<button>Click!</button>
