@@ -27,11 +27,13 @@
 
 define(function (require, exports, module) {
     var Agent              = require("Agent");
+    var ChromeAgent        = require("Agent-chrome");
     var Dialogs            = brackets.getModule("widgets/Dialogs");
     var EditorInterface    = require("EditorInterface");
     var ExtensionUtils     = brackets.getModule("utils/ExtensionUtils");
     var Inspector          = brackets.getModule("LiveDevelopment/Inspector/Inspector");
     var Main               = require("main");
+    var NodeAgent          = require("Agent-node");
     var Panel              = require("Panel");
     var PreferencesManager = brackets.getModule("preferences/PreferencesManager")
     var UI                 = require("UI");
@@ -143,8 +145,12 @@ define(function (require, exports, module) {
         $(Main).on("enable", function () { _recordEvent("Theseus Enable"); _registerProperties({ theseusEnabled: true }); });
         $(Main).on("disable", function () { _recordEvent("Theseus Disable"); _registerProperties({ theseusEnabled: false }); });
 
-        $(Agent).on("receivedScriptInfo", function (e, path) { _recordEvent("Script Connected", { scriptPath: _anonymousId(path) }) });
-        $(Agent).on("scriptWentAway", function (e, path) { _recordEvent("Script Went Away", { scriptPath: _anonymousId(path) }) });
+        // $(Agent).on("receivedScriptInfo", function (e, path) { _recordEvent("Script Connected", { scriptPath: _anonymousId(path) }) });
+        // $(Agent).on("scriptWentAway", function (e, path) { _recordEvent("Script Went Away", { scriptPath: _anonymousId(path) }) });
+        $(NodeAgent).on("connect", function () { _recordEvent("Node.js Connected"); _registerProperties({ nodeConnected: true }); })
+        $(NodeAgent).on("disconnect", function () { _registerProperties({ nodeConnected: false }); _recordEvent("Node.js Disconnected"); })
+        $(ChromeAgent).on("connect", function () { _recordEvent("Chrome Connected"); _registerProperties({ chromeConnected: true }); })
+        $(ChromeAgent).on("disconnect", function () { _registerProperties({ chromeConnected: false }); _recordEvent("Chrome Disconnected"); })
 
         $(UI).on("_gutterCallCountClicked", function (e, node) { _recordEvent("Gutter Call Count Clicked", { nodeType: node.type, nodeId: _anonymousId(node.id), nodePath: _anonymousId(node.path) }); });
         $(UI).on("_functionAddedToQuery", function (ev, o) { _recordEvent("Function Added To Query", { nodeId: _anonymousId(o.node.id), nodePath: _anonymousId(o.node.path) }); _registerProperties({ selectedNodes: o.allNodeIds.map(_anonymousId) }); });
