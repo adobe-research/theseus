@@ -159,6 +159,8 @@ define(function (require, exports, module) {
         _conn.connected.done(function () {
             _connected = true;
 
+            $exports.triggerHandler("connect");
+
             // get the handle to use for tracking hits
             _invoke("trackHits", [], function (handle) {
                 _hitsHandle = handle;
@@ -180,6 +182,8 @@ define(function (require, exports, module) {
             });
         });
         _conn.disconnected.done(function () {
+            if (_connected) $exports.triggerHandler("disconnect");
+
             _connected = false;
 
             var paths = [];
