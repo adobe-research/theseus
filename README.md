@@ -28,7 +28,7 @@ Download & Install
 [![Download Theseus](https://raw.github.com/adobe-research/theseus/gh-pages/download-button.png)](https://s3.amazonaws.com/theseus-downloads/theseus-0.2.8.zip)  
 Current version: 0.2.8
 
-Unzip, then copy the `brackets-theseus` directory into your extensions folder (*Help > Show Extensions Folder* in Brackets).
+Unzip, then copy the `brackets-theseus` directory into your `extensions/user` folder (*Help > Show Extensions Folder* in Brackets). **Do not** install with *File > Install Extension...* because it is [buggy](https://github.com/adobe/brackets/issues/3734).
 
 For Node.js support, also run: `npm install -g node-theseus` to get the command-line helper.
 
