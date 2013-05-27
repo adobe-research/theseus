@@ -251,7 +251,14 @@ define(function (require, exports, module) {
     }
 
     function refreshLogs(handle, maxResults, callback) {
-        _invoke("logDelta", [handle, maxResults], callback);
+        _invoke("logDelta", [handle, maxResults], function (results) {
+            if (results) {
+                results.forEach(function (entry) {
+                    entry.source = "node";
+                });
+            }
+            callback(results);
+        });
     }
 
     function backtrace(options, callback) {

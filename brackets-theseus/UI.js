@@ -423,7 +423,7 @@ define(function (require, exports, module) {
                 return $("<div />");
             }
 
-            var $container = $("<div />");
+            var $container = $("<div />").addClass("source-" + log.source);
             var $table = $("<table class='vars-table' />").appendTo($container);
             var $row1 = $("<tr />").appendTo($table);
             var $nameCell = $("<th class='fn' />").appendTo($row1);
