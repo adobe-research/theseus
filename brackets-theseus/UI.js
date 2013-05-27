@@ -293,6 +293,8 @@ define(function (require, exports, module) {
     _variablesPanel = {
         add: function ($parent) {
             this.$dom = $("<div class='resizable-content' />").appendTo($parent);
+            this.$doms = {}; // invocationId -> DOM
+            this.$childDoms = {}; // invocationId -> children DOM
             this.$log = $("<div />").appendTo(this.$dom);
             this.$backtrace = $("<div />").appendTo(this.$dom).hide();
             this.logs = [];
@@ -310,6 +312,8 @@ define(function (require, exports, module) {
 
         clearLogs: function () {
             if (this.$log) this.$log.empty();
+            this.$doms = {};
+            this.$childDoms = {};
             this.logs = [];
             this.rootLogs = [];
             this.logsByInvocationId = {};
@@ -359,41 +363,25 @@ define(function (require, exports, module) {
 
         // call with no argument to clear the log an render everything over
         render: function (newLogs) {
-            if (!newLogs) {
-                this.$log.empty();
-            }
-
-            // TODO: don't draw the tree from scratch every time!
-            this.$log.empty();
-            // TODO: when timestamps are equal, compare ticks (so log items from the same agent will get the correct order relative to each other)
-            this.rootLogs.sort(function (a, b) { return a.timestamp - b.timestamp });
-            this.rootLogs.forEach(function (log) {
-                this._appendLogTree(log, true, this.$log);
-            }.bind(this));
-        },
-
-        _appendLogTree: function (log, isRoot, $parent, link) {
-            if (log.nodeId === "log" && isRoot) {
-                return;
-            }
-
-            $parent.append(this._entryDom(log, { link: link }));
-            if (log.childrenLinks.length > 0) {
-                var $indented = $("<div class='indented' />").appendTo($parent);
-
-                var children = log.childrenLinks.map(function (link) {
-                    return { invocation: this.logsByInvocationId[link.invocationId], link: link };
-                }.bind(this));
-                children.sort(function (a, b) {
-                    // XXX: this check should not be necessary
-                    if (a.invocation && b.invocation) {
-                        return a.invocation.timestamp - b.invocation.timestamp;
+            if (newLogs) {
+                newLogs.forEach(function (log) {
+                    if (log.parents) {
+                        var parentLink = log.parents[0]; // XXX
+                        var $parentDom = this.$childDoms[parentLink.invocationId];
+                        if ($parentDom) {
+                            this.$doms[log.invocationId] = this._entryDom(log, { link: parentLink }).appendTo($parentDom);
+                            this.$childDoms[log.invocationId] = $("<div class='indented' />").appendTo($parentDom);
+                        } else {
+                            console.error("[theseus] invocation parent DOM not found!");
+                        }
+                    } else {
+                        this.$doms[log.invocationId] = this._entryDom(log, { link: undefined }).appendTo(this.$log);
+                        this.$childDoms[log.invocationId] = $("<div class='indented' />").appendTo(this.$log);
                     }
-                    return 0;
-                });
-                children.forEach(function (child) {
-                    this._appendLogTree(child.invocation, false, $indented, child.link);
                 }.bind(this));
+            } else {
+                this.$log.empty();
+                this.render(this.logs);
             }
         },
 
