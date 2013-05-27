@@ -425,7 +425,14 @@ define(function (require, exports, module) {
     }
 
     function refreshLogs(handle, maxResults, callback) {
-        _invoke("logDelta", [{ value: handle }, { value: maxResults }], callback);
+        _invoke("logDelta", [{ value: handle }, { value: maxResults }], function (results) {
+            if (results) {
+                results.forEach(function (entry) {
+                    entry.source = "chrome";
+                });
+            }
+            callback(results);
+        });
     }
 
     function backtrace(options, callback) {
