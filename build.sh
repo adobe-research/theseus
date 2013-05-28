@@ -19,5 +19,9 @@ cd brackets-theseus
 npm install
 cd ..
 
+echo Extracting version number...
+VERSION=`ruby -e 'require "json"; puts JSON.parse(File.read("brackets-theseus/package.json"))["version"]'`
+echo Got $VERSION
+
 echo Compressing...
-zip -qr theseus.zip brackets-theseus
+zip -qr theseus-$VERSION.zip brackets-theseus
