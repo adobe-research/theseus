@@ -31,10 +31,11 @@ define(function (require, exports, module) {
 	var EditorManager = brackets.getModule("editor/EditorManager");
 	var Inspector     = brackets.getModule("LiveDevelopment/Inspector/Inspector");
 	var Main          = require("main");
+	var PanelManager  = brackets.getModule("view/PanelManager");
 	var Resizer       = brackets.getModule("utils/Resizer");
 
-	var $panel, $toolbar;
-	var _panel, _shown = false;
+	var $panel, $panelContent, $toolbar;
+	var _panel, _bracketsPanel;
 
 	function setPanel(panel) {
 		if (panel === _panel) {
@@ -44,27 +45,18 @@ define(function (require, exports, module) {
 			_panel.remove();
 		}
 		_panel = panel;
-		_panel.add($panel);
-
-		// XXX: it may not be okay to call this multiple times
-		Resizer.makeResizable($panel.get(0),
-		                      "vert" /* Resizer.DIRECTION_VERTICAL */,
-		                      "top" /* Resizer.POSITION_TOP */,
-		                      100, // minSize
-		                      false // collapsible
-		                      );
+		_panel.add($panelContent);
 	}
 
 	/** Toggle the display of the panel */
 	function toggle(show) {
 		if (show === undefined) {
-			Resizer.toggle($panel.get(0));
+			_bracketsPanel.setVisible(!_bracketsPanel.isVisible());
 		} else if (show) {
-			Resizer.show($panel.get(0));
+			_bracketsPanel.show();
 		} else {
-			Resizer.hide($panel.get(0));
+			_bracketsPanel.hide();
 		}
-		$panel.toggle(show);
 	}
 
 	function _enable() {
@@ -77,9 +69,13 @@ define(function (require, exports, module) {
 
 	/** Initialize the panel */
 	function init() {
-		$panel = $("<div id='theseus-panel' class='bottom-panel vert-resizable top-resizer no-focus' />").insertAfter(".bottom-panel:last");
+		$panel = $("<div id='theseus-panel' class='bottom-panel vert-resizable top-resizer no-focus' />");
 		$toolbar = $("<div class='toolbar simple-toolbar-layout' />").appendTo($panel);
-		$("<div class='title' />").appendTo($toolbar).text("Log");
+		$panelContent = $("<div class='resizable-content' />").appendTo($panel);
+
+		$toolbar.append($("<div class='title' />").text("Log"));
+
+		_bracketsPanel = PanelManager.createBottomPanel("theseus.log", $panel, 100);
 
 		$(Main).on("enable", _enable);
 		$(Main).on("disable", _disable);
