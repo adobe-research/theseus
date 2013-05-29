@@ -357,7 +357,7 @@ define(function (require, exports, module) {
     var LOG_ROOT_SUBTREE = "---root---";
     _variablesPanel = {
         add: function ($parent) {
-            this.$dom = $("<div class='resizable-content' />").appendTo($parent);
+            this.$dom = $("<div />").appendTo($parent);
             this.$log = $("<div />").appendTo(this.$dom);
             this.$backtrace = $("<div />").appendTo(this.$dom).hide();
             this._reset();

@@ -31,10 +31,11 @@ define(function (require, exports, module) {
 	var EditorManager = brackets.getModule("editor/EditorManager");
 	var Inspector     = brackets.getModule("LiveDevelopment/Inspector/Inspector");
 	var Main          = require("../main");
+	var PanelManager  = brackets.getModule("view/PanelManager");
 	var Resizer       = brackets.getModule("utils/Resizer");
 
-	var $panel, $toolbar;
-	var _panel, _shown = false;
+	var $panel, $panelContent, $toolbar;
+	var _panel, _bracketsPanel;
 
 	function setPanel(panel) {
 		if (panel === _panel) {
@@ -44,29 +45,17 @@ define(function (require, exports, module) {
 			_panel.remove();
 		}
 		_panel = panel;
-		_panel.add($panel);
-
-		// XXX: it may not be okay to call this multiple times
-		Resizer.makeResizable($panel.get(0),
-		                      "vert" /* Resizer.DIRECTION_VERTICAL */,
-		                      "top" /* Resizer.POSITION_TOP */,
-		                      100, // minSize
-		                      false // collapsible
-		                      );
+		_panel.add($panelContent);
 	}
 
 	/** Toggle the display of the panel */
 	function toggle(show) {
 		if (show === undefined) {
-			Resizer.toggle($panel.get(0));
+			_bracketsPanel.setVisible(!_bracketsPanel.isVisible());
 		} else if (show) {
-			Resizer.show($panel.get(0));
+			_bracketsPanel.show();
 		} else {
-			Resizer.hide($panel.get(0));
-		}
-		$panel.toggle(show);
-		if (_panel && _panel.toggled) {
-			_panel.toggled(Resizer.isVisible($panel.get(0)));
+			_bracketsPanel.hide();
 		}
 	}
 
@@ -82,7 +71,12 @@ define(function (require, exports, module) {
 	function init() {
 		$panel = $("<div id='theseus-panel' class='bottom-panel vert-resizable top-resizer' />").insertAfter(".bottom-panel:last");
 		$toolbar = $("<div class='toolbar simple-toolbar-layout' />").appendTo($panel);
-		$("<div class='title' />").appendTo($toolbar).text("Log");
+		$toolbar.append($("<div class='title' />").text("Log"));
+
+		$panelContent = $("<div class='resizable-content' />").appendTo($panel);
+
+		_bracketsPanel = PanelManager.createBottomPanel("theseus.log", $panel, 100);
+
 		var $close = $("<a class='close' />").appendTo($toolbar).html("&times;")
 
 		$close.on("click", function () {
