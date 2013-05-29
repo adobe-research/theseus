@@ -304,6 +304,13 @@ define(function (require, exports, module) {
             this.$dom.on("click", ".vars-table .objects-bad", function () {
                 alert("You can't inspect this object any deeper.");
             });
+
+            this.$dom.bind("scroll mousedown DOMMouseScroll mousewheel keyup", function (e) {
+                if (e.which > 0 || e.type === "mousedown" || e.type === "mousewheel") {
+                    this._animating = false;
+                    this.$dom.stop(true /* clear queue */);
+                }
+            }.bind(this));
         },
 
         remove: function () {
@@ -334,6 +341,10 @@ define(function (require, exports, module) {
         },
 
         appendLogs: function (logs) {
+            var scrollBottom = this.$dom.scrollTop() + this.$dom.innerHeight();
+            var logBottom = this.$log.innerHeight();
+            var autoScroll = this._animating || (scrollBottom >= logBottom);
+
             this.logs.push.apply(this.logs, logs);
             logs.forEach(function (log) {
                 this.logsByInvocationId[log.invocationId] = log;
@@ -359,6 +370,14 @@ define(function (require, exports, module) {
             }.bind(this));
 
             this.render(logs);
+
+            if (autoScroll) {
+                this.$dom.stop(true /* clear queue */);
+                this._animating = true;
+                this.$dom.animate({ scrollTop: this.$dom[0].scrollHeight }, { done: function () {
+                    this._animating = false;
+                }.bind(this)});
+            }
         },
 
         // call with no argument to clear the log an render everything over
