@@ -16,7 +16,7 @@ npm install
 cd ..
 
 echo Extracting version number...
-VERSION=`ruby -e 'require "json"; puts JSON.parse(File.read("theseus/package.json"))["version"]'`
+VERSION=`node -e 'console.log(require("./theseus/package.json").version)'`
 echo Got $VERSION
 
 echo Compressing...
