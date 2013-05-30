@@ -43,8 +43,9 @@ define(function (require, exports, module) {
     var _connected = false;
     var _nodes = {}; // id (string) -> {id: string, path: string, start: {line, column}, end: {line, column}, name: string (optional)}
     var _nodesByFilePath = {};
-    var _hitsHandle;
+    var _hitsHandle, _exceptionsHandle;
     var _nodeHitCounts = {};
+    var _nodeExceptionCounts = {};
     var _queuedScripts = [];
     var $exports = $(exports);
 
@@ -149,7 +150,9 @@ define(function (require, exports, module) {
         _nodes = {};
         _nodesByFilePath = {};
         _hitsHandle = undefined;
+        _exceptionsHandle = undefined;
         _nodeHitCounts = {};
+        _nodeExceptionCounts = {};
         _queuedScripts = [];
     }
 
@@ -164,6 +167,10 @@ define(function (require, exports, module) {
             // get the handle to use for tracking hits
             _invoke("trackHits", [], function (handle) {
                 _hitsHandle = handle;
+            });
+
+            _invoke("trackExceptions", [], function (handle) {
+                _exceptionsHandle = handle;
             });
 
             // poll for new nodes
@@ -242,6 +249,24 @@ define(function (require, exports, module) {
         });
     }
 
+    function refreshExceptionCounts(callback) {
+        if (_exceptionsHandle === undefined) {
+            callback && callback();
+            return;
+        }
+
+        _invoke("newExceptions", [_exceptionsHandle], function (exceptions) {
+            if (exceptions) {
+                for (var id in exceptions.counts) {
+                    _nodeExceptionCounts[id] = (_nodeExceptionCounts[id] || 0) + exceptions.counts[id];
+                }
+                callback && callback(_nodeExceptionCounts, exceptions.counts);
+            } else {
+                callback && callback(_nodeExceptionCounts, {});
+            }
+        });
+    }
+
     function cachedHitCounts() {
         return _nodeHitCounts;
     }
@@ -275,6 +300,7 @@ define(function (require, exports, module) {
 
     // fetch data from the instrumented app (async)
     exports.refreshHitCounts = refreshHitCounts;
+    exports.refreshExceptionCounts = refreshExceptionCounts;
     exports.trackLogs = trackLogs;
     exports.refreshLogs = refreshLogs;
     exports.backtrace = backtrace;

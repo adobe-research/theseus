@@ -51,7 +51,7 @@ define(function (require, exports, module) {
 
     var _proxyURL;
     var _tracerObjectId;
-    var _defaultTrackingHandle;
+    var _defaultTrackingHandle, _defaultExceptionTrackingHandle;
     var _queuedScripts;
     var _proxyServerProvider;
 
@@ -76,6 +76,7 @@ define(function (require, exports, module) {
     var _nodesByFilePath = {};
     var _invocations = {}; // id (string) -> {id: string, f: function (see above), children: [invocation id], parents: [invocation id]}
     var _nodeHitCounts = {};
+    var _nodeExceptionCounts = {};
 
     var fsm = new Fsm({
         waitingForApp: {
@@ -100,8 +101,16 @@ define(function (require, exports, module) {
         },
         initializingHits: {
             enter:                 function () { _trackHits(); },
-            trackingHits:          function () { this.goto("connected"); },
+            trackingHits:          function () { this.goto("initializingExceptions"); },
             trackingHitsFailed:    function () { this.goto("disconnected"); },
+
+            gotDocument:           function () { this.goto("initializingTracer"); }, // XXX: I think this case is tricky
+            inspectorDisconnected: function () { this.goto("disconnected"); },
+        },
+        initializingExceptions: {
+            enter:                 function () { _trackExceptions(); },
+            trackingExceptions:    function () { this.goto("connected"); },
+            trackingExceptionsFailed: function () { this.goto("disconnected"); },
 
             gotDocument:           function () { this.goto("initializingTracer"); }, // XXX: I think this case is tricky
             inspectorDisconnected: function () { this.goto("disconnected"); },
@@ -225,6 +234,17 @@ define(function (require, exports, module) {
         });
     }
 
+    function _trackExceptions() {
+        trackExceptions(function (handle) {
+            if (handle === undefined) {
+                fsm.trigger("trackingExceptionsFailed");
+            } else {
+                _defaultExceptionTrackingHandle = handle;
+                fsm.trigger("trackingExceptions");
+            }
+        });
+    }
+
     function _onDisconnect() {
         $exports.triggerHandler("disconnect");
 
@@ -337,11 +357,13 @@ define(function (require, exports, module) {
     function _resetConnection() {
         _tracerObjectId = undefined;
         _defaultTrackingHandle = undefined;
+        _defaultExceptionTrackingHandle = undefined;
         _queuedScripts = [];
         _nodes = {};
         _nodesByFilePath = {};
         _invocations = {};
         _nodeHitCounts = {};
+        _nodeExceptionCounts = {};
     }
 
     /**
@@ -351,7 +373,7 @@ define(function (require, exports, module) {
      * TODO: the first argument to the callback should be err, dude
      */
     function _invoke(functionName, args, callback) {
-        if (["initializingTracer", "initializingHits", "connected"].indexOf(fsm.state) !== -1) {
+        if (["initializingTracer", "initializingHits", "initializingExceptions", "connected"].indexOf(fsm.state) !== -1) {
             Inspector.Runtime.callFunctionOn(_tracerObjectId, "tracer." + functionName, args, true, true, function (res) {
                 if (!res.wasThrown) {
                     callback && callback(res.result.value);
@@ -402,6 +424,10 @@ define(function (require, exports, module) {
         _invoke("trackHits", [], callback);
     }
 
+    function trackExceptions(callback) {
+        _invoke("trackExceptions", [], callback);
+    }
+
     /**
      * callback will get 2 arguments: hitCounts, and deltas
      * both of the form { functions: {fid -> count}, callSites: {fid -> count} }
@@ -414,6 +440,19 @@ define(function (require, exports, module) {
                     _nodeHitCounts[id] = (_nodeHitCounts[id] || 0) + deltas[id];
                 }
                 callback(_nodeHitCounts, deltas);
+            } else {
+                callback();
+            }
+        });
+    }
+
+    function refreshExceptionCounts(callback) {
+        _invoke("newExceptions", [{ value: _defaultExceptionTrackingHandle }], function (exceptions) {
+            if (exceptions) {
+                for (var id in exceptions.counts) {
+                    _nodeExceptionCounts[id] = (_nodeExceptionCounts[id] || 0) + exceptions.counts[id];
+                }
+                callback(_nodeExceptionCounts, exceptions.counts);
             } else {
                 callback();
             }
@@ -468,6 +507,7 @@ define(function (require, exports, module) {
     // fetch data from the browser
     exports.trackHits = trackHits;
     exports.refreshHitCounts = refreshHitCounts;
+    exports.refreshExceptionCounts = refreshExceptionCounts;
     exports.cachedHitCounts = cachedHitCounts;
     exports.trackLogs = trackLogs;
     exports.refreshLogs = refreshLogs;

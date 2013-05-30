@@ -164,7 +164,7 @@ define(function (require, exports, module) {
                 usedLines[node.start.line] = true;
 
                 var $glyph = $(_svgForGlyph(_nodeGlyph(node.id), "tiny"));
-                var $dom = $("<span class='uninitialized none theseus-call-count' id='" + _domIdForNodeId(node.id) + "' data-node-id='" + node.id + "'> <span class='counts'>0 calls</span></span>");
+                var $dom = $("<span class='uninitialized uninitialized-exceptions none theseus-call-count' id='" + _domIdForNodeId(node.id) + "' data-node-id='" + node.id + "'> <span class='counts'>0 calls</span></span>");
                 $dom.prepend($glyph);
                 editor._codeMirror.setGutterMarker(node.start.line - 1, "CodeMirror-linenumbers", $dom.get(0));
             });
@@ -230,6 +230,24 @@ define(function (require, exports, module) {
                                       .toggleClass("set", _loggedNodes.indexOf(id) !== -1)
                                       .toggleClass("uninitialized", false)
                                       .find(".counts").html(html);
+                });
+            });
+
+            Agent.refreshExceptionCounts(function (counts, deltas) {
+                // add the 'exception' class to all the pills that threw exceptions this cycle
+                for (var id in deltas) {
+                    _getNodeMarker(id).addClass("exception")
+                                      .toggleClass("uninitialized-exceptions", false);
+                }
+
+                // update the pills that were reset because they scrolled off-screen
+                var uninitialized = $(".CodeMirror").find(".theseus-call-count.uninitialized-exceptions");
+                uninitialized.each(function () {
+                    var id = $(this).attr("data-node-id");
+                    if (id in counts) {
+                        _getNodeMarker(id).addClass("exception")
+                                          .toggleClass("uninitialized-exceptions", false);
+                    }
                 });
             });
 

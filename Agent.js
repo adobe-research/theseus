@@ -120,6 +120,28 @@ define(function (require, exports, module) {
         });
     }
 
+    function refreshExceptionCounts(callback) {
+        NodeAgent.refreshExceptionCounts(function (nodeCounts, nodeDeltas) {
+            ChromeAgent.refreshExceptionCounts(function (chromeCounts, chromeDeltas) {
+                var counts = {};
+                var deltas = {};
+                if (nodeCounts) {
+                    for (var i in nodeCounts) { counts[i] = nodeCounts[i] }
+                    for (var i in nodeDeltas) { deltas[i] = nodeDeltas[i] }
+                }
+                if (chromeCounts) {
+                    for (var i in chromeCounts) { counts[i] = chromeCounts[i] }
+                    for (var i in chromeDeltas) { deltas[i] = chromeDeltas[i] }
+                }
+                if (nodeCounts || chromeCounts) {
+                    callback(counts, deltas);
+                } else {
+                    callback();
+                }
+            });
+        });
+    }
+
     function cachedHitCounts() {
         var hits = {};
         var nodeHits = NodeAgent.cachedHitCounts();
@@ -230,6 +252,7 @@ define(function (require, exports, module) {
 
     // fetch data from the instrumented app (async)
     exports.refreshHitCounts = refreshHitCounts;
+    exports.refreshExceptionCounts = refreshExceptionCounts;
     exports.trackLogs = trackLogs;
     exports.refreshLogs = refreshLogs;
     exports.backtrace = backtrace;
