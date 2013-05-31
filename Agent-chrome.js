@@ -475,7 +475,16 @@ define(function (require, exports, module) {
     }
 
     function backtrace(options, callback) {
-        _invoke("backtrace", [{ value: options }], callback);
+        _invoke("backtrace", [{ value: options }], function (backtrace) {
+            if (backtrace) {
+                backtrace.forEach(function (entry) {
+                    entry.source = "node";
+                });
+                callback(backtrace);
+            } else {
+                callback();
+            }
+        });
     }
 
     function isReady() {
