@@ -25,12 +25,13 @@ Features
 Download & Install
 ------------------
 
-[![Download Theseus](https://raw.github.com/adobe-research/theseus/gh-pages/download-button.png)](https://s3.amazonaws.com/theseus-downloads/theseus-0.2.8.zip)  
-Current version: 0.2.8
+Theseus **requires** Brackets Sprint 25.
 
-Unzip, then copy the `brackets-theseus` directory into your `extensions/user` folder (*Help > Show Extensions Folder* in Brackets). **Do not** install with *File > Install Extension...* because it is [buggy](https://github.com/adobe/brackets/issues/3734).
+1. In Brackets, click the menu item *File > Extension Manager...*
+2. Click the *Install from URL...* button in the lower left.
+3. Enter this URL: https://s3.amazonaws.com/theseus-downloads/theseus-0.2.10.zip
 
-For Node.js support, also run: `npm install -g node-theseus` to get the command-line helper.
+For Node.js support, also run `npm install -g node-theseus` in a terminal to get the command-line helper.
 
 Usage: Debugging Node.js
 ------------------------
