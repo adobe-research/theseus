@@ -308,16 +308,13 @@ define(function (require, exports, module) {
         }
     }
 
+    var LOG_ROOT_SUBTREE = "---root---";
     _variablesPanel = {
         add: function ($parent) {
             this.$dom = $("<div class='resizable-content' />").appendTo($parent);
-            this.$doms = {}; // invocationId -> DOM
-            this.$childDoms = {}; // invocationId -> children DOM
             this.$log = $("<div />").appendTo(this.$dom);
             this.$backtrace = $("<div />").appendTo(this.$dom).hide();
-            this.logs = [];
-            this.rootLogs = []; // those without parents in the query
-            this.logsByInvocationId = {};
+            this._reset();
 
             this.$dom.on("click", ".vars-table .objects-bad", function () {
                 alert("You can't inspect this object any deeper.");
@@ -331,17 +328,22 @@ define(function (require, exports, module) {
             }.bind(this));
         },
 
+        _reset: function () {
+            this.logs = [];
+            this.rootLogs = []; // those without parents in the query
+            this.logsByInvocationId = {};
+
+            this.subtrees = {}; // { invocationId: { root: ..., children: [{ dom: ..., timestamp: ... }] } }
+            this.subtrees[LOG_ROOT_SUBTREE] = { root: this.$log, children: [] };
+        },
+
         remove: function () {
             this.$dom.remove();
         },
 
         clearLogs: function () {
             if (this.$log) this.$log.empty();
-            this.$doms = {};
-            this.$childDoms = {};
-            this.logs = [];
-            this.rootLogs = [];
-            this.logsByInvocationId = {};
+            this._reset();
         },
 
         clearDeadLogs: function () {
@@ -402,18 +404,39 @@ define(function (require, exports, module) {
         render: function (newLogs) {
             if (newLogs) {
                 newLogs.forEach(function (log) {
+                    var subtree = this.subtrees[LOG_ROOT_SUBTREE];
                     if (log.parents) {
                         var parentLink = log.parents[0]; // XXX
-                        var $parentDom = this.$childDoms[parentLink.invocationId];
-                        if ($parentDom) {
-                            this.$doms[log.invocationId] = this._entryDom(log, { link: parentLink }).appendTo($parentDom);
-                            this.$childDoms[log.invocationId] = $("<div class='indented' />").appendTo($parentDom);
+                        var t = this.subtrees[parentLink.invocationId];
+                        if (t) {
+                            subtree = t;
                         } else {
                             console.error("[theseus] invocation parent DOM not found!");
                         }
-                    } else {
-                        this.$doms[log.invocationId] = this._entryDom(log, { link: undefined }).appendTo(this.$log);
-                        this.$childDoms[log.invocationId] = $("<div class='indented' />").appendTo(this.$log);
+                    }
+
+                    var $entryDom = this._entryDom(log, { link: parentLink });
+                    var $entryChildrenDom = $("<div class='indented' />");
+                    var childEntry = { insertAfter: $entryChildrenDom, timestamp: log.timestamp };
+
+                    this.subtrees[log.invocationId] = { root: $entryChildrenDom, children: [] };
+
+                    var inserted = false;
+                    if (subtree.children.length > 0) {
+                        for (var i = subtree.children.length - 1; i >= 0; i--) {
+                            if (subtree.children[i].timestamp <= log.timestamp) {
+                                $entryDom.insertAfter(subtree.children[i].insertAfter);
+                                $entryChildrenDom.insertAfter($entryDom);
+                                subtree.children.splice(i + 1, 0, childEntry);
+                                inserted = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!inserted) {
+                        $entryDom.appendTo(subtree.root);
+                        $entryChildrenDom.appendTo(subtree.root);
+                        subtree.children.push(childEntry);
                     }
                 }.bind(this));
             } else {
