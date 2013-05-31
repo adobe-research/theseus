@@ -22,8 +22,8 @@ Features
 
 ![Screenshot of multiple functions being logged](https://raw.github.com/adobe-research/theseus/gh-pages/log2.png)
 
-Download & Install
-------------------
+Install
+-------
 
 Theseus **requires** Brackets Sprint 25.
 
