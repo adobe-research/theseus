@@ -206,7 +206,12 @@ define(function (require, exports, module) {
         });
 
         masterPromise.always(function () {
-            logs.sort(function (a, b) { return a.timestamp - b.timestamp });
+            logs.sort(function (a, b) {
+                if (a.timestamp === b.timestamp) {
+                    return a.tick - b.tick;
+                }
+                return a.timestamp - b.timestamp
+            });
             callback(logs);
         });
     }
