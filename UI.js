@@ -390,9 +390,9 @@ define(function (require, exports, module) {
             this.render(logs);
 
             if (autoScroll) {
-                this.$dom.stop(true /* clear queue */);
+                this.$dom.stop(true /* clear queue */, true /* jump to end */);
                 this._animating = true;
-                this.$dom.animate({ scrollTop: this.$dom[0].scrollHeight }, { done: function () {
+                this.$dom.animate({ scrollTop: this.$dom[0].scrollHeight }, { duration: 200, done: function () {
                     this._animating = false;
                 }.bind(this)});
             }
