@@ -287,7 +287,16 @@ define(function (require, exports, module) {
     }
 
     function backtrace(options, callback) {
-        _invoke("backtrace", [options], callback);
+        _invoke("backtrace", [options], function (backtrace) {
+            if (backtrace) {
+                backtrace.forEach(function (entry) {
+                    entry.source = "node";
+                });
+                callback(backtrace);
+            } else {
+                callback();
+            }
+        });
     }
 
     exports.init = init;
