@@ -29,7 +29,7 @@ Theseus **requires** Brackets Sprint 25.
 
 1. In Brackets, click the menu item *File > Extension Manager...*
 2. Click the *Install from URL...* button in the lower left.
-3. Enter this URL: https://s3.amazonaws.com/theseus-downloads/theseus-0.2.12.zip
+3. Enter this URL: https://s3.amazonaws.com/theseus-downloads/theseus-0.2.13.zip
 
 For Node.js support, also run `npm install -g node-theseus` in a terminal to get the command-line helper.
 
@@ -56,6 +56,13 @@ Then open an HTML file and start Brackets' Live Development mode by clicking the
 ![Brackets' lightning bolt](https://raw.github.com/adobe-research/theseus/gh-pages/lightning-bolt.png)
 
 Your page will open in Chrome.
+
+A Handful of Technical Details
+------------------------------
+
+Node.js: Files in paths containing `node_modules` will not be instrumented.
+
+Chrome: Files requested with the URL parameter `theseus=no` will not be instrumented.
 
 Bugs
 ----
