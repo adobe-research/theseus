@@ -563,6 +563,10 @@ define(function (require, exports, module) {
         _objectInspectorDom: function (val, options) {
             options = (options || {});
 
+            function isNumber(n) {
+                return !isNaN(parseFloat(n)) && isFinite(n);
+            }
+
             var arrowURL = ExtensionUtils.getModuleUrl(module, "images/arrow.png");
             var turnedArrowURL = ExtensionUtils.getModuleUrl(module, "images/arrow-turned.png");
 
@@ -590,7 +594,14 @@ define(function (require, exports, module) {
                         for (var name in val.ownProperties) {
                             names.push(name);
                         }
-                        names.sort();
+                        names.sort(function (a, b) {
+                            if (isNumber(a) && isNumber(b)) {
+                                return parseInt(a) - parseInt(b)
+                            }
+                            if (a < b) return -1;
+                            if (a > b) return 1;
+                            return 0;
+                        });
                         names.forEach(function (name) {
                             $expanded.append($("<div />").append($("<strong />").text(name + " = "))
                                                          .append(this._valueDom(val.ownProperties[name])));
