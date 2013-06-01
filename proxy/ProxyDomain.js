@@ -88,8 +88,8 @@ maxerr: 50, node: true */
     }
 
     function _accept(req, contentType) {
-        var prebug = url.parse(req.url, true).query.prebug;
-        if (prebug === 'no' || prebug === 'false' || prebug === '0') {
+        var useTheseus = url.parse(req.url, true).query.theseus;
+        if (useTheseus === 'no' || useTheseus === 'false' || useTheseus === '0') {
             return false;
         }
         return ['application/javascript', 'text/html'].indexOf(contentType) !== -1;
