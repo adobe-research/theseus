@@ -164,6 +164,7 @@ define(function (require, exports, module) {
 
         _registerProperties({
             _theseusVersion: Main.version,
+            _bracketsVersion: brackets.metadata.version,
             _userId: _prefs.getValue("user_id"),
             _sessionId: _guid(),
         });
