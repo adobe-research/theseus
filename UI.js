@@ -164,8 +164,8 @@ define(function (require, exports, module) {
                 usedLines[node.start.line] = true;
 
                 var $glyph = $(_svgForGlyph(_nodeGlyph(node.id), "tiny"));
-                var $dom = $("<span class='uninitialized uninitialized-exceptions none theseus-call-count' id='" + _domIdForNodeId(node.id) + "' data-node-id='" + node.id + "'> <span class='counts'>0 calls</span></span>");
-                $dom.prepend($glyph);
+                var $dom = $("<span class='uninitialized uninitialized-exceptions none theseus-call-count' id='" + _domIdForNodeId(node.id) + "' data-node-id='" + node.id + "'><span class='counts'>0 calls</span></span>");
+                $dom.append($glyph);
                 editor._codeMirror.setGutterMarker(node.start.line - 1, "CodeMirror-linenumbers", $dom.get(0));
             });
 

@@ -36,7 +36,7 @@
     }
 
     .theseus-dead {
-        background: rgba(0, 0, 0, 0.0625);
+        background: rgba(0, 0, 0, 0.0525);
     }
 
     .theseus-call-site {
@@ -82,48 +82,83 @@
 
     .theseus-call-count {
         pointer-events: auto;
-        color: #000;
+        color: #111;
         font-family: sans-serif;
         line-height: 0; /* otherwise sans-serif font pushes line height > 15px */
+        background: #fff;
         border: 1px solid #0186cc;
-        background: #b4e5ff;
-        border-radius: 10px;
-        padding: 0 7px;
+        border-radius: 0 6px 6px 0;
+        border-left: 0;
+        padding: 0 5px 0 4px;
         cursor: pointer;
         white-space: nowrap;
 
-        .glyph {
-            display: none;
+        &:hover {
+            background: #0186cc;
+            color: #fff;
+        }
+
+        &:active {
+            color: #00f;
         }
 
         &.uninitialized {
         }
 
         &.none {
-            border-width: 0;
-            background: #ddd;
+            border-color: #ccc;
+            color: #666;
+
+            &:hover {
+                background: #ccc;
+                color: #fff;
+            }
+
+            &:active {
+                color: #000;
+            }
+
+            &.set {
+                box-shadow: 0 0 4px 1px #ccc;
+                background: #ccc;
+                border-color: #ccc;
+                color: #000;
+            }
         }
 
         &.exception {
-            background: #f66;
+            border-width: 0;
+            box-shadow: 0 0 2px 1px #f00;
+            color: #950000;
+
+            &:hover {
+                background: #f00;
+                color: #fff;
+            }
+
+            &.set {
+                box-shadow: 0 0 4px 1px #f00;
+                background: #ffc0c0;
+                color: #000;
+            }
         }
 
         &.set {
-            background: #fff;
+            border-width: 0;
+            box-shadow: 0 0 4px 1px #0186cc;
+            background: #c1e1f2;
 
             .glyph {
                 display: inline;
                 position: relative;
                 top: 1px;
             }
-
-            &.exception {
-                background: #fcc;
-            }
         }
-    }
-    .theseus-call-count:hover {
-        background: #35b8fe;
+
+        .glyph {
+            display: none;
+            margin-left: 5px;
+        }
     }
 }
 
