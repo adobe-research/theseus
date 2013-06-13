@@ -33,8 +33,8 @@ Theseus **requires** Brackets Sprint 25.
 
 For Node.js support, also run `npm install -g node-theseus` in a terminal to get the command-line helper.
 
-Usage: Debugging Node.js
-------------------------
+Usage: Debug JavaScript running in Node.js
+------------------------------------------
 
 ![Brackets + Node.js](https://raw.github.com/adobe-research/theseus/gh-pages/theseus-node.png)
 
@@ -42,8 +42,8 @@ Start your program by running `node-theseus app.js` (instead of `node app.js` as
 
 (You install `node-theseus` with `npm install -g node-theseus`)
 
-Usage: Debugging JavaScript in Chrome
--------------------------------------
+Usage: Debug JavaScript running in Chrome
+-----------------------------------------
 
 ![Brackets + Chrome](https://raw.github.com/adobe-research/theseus/gh-pages/theseus-chrome.png)
 
