@@ -39,6 +39,7 @@ define(function (require, exports, module) {
     var EditorInterface    = require("EditorInterface");
     var ExtensionUtils     = brackets.getModule("utils/ExtensionUtils");
     var Menus              = brackets.getModule("command/Menus");
+    var NativeApp          = brackets.getModule("utils/NativeApp");
     var Panel              = require("Panel");
     var PreferencesManager = brackets.getModule("preferences/PreferencesManager")
     var UI                 = require("UI");
@@ -101,7 +102,10 @@ define(function (require, exports, module) {
     }
 
     function _sendFeedback() {
-        window.open(ExtensionUtils.getModuleUrl(module, "feedback.html"));
+        var params = '?';
+        params += 'brackets_version=' + brackets.metadata.version;
+        params += '&theseus_version=' + THESEUS_VERSION;
+        NativeApp.openURLInDefaultBrowser('file://' + ExtensionUtils.getModuleUrl(module, "feedback.html") + params);
     }
 
     function _loadPreferences() {
