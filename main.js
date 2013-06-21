@@ -180,7 +180,7 @@ define(function (require, exports, module) {
         EditorInterface.init();
         UI.init();
         Panel.init();
-        EpochPanel.init();
+        // EpochPanel.init();
 
         if (_enabled) {
             _enable();
