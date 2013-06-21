@@ -37,6 +37,7 @@ define(function (require, exports, module) {
     var AppInit            = brackets.getModule("utils/AppInit");
     var CommandManager     = brackets.getModule("command/CommandManager");
     var Commands           = brackets.getModule("command/Commands");
+    var EpochPanel         = require("EpochPanel");
     var EditorInterface    = require("EditorInterface");
     var ExtensionUtils     = brackets.getModule("utils/ExtensionUtils");
     var Menus              = brackets.getModule("command/Menus");
@@ -179,6 +180,7 @@ define(function (require, exports, module) {
         EditorInterface.init();
         UI.init();
         Panel.init();
+        EpochPanel.init();
 
         if (_enabled) {
             _enable();

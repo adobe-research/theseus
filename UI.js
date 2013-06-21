@@ -28,6 +28,7 @@
 define(function (require, exports, module) {
     var Agent           = require("Agent");
     var EditorInterface = require("EditorInterface");
+    var EpochPanel      = require("EpochPanel");
     var ExtensionUtils  = brackets.getModule("utils/ExtensionUtils");
     var Main            = require("main");
     var Panel           = require("Panel");
@@ -41,7 +42,7 @@ define(function (require, exports, module) {
     var _functionsInFile = [];
     var _deadCodeMarks = {}; // node id -> mark
     var _logHandle;
-    var _loggedNodes = [];
+    var _loggedNodes = [], _loggedEventNames = [];
     var _nodeGlyphs = {}; // node id -> glyph object
     var _variablesPanel;
 
@@ -96,7 +97,7 @@ define(function (require, exports, module) {
     }
 
     function _refreshLogQuery() {
-        Agent.trackLogs({ ids: _loggedNodes }, function (handle) {
+        Agent.trackLogs({ ids: _loggedNodes, eventNames: _loggedEventNames }, function (handle) {
             _logHandle = handle;
         });
     }
@@ -125,7 +126,7 @@ define(function (require, exports, module) {
             $exports.triggerHandler("_functionRemovedFromQuery", { node: node, allNodeIds: _loggedNodes.slice() });
         }
 
-        if (_loggedNodes.length === 0) {
+        if (_queryIsEmpty()) {
             Panel.toggle(false);
         } else {
             Panel.toggle(true);
@@ -280,7 +281,7 @@ define(function (require, exports, module) {
         if (_loggedNodes.length !== countBefore) {
             _resetLogQuery();
 
-            if (_loggedNodes.length === 0) {
+            if (_queryIsEmpty()) {
                 Panel.toggle(false);
             } else {
                 _variablesPanel.clearDeadLogs(); // do this immediately so that the user can't click on functions that are no longer there
@@ -599,6 +600,18 @@ define(function (require, exports, module) {
         },
     };
 
+    function _queryIsEmpty() {
+        return _loggedNodes.length === 0 && _loggedEventNames.length === 0;
+    }
+
+    function _showPanelIfAppropriate() {
+        if (_queryIsEmpty()) {
+            Panel.toggle(false);
+        } else {
+            Panel.toggle(true);
+        }
+    }
+
     function _reset() {
         _functionsInFile = [];
         for (var id in _deadCodeMarks) {
@@ -613,6 +626,7 @@ define(function (require, exports, module) {
 
         _logHandle = undefined; // TODO: clear query
         _loggedNodes = [];
+        _loggedEventNames = [];
 
         Panel.toggle(false);
         _variablesPanel.clearLogs();
@@ -647,6 +661,20 @@ define(function (require, exports, module) {
         $(EditorInterface).on("editorChanged", _editorChanged);
 
         $(document).on("click", ".theseus-call-count", _gutterCallCountClicked);
+
+        $(EpochPanel).on("eventNameClicked", function (ev, name) {
+            var i = _loggedEventNames.indexOf(name);
+            if (i === -1) {
+                console.log('added!');
+                _loggedEventNames.push(name);
+            } else {
+                console.log('removed!');
+                _loggedEventNames.splice(i, 1);
+            }
+            _resetLogQuery();
+            _refreshLogQuery();
+            _showPanelIfAppropriate();
+        });
     }
 
     function unload() {
