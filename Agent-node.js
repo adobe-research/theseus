@@ -201,7 +201,7 @@ define(function (require, exports, module) {
             _reset();
 
             paths.forEach(function (path) {
-                $exports.triggerHandler("scriptWentAway", path);
+                $exports.triggerHandler("scriptWentAway", [path]);
             });
 
             setTimeout(_connect, 1000);

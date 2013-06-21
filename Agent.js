@@ -52,17 +52,17 @@ define(function (require, exports, module) {
         ChromeAgent.init();
 
         $(NodeAgent).on("receivedScriptInfo", function (ev, path) {
-            $exports.triggerHandler("receivedScriptInfo", path);
+            $exports.triggerHandler("receivedScriptInfo", [path]);
         });
         $(NodeAgent).on("scriptWentAway", function (ev, path) {
-            $exports.triggerHandler("scriptWentAway", path);
+            $exports.triggerHandler("scriptWentAway", [path]);
         });
 
         $(ChromeAgent).on("receivedScriptInfo", function (ev, path) {
-            $exports.triggerHandler("receivedScriptInfo", path);
+            $exports.triggerHandler("receivedScriptInfo", [path]);
         });
         $(ChromeAgent).on("scriptWentAway", function (ev, path) {
-            $exports.triggerHandler("scriptWentAway", path);
+            $exports.triggerHandler("scriptWentAway", [path]);
         });
     }
 
