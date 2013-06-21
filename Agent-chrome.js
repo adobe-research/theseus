@@ -61,7 +61,7 @@ define(function (require, exports, module) {
      * A deferred which is resolved with a NodeConnection or rejected if
      * we are unable to connect to Node.
      */
-    var _nodeConnectionDeferred = $.Deferred();
+    var _nodeConnectionDeferred = new $.Deferred();
 
     /**
      * @const
@@ -132,7 +132,7 @@ define(function (require, exports, module) {
         },
 
         readyToServe: function () {
-            var readyToServeDeferred = $.Deferred();
+            var readyToServeDeferred = new $.Deferred();
 
             _nodeConnectionDeferred.done(function (nodeConnection) {
                 if (nodeConnection.connected()) {
