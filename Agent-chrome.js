@@ -507,6 +507,7 @@ define(function (require, exports, module) {
     // exports
     exports.init = init;
     exports.isReady = isReady;
+    exports.id = 'agent-chrome';
 
     // satisfied from locally cached data
     // (read-only once received from browser)
