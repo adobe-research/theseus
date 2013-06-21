@@ -387,6 +387,20 @@ define(function (require, exports, module) {
         }
     }
 
+    function _invokePromise(functionName, args) {
+        var d = new $.Deferred;
+
+        _invoke(functionName, args, function () {
+            if (arguments.length === 0) {
+                d.reject();
+            } else {
+                d.resolve(arguments[0]);
+            }
+        })
+
+        return d.promise();
+    }
+
     /**
      * like $.grep, but iterates over the values in an object instead of a
      * collection
@@ -463,6 +477,23 @@ define(function (require, exports, module) {
         _invoke("trackLogs", [{ value: query }], callback);
     }
 
+    function trackNodes() {
+        return _invokePromise("trackNodes", []);
+    }
+
+    function untrackNodes(handle) {
+        return _invokePromise("untrackNodes", [{ value: handle }]);
+    }
+
+    function nodeDelta(handle) {
+        return _invokePromise("newNodes", [{ value: handle }]);
+    }
+
+    function trackEpochs() {
+        var d = new $.Deferred;
+        return d.reject().promise();
+    }
+
     function refreshLogs(handle, maxResults, callback) {
         _invoke("logDelta", [{ value: handle }, { value: maxResults }], function (results) {
             if (results) {
@@ -520,6 +551,13 @@ define(function (require, exports, module) {
     exports.refreshExceptionCounts = refreshExceptionCounts;
     exports.cachedHitCounts = cachedHitCounts;
     exports.trackLogs = trackLogs;
+
+    exports.trackEpochs = trackEpochs; // XXX: uses promises
+
+    exports.trackNodes = trackNodes; // XXX: uses promises
+    exports.untrackNodes = untrackNodes;
+    exports.nodeDelta = nodeDelta; // XXX: uses promises
+
     exports.refreshLogs = refreshLogs;
     exports.backtrace = backtrace;
 });

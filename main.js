@@ -33,6 +33,7 @@
 
 define(function (require, exports, module) {
     var Agent              = require("Agent");
+    var AgentManager       = require("AgentManager");
     var AppInit            = brackets.getModule("utils/AppInit");
     var CommandManager     = brackets.getModule("command/CommandManager");
     var Commands           = brackets.getModule("command/Commands");
@@ -174,6 +175,7 @@ define(function (require, exports, module) {
 
         // Usage.init();
         Agent.init();
+        AgentManager.init();
         EditorInterface.init();
         UI.init();
         Panel.init();

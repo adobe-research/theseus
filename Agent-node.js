@@ -146,6 +146,12 @@ define(function (require, exports, module) {
         });
     }
 
+    function _invokePromise(name, args) {
+        return _conn.connected.pipe(function () {
+            return _conn.request(name, args);
+        });
+    }
+
     function _reset() {
         _nodes = {};
         _nodesByFilePath = {};
@@ -299,6 +305,25 @@ define(function (require, exports, module) {
         });
     }
 
+    function wrapServerFunction(localName, remoteName) {
+        exports[localName] = function () {
+            return _invokePromise(remoteName, Array.prototype.slice.apply(arguments));
+        };
+    }
+
+    var trackerFunctions = {
+        trackNodes: "trackNodes",
+        untrackNodes: "untrackNodes",
+        nodeDelta: "newNodes",
+        trackEpochs: "trackEpochs",
+        untrackEpochs: "untrackEpochs",
+        epochDelta: "epochDelta",
+    };
+
+    for (var fname in trackerFunctions) {
+        wrapServerFunction(fname, trackerFunctions[fname]);
+    }
+
     exports.init = init;
     exports.isReady = isReady;
     exports.id = 'agent-node';
@@ -313,5 +338,6 @@ define(function (require, exports, module) {
     exports.refreshExceptionCounts = refreshExceptionCounts;
     exports.trackLogs = trackLogs;
     exports.refreshLogs = refreshLogs;
+
     exports.backtrace = backtrace;
 });
