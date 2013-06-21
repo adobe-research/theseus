@@ -25,11 +25,11 @@ Features
 Install
 -------
 
-Theseus **requires** Brackets Sprint 25.
+Theseus **requires** Brackets Sprint 25 or later.
 
 1. In Brackets, click the menu item *File > Extension Manager...*
 2. Click the *Install from URL...* button in the lower left.
-3. Enter this URL: https://s3.amazonaws.com/theseus-downloads/theseus-0.2.13.zip
+3. Enter this URL: https://s3.amazonaws.com/theseus-downloads/theseus-0.2.14.zip
 
 For Node.js support, also run `npm install -g node-theseus` in a terminal to get the command-line helper.
 
