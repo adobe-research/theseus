@@ -41,7 +41,7 @@ define(function (require, exports, module) {
     var _functionsInFile = [];
     var _deadCodeMarks = {}; // node id -> mark
     var _logHandle;
-    var _loggedNodes = [], _previouslyLoggedNodes = [];
+    var _loggedNodes = [];
     var _nodeGlyphs = {}; // node id -> glyph object
     var _variablesPanel;
 
@@ -264,25 +264,6 @@ define(function (require, exports, module) {
     function _receivedScriptInfo(event, path) {
         if (Agent.couldBeRemotePath(EditorInterface.currentPath(), path)) {
             _editorChanged(undefined, EditorInterface.currentEditor(), EditorInterface.currentEditor(), EditorInterface.currentPath());
-        }
-
-        var fileNodes = Agent.functionsInFile(path);
-        var nodesToReAdd = [];
-        _previouslyLoggedNodes.forEach(function (nodeId) {
-            var exists = fileNodes.some(function (node) { return node.id === nodeId });
-            var inQuery = _loggedNodes.indexOf(nodeId) !== -1;
-            if (exists && !inQuery) {
-                nodesToReAdd.push(nodeId);
-            }
-        });
-        if (nodesToReAdd.length > 0) {
-            _resetLogQuery();
-            nodesToReAdd.forEach(function (nodeId) {
-                _loggedNodes.push(nodeId);
-                _getNodeMarker(nodeId).toggleClass("set", true);
-            });
-            Panel.toggle(true);
-            _refreshLogQuery();
         }
     }
 
@@ -631,7 +612,6 @@ define(function (require, exports, module) {
         }
 
         _logHandle = undefined; // TODO: clear query
-        _previouslyLoggedNodes = _loggedNodes;
         _loggedNodes = [];
 
         Panel.toggle(false);
