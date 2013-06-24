@@ -1,0 +1,19 @@
+<div class="theseus-invitation-dialog template modal hide">
+    <div class="modal-header">
+        <a href="#" class="close">&times;</a>
+        <h1 class="dialog-title">{{Strings.INVITATION_HEADER}}</h1>
+    </div>
+    <div class="modal-body">
+        <div class="dialog-image"></div>
+        <p class="dialog-message">{{Strings.INVITATION_TEXT_1}}</p>
+        <ol>
+            <li><input type="checkbox" id="theseus-input-usage" /> <div class="option"><label for="theseus-input-usage">{{Strings.INVITATION_USAGE}}</label><br />
+                (<a class="clickable-link" data-href="{{Strings.INVITATION_USAGE_DETAIL_URL}}">{{Strings.INVITATION_USAGE_DETAIL}}</a>)</div></li>
+            <li><input type="checkbox" id="theseus-input-contact" /> <div class="option"><label for="theseus-input-contact">{{Strings.INVITATION_CONTACT}}</label><br />
+                <label for="theseus-input-email">My e-mail address:</label> <input type="email" id="theseus-input-email" size="25" /></div></li>
+        </ol>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="dialog-button btn primary" data-button-id="ok">{{Strings.INVITATION_CONFIRM}}</a>
+    </div>
+</div>

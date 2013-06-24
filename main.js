@@ -40,6 +40,7 @@ define(function (require, exports, module) {
     var EpochPanel         = require("EpochPanel");
     var EditorInterface    = require("EditorInterface");
     var ExtensionUtils     = brackets.getModule("utils/ExtensionUtils");
+    var Invitation         = require("Invitation");
     var Menus              = brackets.getModule("command/Menus");
     var NativeApp          = brackets.getModule("utils/NativeApp");
     var Panel              = require("Panel");
@@ -174,7 +175,7 @@ define(function (require, exports, module) {
 
         ExtensionUtils.loadStyleSheet(module, "main.less");
 
-        // Usage.init();
+        Usage.init();
         Agent.init();
         AgentManager.init();
         EditorInterface.init();
@@ -182,7 +183,12 @@ define(function (require, exports, module) {
         Panel.init();
         // EpochPanel.init();
 
-        if (_enabled) {
+        // after a short delay, show 'Thank you!' popup if they haven't seen it
+        setTimeout(function () {
+            Invitation.showInvitationIfNecessary();
+        }, 1000);
+
+        if (_enabled) { // enable now if enabled in preferences
             _enable();
         }
     }

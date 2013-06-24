@@ -40,23 +40,50 @@ define(function (require, exports, module) {
 
     var $exports = $(exports);
 
+    var _started = false;
     var _properties = {};
     var _eventQueue = [];
     var _anonymousIds = {};
 
-    var UPLOAD_CHECK_INTERVAL = 10000;
-    var UPLOAD_RETRY_INTERVAL = 60000;
+    var UPLOAD_CHECK_INTERVAL = 10 * 1000; // 10 seconds
+    var UPLOAD_RETRY_INTERVAL = 60 * 1000; // 60 seconds after an error
+
+    var AGREEMENT_ID = 0; // increment every time the information we report changes
 
     function _loadPreferences() {
         _prefs = PreferencesManager.getPreferenceStorage("com.adobe.theseus.usage-reporting", {
-            agreed: {
-                anonymous: false,
-                non_anonymous: false,
-            },
-            shown_agreement: false,
-            show_again: true,
+            usage_reporting_approved: false,
+            last_agreement_shown: -1,
             user_id: _guid(),
         });
+    }
+
+    function sawAgreement() {
+        return _prefs.getValue("last_agreement_shown") === AGREEMENT_ID;
+    }
+
+    function _agreedToUsageReporting() {
+        return sawAgreement() && _prefs.getValue("usage_reporting_approved");
+    }
+
+    /**
+    result = {
+        usageOkay: boolean indicating that reporting anonymous usage statistics is approved,
+        contactOkay: boolean indicating that contacting them is okay,
+        email: string containing e-mail address, provided when contactOkay is true,
+    }
+    **/
+    function recordAgreementResult(result) {
+        _prefs.setValue("last_agreement_shown", AGREEMENT_ID);
+        _prefs.setValue("usage_reporting_approved", result.usageOkay);
+
+        if (result.usageOkay) {
+            _start();
+        }
+
+        if (result.contactOkay) {
+            _recordEvent("Contacting is Okay", { email: result.email });
+        }
     }
 
     // from http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
@@ -96,6 +123,7 @@ define(function (require, exports, module) {
      */
     function _recordEvent(name, properties) {
         var props = {};
+        properties || (properties = {});
         props["_id"] = _guid();
         props["_date"] = new Date().getTime();
         for (var k in _properties) { props[k] = _properties[k]; }
@@ -145,18 +173,25 @@ define(function (require, exports, module) {
         $(Main).on("enable", function () { _recordEvent("Theseus Enable"); _registerProperties({ theseusEnabled: true }); });
         $(Main).on("disable", function () { _recordEvent("Theseus Disable"); _registerProperties({ theseusEnabled: false }); });
 
-        // $(Agent).on("receivedScriptInfo", function (e, path) { _recordEvent("Script Connected", { scriptPath: _anonymousId(path) }) });
-        // $(Agent).on("scriptWentAway", function (e, path) { _recordEvent("Script Went Away", { scriptPath: _anonymousId(path) }) });
         $(NodeAgent).on("connect", function () { _recordEvent("Node.js Connected"); _registerProperties({ nodeConnected: true }); })
         $(NodeAgent).on("disconnect", function () { _registerProperties({ nodeConnected: false }); _recordEvent("Node.js Disconnected"); })
         $(ChromeAgent).on("connect", function () { _recordEvent("Chrome Connected"); _registerProperties({ chromeConnected: true }); })
         $(ChromeAgent).on("disconnect", function () { _registerProperties({ chromeConnected: false }); _recordEvent("Chrome Disconnected"); })
 
-        $(UI).on("_gutterCallCountClicked", function (e, node) { _recordEvent("Gutter Call Count Clicked", { nodeType: node.type, nodeId: _anonymousId(node.id), nodePath: _anonymousId(node.path) }); });
-        $(UI).on("_functionAddedToQuery", function (ev, o) { _recordEvent("Function Added To Query", { nodeId: _anonymousId(o.node.id), nodePath: _anonymousId(o.node.path) }); _registerProperties({ selectedNodes: o.allNodeIds.map(_anonymousId) }); });
-        $(UI).on("_functionRemovedFromQuery", function (ev, o) { _registerProperties({ selectedNodes: o.allNodeIds.map(_anonymousId) }); _recordEvent("Function Removed From Query", { nodeId: _anonymousId(o.node.id), nodePath: _anonymousId(o.node.path) }); });
+        $(UI).on("_gutterCallCountClicked", function (e, node) { _recordEvent("Gutter Call Count Clicked", { nodeType: node.type }); });
+        $(UI).on("_functionAddedToQuery", function (ev, o) { _recordEvent("Function Added To Query"); });
+        $(UI).on("_functionRemovedFromQuery", function (ev, o) { _recordEvent("Function Removed From Query"); });
+    }
 
-        // $(EditorInterface).on("editorChanged", function (ev, ed, preved, path) { _recordEvent("File Opened", { filePath: _anonymousId(path) }); _registerProperties({ openFilePath: _anonymousId(path) }); });
+    function _start() {
+        if (_started) {
+            return;
+        }
+
+        _started = true;
+
+        _listenForEvents();
+        _uploadEvents(); // kick-off
     }
 
     function init() {
@@ -168,14 +203,15 @@ define(function (require, exports, module) {
             _userId: _prefs.getValue("user_id"),
             _sessionId: _guid(),
         });
-        _recordEvent("Theseus Usage Reporting Init");
 
-        _listenForEvents();
-
-        _uploadEvents(); // kick-off
+        if (_agreedToUsageReporting()) {
+            _start();
+        }
     }
 
     exports.init = init;
+    exports.sawAgreement = sawAgreement;
+    exports.recordAgreementResult = recordAgreementResult;
 
     exports.recordEvent = _recordEvent;
     exports.registerProperties = _registerProperties;
