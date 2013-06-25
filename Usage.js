@@ -44,6 +44,7 @@ define(function (require, exports, module) {
     var _properties = {};
     var _eventQueue = [];
     var _anonymousIds = {};
+    var _numFailures = 0;
 
     var UPLOAD_CHECK_INTERVAL = 10 * 1000; // 10 seconds
     var UPLOAD_RETRY_INTERVAL = 60 * 1000; // 60 seconds after an error
@@ -158,10 +159,13 @@ define(function (require, exports, module) {
 
             post.fail(function () {
                 _eventQueue = events.concat(_eventQueue);
-                setTimeout(_uploadEvents, UPLOAD_RETRY_INTERVAL);
+                _numFailures++;
+                var delay = Math.pow(2, _numFailures - 1) * UPLOAD_RETRY_INTERVAL;
+                setTimeout(_uploadEvents, delay);
             });
 
             post.done(function () {
+                _numFailures = 0;
                 setTimeout(_uploadEvents, UPLOAD_CHECK_INTERVAL);
             });
         } else {
