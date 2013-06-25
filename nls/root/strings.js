@@ -35,4 +35,5 @@ define({
     "INVITATION_USAGE_DETAIL_URL"    : "https://github.com/adobe-research/theseus/wiki/Anonymous-Usage-Reporting",
     "INVITATION_CONTACT"             : "I might be willing to talk to you about how I use Theseus.",
     "INVITATION_CONFIRM"             : "Okay",
+    "INVITATION_CANCEL"              : "Cancel",
 });
