@@ -34,7 +34,8 @@ define(function (require, exports, module) {
     var dialogHTML     = require("text!Invitation.html");
     var dialogTemplate = Mustache.render(dialogHTML, {Strings : Strings});
 
-    function showInvitation() {
+    /** recordCancel: if true, records cancellation as opting out of everything **/
+    function showInvitation(recordCancel) {
         var d = new $.Deferred;
 
         var dialog = Dialogs.showModalDialogUsingTemplate(dialogTemplate);
@@ -49,24 +50,31 @@ define(function (require, exports, module) {
         $dialog.find(".dialog-image").append($photo);
         $dialog.find(".close").on("click", dialog.close.bind(dialog));
 
+        var $usageOkay = $dialog.find("#theseus-input-usage");
+        var $contactOkay = $dialog.find("#theseus-input-contact");
+        var $email = $dialog.find("#theseus-input-email");
+
+        var lastResult = Usage.lastAgreementResult();
+        $usageOkay.prop("checked", lastResult.usageOkay);
+        $contactOkay.prop("checked", lastResult.contactOkay);
+        $email.val(lastResult.email);
+
         $dialog.on("hide", function () {
             if ($dialog.data("buttonId") === "ok") {
-                var usageOkay = $dialog.find("#theseus-input-usage").is(":checked");
-                var contactOkay = $dialog.find("#theseus-input-contact").is(":checked");
-                var email = $dialog.find("#theseus-input-email").val();
-
                 Usage.recordAgreementResult({
-                    usageOkay: usageOkay,
-                    contactOkay: contactOkay,
-                    email: email,
+                    usageOkay: $usageOkay.prop("checked"),
+                    contactOkay: $contactOkay.prop("checked"),
+                    email: $email.val(),
                 });
 
                 d.resolve();
             } else {
-                Usage.recordAgreementResult({
-                    usageOkay: false,
-                    contactOkay: false,
-                });
+                if (recordCancel) {
+                    Usage.recordAgreementResult({
+                        usageOkay: false,
+                        contactOkay: false,
+                    });
+                }
 
                 d.reject();
             }
@@ -84,8 +92,9 @@ define(function (require, exports, module) {
             var d = new $.Deferred;
             return d.reject().promise();
         }
-        return showInvitation();
+        return showInvitation(true /* recordCancel */);
     }
 
     exports.showInvitationIfNecessary = showInvitationIfNecessary;
+    exports.showInvitation = showInvitation;
 });

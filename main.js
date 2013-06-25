@@ -62,6 +62,9 @@ define(function (require, exports, module) {
     var ID_THESEUS_SEND_FEEDBACK   = "brackets.theseus.sendFeedback";
     var NAME_THESEUS_SEND_FEEDBACK = "Send Theseus Feedback...";
 
+    var ID_THESEUS_WELCOME_SCREEN   = "brackets.theseus.welcome";
+    var NAME_THESEUS_WELCOME_SCREEN = "Theseus Welcome Screen...";
+
     var ID_THESEUS_ENABLE = "brackets.theseus.enable";
     var NAME_THESEUS_ENABLE = "Enable Theseus";
 
@@ -111,6 +114,10 @@ define(function (require, exports, module) {
         NativeApp.openURLInDefaultBrowser('file://' + ExtensionUtils.getModuleUrl(module, "feedback.html") + params);
     }
 
+    function _showWelcomeScreen() {
+        Invitation.showInvitation();
+    }
+
     function _loadPreferences() {
         _prefs = PreferencesManager.getPreferenceStorage("com.adobe.theseus", { enabled: true, mode: "static" });
         _enabled = _prefs.getValue("enabled");
@@ -122,6 +129,12 @@ define(function (require, exports, module) {
             NAME_THESEUS_SEND_FEEDBACK,
             ID_THESEUS_SEND_FEEDBACK,
             _sendFeedback
+        );
+
+        CommandManager.register(
+            NAME_THESEUS_WELCOME_SCREEN,
+            ID_THESEUS_WELCOME_SCREEN,
+            _showWelcomeScreen
         );
 
         CommandManager.register(
@@ -141,6 +154,7 @@ define(function (require, exports, module) {
         var menu = Menus.getMenu(Menus.AppMenuBar.HELP_MENU);
         menu.addMenuDivider(Menus.LAST, null);
         menu.addMenuItem(ID_THESEUS_SEND_FEEDBACK, null, Menus.LAST, null);
+        menu.addMenuItem(ID_THESEUS_WELCOME_SCREEN, null, Menus.LAST, null);
 
         var fileMenu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
         fileMenu.addMenuItem(ID_THESEUS_ENABLE, null, Menus.AFTER, Commands.FILE_LIVE_HIGHLIGHT);

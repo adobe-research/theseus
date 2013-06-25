@@ -53,9 +53,11 @@ define(function (require, exports, module) {
 
     function _loadPreferences() {
         _prefs = PreferencesManager.getPreferenceStorage("com.adobe.theseus.usage-reporting", {
-            usage_reporting_approved: false,
-            last_agreement_shown: -1,
             user_id: _guid(),
+            last_agreement_shown: -1,
+            usage_reporting_approved: false,
+            research_contact_approved: false,
+            research_contact_email: undefined,
         });
     }
 
@@ -77,6 +79,12 @@ define(function (require, exports, module) {
     function recordAgreementResult(result) {
         _prefs.setValue("last_agreement_shown", AGREEMENT_ID);
         _prefs.setValue("usage_reporting_approved", result.usageOkay);
+        _prefs.setValue("research_contact_approved", result.contactOkay);
+        if (result.email === undefined) {
+            _prefs.remove("research_contact_email", result.email);
+        } else {
+            _prefs.setValue("research_contact_email", result.email);
+        }
 
         if (result.usageOkay) {
             _start();
@@ -84,7 +92,18 @@ define(function (require, exports, module) {
 
         if (result.contactOkay) {
             _recordEvent("Contacting is Okay", { email: result.email });
+        } else {
+            _recordEvent("Contacting is Not Okay", { });
         }
+    }
+
+    /** returns the last hash passed to recordAgreementResult **/
+    function lastAgreementResult() {
+        return {
+            usageOkay: _prefs.getValue("usage_reporting_approved"),
+            contactOkay: _prefs.getValue("research_contact_approved"),
+            email: _prefs.getValue("research_contact_email"),
+        };
     }
 
     // from http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
@@ -216,6 +235,7 @@ define(function (require, exports, module) {
     exports.init = init;
     exports.sawAgreement = sawAgreement;
     exports.recordAgreementResult = recordAgreementResult;
+    exports.lastAgreementResult = lastAgreementResult;
 
     exports.recordEvent = _recordEvent;
     exports.registerProperties = _registerProperties;
