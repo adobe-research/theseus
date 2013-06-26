@@ -551,7 +551,6 @@ define(function (require, exports, module) {
             }
 
             var arrowURL = ExtensionUtils.getModuleUrl(module, "images/arrow.png");
-            var turnedArrowURL = ExtensionUtils.getModuleUrl(module, "images/arrow-turned.png");
 
             var preview = val.preview;
             if (preview === null || preview === undefined) preview = "";
@@ -560,7 +559,10 @@ define(function (require, exports, module) {
             if (preview.length > 20 && !options.wholePreview) preview = val.preview.slice(0, 20) + "...";
 
             var $dom = $("<div />").css({ "display" : "inline-block", "vertical-align" : "top" });
-            var $image = $("<img />").attr("src", arrowURL);
+            var $image = $("<img />").attr("src", arrowURL).css({
+                "-webkit-transform-origin" : "40% 50% 0",
+                "-webkit-transition" : "all 100ms",
+            });
             var $title = $("<span />").appendTo($dom)
                                       .append($image)
                                       .attr("title", val.preview);
@@ -571,9 +573,11 @@ define(function (require, exports, module) {
                 var showing = false;
                 $title.on("click", function () {
                     if (showing) {
+                        $image.css("-webkit-transform", "");
                         $expanded.empty();
-                        $image.attr("src", arrowURL);
                     } else {
+                        $image.css("-webkit-transform", "rotate(90deg)");
+
                         var names = [];
                         for (var name in val.ownProperties) {
                             names.push(name);
@@ -590,7 +594,6 @@ define(function (require, exports, module) {
                             $expanded.append($("<div />").append($("<strong />").text(name + " = "))
                                                          .append(this._valueDom(val.ownProperties[name])));
                         }.bind(this));
-                        $image.attr("src", turnedArrowURL);
                     }
                     showing = !showing;
                 }.bind(this));
