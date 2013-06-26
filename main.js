@@ -195,7 +195,7 @@ define(function (require, exports, module) {
         EditorInterface.init();
         UI.init();
         Panel.init();
-        // EpochPanel.init();
+        EpochPanel.init();
 
         // after a short delay, show 'Thank you!' popup if they haven't seen it
         setTimeout(function () {
