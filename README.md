@@ -62,7 +62,7 @@ A Handful of Technical Details
 
 Node.js: Files with paths containing `node_modules` will not be instrumented.
 
-Chrome: Files requested with the URL parameter `theseus=no` will not be instrumented.
+Chrome: Files requested with the URL parameter `theseus=no` (for example, `<script src="script.js?theseus=no" />`) will not be instrumented.
 
 Bugs
 ----
