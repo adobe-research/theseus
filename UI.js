@@ -545,6 +545,7 @@ define(function (require, exports, module) {
         _objectInspectorDom: function (val, options) {
             options = (options || {});
 
+            // http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric
             function isNumber(n) {
                 return !isNaN(parseFloat(n)) && isFinite(n);
             }
@@ -562,9 +563,10 @@ define(function (require, exports, module) {
             var $image = $("<img />").attr("src", arrowURL);
             var $title = $("<span />").appendTo($dom)
                                       .append($image)
-                                      .append($("<span />").text(" " + preview))
                                       .attr("title", val.preview);
+            var $preview = $("<span />").text(" " + preview).appendTo($title);
             var $expanded = $("<div />").appendTo($dom);
+
             if ("ownProperties" in val) {
                 var showing = false;
                 $title.on("click", function () {
@@ -595,6 +597,21 @@ define(function (require, exports, module) {
                 $title.css({ cursor: "pointer" });
             } else {
                 $dom.toggleClass("objects-bad", true);
+            }
+
+            if ("truncated" in val) {
+                var $icon = $("<img />").attr("src", ExtensionUtils.getModuleUrl(module, "images/warning-icon.png"));
+                var messages = [];
+                if (val.truncated.length && val.truncated.length.amount) {
+                    messages.push(val.truncated.length.amount + " of this object's items were truncated from the log.");
+                }
+                if (val.truncated.keys && val.truncated.keys.amount) {
+                    messages.push(val.truncated.keys.amount + " of this object's keys were truncated from the log.");
+                }
+                $icon.prop("title", messages.join(" "));
+
+                $title.after($icon);
+                $title.after(" ");
             }
             return $dom;
         },
