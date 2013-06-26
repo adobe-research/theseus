@@ -688,10 +688,8 @@ define(function (require, exports, module) {
         $(EpochPanel).on("eventNameClicked", function (ev, name) {
             var i = _loggedEventNames.indexOf(name);
             if (i === -1) {
-                console.log('added!');
                 _loggedEventNames.push(name);
             } else {
-                console.log('removed!');
                 _loggedEventNames.splice(i, 1);
             }
             _resetLogQuery();
