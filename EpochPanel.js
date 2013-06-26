@@ -105,6 +105,10 @@ define(function (require, exports, module) {
         }
     }
 
+    function hasEvent(name) {
+        return (name in combinedHits);
+    }
+
     function init() {
         eventNameDisplayOrder = new DisplayOrder;
 
@@ -125,4 +129,5 @@ define(function (require, exports, module) {
     }
 
     exports.init = init;
+    exports.hasEvent = hasEvent;
 });

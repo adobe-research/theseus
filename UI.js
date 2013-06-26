@@ -273,12 +273,15 @@ define(function (require, exports, module) {
             _editorChanged(undefined, EditorInterface.currentEditor(), EditorInterface.currentEditor(), EditorInterface.currentPath());
         }
 
-        var countBefore = _loggedNodes.length;
+        var originalNodeCount = _loggedNodes.length, originalEventCount = _loggedEventNames.length;
         _loggedNodes = _loggedNodes.filter(function (nodeId) {
             return Agent.functionWithId(nodeId);
         });
+        _loggedEventNames = _loggedEventNames.filter(function (name) {
+            return EpochPanel.hasEvent(name);
+        });
 
-        if (_loggedNodes.length !== countBefore) {
+        if (_loggedNodes.length !== originalNodeCount || _loggedEventNames.length !== originalEventCount) {
             _resetLogQuery();
 
             if (_queryIsEmpty()) {
