@@ -332,11 +332,15 @@ define(function (require, exports, module) {
         trackNodes: "trackNodes",
         untrackNodes: "untrackNodes",
         nodeDelta: "newNodes",
+
         trackEpochs: "trackEpochs",
         untrackEpochs: "untrackEpochs",
         epochDelta: "epochDelta",
-    };
 
+        trackExceptions: "trackExceptions",
+        untrackExceptions: "untrackExceptions",
+        exceptionDelta: "newExceptions",
+    };
     for (var fname in trackerFunctions) {
         wrapServerFunction(fname, trackerFunctions[fname]);
     }

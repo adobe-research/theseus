@@ -169,6 +169,12 @@ define(function (require, exports, module) {
         _refresh: function () { return this._agent.epochDelta(this._rawHandle) },
     });
 
+    var ExceptionsAggregateHandle = makeAggregateHandleConstructor({
+        _open: function () { return this._agent.trackExceptions().done(function (handle) { this._rawHandle = handle }.bind(this)) },
+        _free: function () { this._agent.untrackExceptions(this._rawHandle) },
+        _refresh: function () { return this._agent.exceptionDelta(this._rawHandle) },
+    });
+
     /**
      * returns an object on which you can listen for 'data' events.
      * historical data will be sent with the first 'data' event.
@@ -187,6 +193,12 @@ define(function (require, exports, module) {
         return new EpochsAggregateHandle(updateInterval);
     }
 
+    function trackExceptions(updateInterval) {
+        updateInterval || (updateInterval = 1000);
+        return new ExceptionsAggregateHandle(updateInterval);
+    }
+
     exports.trackEpochs = trackEpochs;
     exports.trackNodes = trackNodes;
+    exports.trackExceptions = trackExceptions;
 });

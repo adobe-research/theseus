@@ -30,12 +30,18 @@ define(function (require, exports, module) {
     var PanelManager = brackets.getModule("view/PanelManager");
 
     var $exports = $(exports);
-    var $panel, $events;
+    var $panel;
+    var $eventsContainer, $events;
     var panel; // PanelManager.Panel
-    var handle; // epoch tracking handle
+
+    var epochHandle;
     var hitsByAgent = {}; // { agent-id: { name: hits } }
     var combinedHits = {}; // { name: hits }
     var eventNameDisplayOrder; // event name display order
+
+    var exceptionHandle;
+    var exceptionCountByAgent = {}; // { agent-id: count }
+    var combinedExceptionCount = 0;
 
     function DisplayOrder() {
         this.objects = [];
@@ -53,13 +59,18 @@ define(function (require, exports, module) {
         },
     }
 
-    function combineHits() {
+    function combineData() {
         combinedHits = {};
-        for (var agent in hitsByAgent) {
-            var hits = hitsByAgent[agent];
+        for (var agentId in hitsByAgent) {
+            var hits = hitsByAgent[agentId];
             for (var name in hits) {
                 combinedHits[name] = (combinedHits[name] || 0) + hits[name];
             }
+        }
+
+        combinedExceptionCount = 0;
+        for (var agentId in exceptionCountByAgent) {
+            combinedExceptionCount += exceptionCountByAgent[agentId];
         }
     }
 
@@ -72,12 +83,23 @@ define(function (require, exports, module) {
             agentHits[name] = (agentHits[name] || 0) + hits[name].hits;
             eventNameDisplayOrder.add(name);
         }
-        combineHits();
+        combineData();
+    }
+
+    function exceptionsReceived(agent, hits) {
+        if (!(agent.id in exceptionCountByAgent)) {
+            exceptionCountByAgent[agent.id] = 0;
+        }
+        for (var nodeId in hits) {
+            exceptionCountByAgent[agent.id] += hits[nodeId];
+        }
+        combineData();
     }
 
     function agentLeft(agent) {
         delete hitsByAgent[agent.id];
-        combineHits();
+        delete exceptionCountByAgent[agent.id];
+        combineData();
     }
 
     function eventDom(name, hits) {
@@ -92,16 +114,42 @@ define(function (require, exports, module) {
         return $dom;
     }
 
+    function exceptionDom(count) {
+        var $dom = $("<span class='epoch exception' />");
+        var $nameDom = $("<span class='name' />").text("exception").appendTo($dom);
+        var $hitsDom = $("<span class='hits' />").text(count).appendTo($dom);
+
+        // $dom.on("click", function () {
+        //     $exports.triggerHandler("eventNameClicked", [name]);
+        // });
+
+        return $dom;
+    }
+
+    function _haveEventData() { return Object.keys(combinedHits).length > 0 }
+    function _haveExceptionData() { return combinedExceptionCount > 0 }
+    function _haveData() {
+        return _haveEventData() || _haveExceptionData();
+    }
+
     function display() {
-        if (Object.keys(combinedHits).length === 0) {
-            panel.hide();
-        } else {
+        $events.empty();
+
+        if (_haveData()) {
             panel.show();
-            $events.empty();
-            var sortedNames = eventNameDisplayOrder.sort(Object.keys(combinedHits));
-            sortedNames.forEach(function (name) {
-                $events.append(eventDom(name, combinedHits[name]));
-            });
+
+            if (_haveExceptionData()) {
+                $events.append(exceptionDom(combinedExceptionCount));
+            }
+
+            if (_haveEventData()) {
+                var sortedNames = eventNameDisplayOrder.sort(Object.keys(combinedHits));
+                sortedNames.forEach(function (name) {
+                    $events.append(eventDom(name, combinedHits[name]));
+                });
+            }
+        } else {
+            panel.hide();
         }
     }
 
@@ -113,16 +161,28 @@ define(function (require, exports, module) {
         eventNameDisplayOrder = new DisplayOrder;
 
         $panel = $("<div id='theseus-epoch-panel' class='bottom-panel no-focus' />");
-        $("<span class='heading' />").text("Events:").appendTo($panel);
-        $events = $("<span class='events' />").appendTo($panel);
         panel = PanelManager.createBottomPanel("theseus.epoch-panel", $panel, 20);
 
-        handle = AgentHandle.trackEpochs(100);
-        $(handle).on("data", function (ev, data) {
+        $eventsContainer = $("<span />").appendTo($panel);
+        $("<span class='heading' />").text("Events:").appendTo($eventsContainer);
+        $events = $("<span class='events' />").appendTo($eventsContainer);
+
+        epochHandle = AgentHandle.trackEpochs(100);
+        $(epochHandle).on("data", function (ev, data) {
             hitsReceived(data.agent, data.data);
             display();
         });
-        $(handle).on("agentDisconnected", function (ev, agent) {
+        $(epochHandle).on("agentDisconnected", function (ev, agent) {
+            agentLeft(agent);
+            display();
+        });
+
+        exceptionHandle = AgentHandle.trackExceptions(100);
+        $(exceptionHandle).on("data", function (ev, data) {
+            exceptionsReceived(data.agent, data.data.counts);
+            display();
+        });
+        $(exceptionHandle).on("agentDisconnected", function (ev, agent) {
             agentLeft(agent);
             display();
         });

@@ -235,13 +235,11 @@ define(function (require, exports, module) {
     }
 
     function _trackExceptions() {
-        trackExceptions(function (handle) {
-            if (handle === undefined) {
-                fsm.trigger("trackingExceptionsFailed");
-            } else {
-                _defaultExceptionTrackingHandle = handle;
-                fsm.trigger("trackingExceptions");
-            }
+        trackExceptions().done(function (handle) {
+            _defaultExceptionTrackingHandle = handle;
+            fsm.trigger("trackingExceptions");
+        }).fail(function () {
+            fsm.trigger("trackingExceptionsFailed");
         });
     }
 
@@ -438,8 +436,12 @@ define(function (require, exports, module) {
         _invoke("trackHits", [], callback);
     }
 
-    function trackExceptions(callback) {
-        _invoke("trackExceptions", [], callback);
+    function trackExceptions() {
+        return _invokePromise("trackExceptions", []);
+    }
+
+    function exceptionDelta(handle) {
+        return _invokePromise("newExceptions", [{ value: handle }]);
     }
 
     /**
@@ -551,6 +553,10 @@ define(function (require, exports, module) {
     exports.refreshExceptionCounts = refreshExceptionCounts;
     exports.cachedHitCounts = cachedHitCounts;
     exports.trackLogs = trackLogs;
+
+    exports.trackExceptions = trackExceptions; // XXX: uses promises
+    // exports.untrackExceptions = untrackExceptions; // XXX: uses promises
+    exports.exceptionDelta = exceptionDelta; // XXX: uses promises
 
     exports.trackEpochs = trackEpochs; // XXX: uses promises
 
