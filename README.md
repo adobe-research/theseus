@@ -67,7 +67,9 @@ Chrome: Files requested with the URL parameter `theseus=no` (for example, `<scri
 Bugs
 ----
 
-If you come across a bug, submit an issue on GitHub. Include a list of steps we can follow to reproduce the problem, a description of what you saw that seemed broken, and a description of what you expected to see.
+First, there's [a whole wiki page about troubleshooting Theseus](https://github.com/adobe-research/theseus/wiki/Troubleshooting-Theseus). Check it out!
+
+If you come across a bug, [submit an issue on GitHub](https://github.com/adobe-research/theseus/issues). Include a list of steps we can follow to reproduce the problem, a description of what you saw that seemed broken, and a description of what you expected to see.
 
 License
 -------
