@@ -119,9 +119,9 @@ define(function (require, exports, module) {
         var $nameDom = $("<span class='name' />").text("exception").appendTo($dom);
         var $hitsDom = $("<span class='hits' />").text(count).appendTo($dom);
 
-        // $dom.on("click", function () {
-        //     $exports.triggerHandler("eventNameClicked", [name]);
-        // });
+        $dom.on("click", function () {
+            $exports.triggerHandler("exceptionsClicked", [name]);
+        });
 
         return $dom;
     }
@@ -157,6 +157,10 @@ define(function (require, exports, module) {
         return (name in combinedHits);
     }
 
+    function hasExceptions() {
+        return combinedExceptionCount > 0;
+    }
+
     function init() {
         eventNameDisplayOrder = new DisplayOrder;
 
@@ -190,4 +194,5 @@ define(function (require, exports, module) {
 
     exports.init = init;
     exports.hasEvent = hasEvent;
+    exports.hasExceptions = hasExceptions;
 });
