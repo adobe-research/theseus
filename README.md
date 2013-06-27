@@ -71,6 +71,11 @@ First, there's [a whole wiki page about troubleshooting Theseus](https://github.
 
 If you come across a bug, [submit an issue on GitHub](https://github.com/adobe-research/theseus/issues). Include a list of steps we can follow to reproduce the problem, a description of what you saw that seemed broken, and a description of what you expected to see.
 
+Mailing List
+------------
+
+Announcements and discussion: https://groups.google.com/d/forum/theseus-discuss
+
 License
 -------
 
