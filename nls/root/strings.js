@@ -26,14 +26,18 @@
 /*global define */
 
 define({
-    "PRODUCT_NAME"                   : "Theseus",
+    "PRODUCT_NAME"                       : "Theseus",
 
-    "INVITATION_HEADER"              : "Thanks for installing Theseus!",
-    "INVITATION_TEXT_1"              : "Theseus is a research project by MIT PhD student Tom Lieber (pictured right) and he would love to know how you use it!",
-    "INVITATION_USAGE"               : "You may collect anonymous information about how I use Theseus.",
-    "INVITATION_USAGE_DETAIL"        : "See exactly what will be reported and why.",
-    "INVITATION_USAGE_DETAIL_URL"    : "https://github.com/adobe-research/theseus/wiki/Anonymous-Usage-Reporting",
-    "INVITATION_CONTACT"             : "I might be willing to talk to you about how I use Theseus.",
-    "INVITATION_CONFIRM"             : "Okay",
-    "INVITATION_CANCEL"              : "Cancel",
+    "INVITATION_HEADER"                  : "Thanks for installing Theseus!",
+    "INVITATION_TEXT_1"                  : "Theseus is a research project by MIT PhD student Tom Lieber (pictured right) and he would love to know how you use it!",
+    "INVITATION_USAGE"                   : "You may collect anonymous information about how I use Theseus.",
+    "INVITATION_USAGE_DETAIL"            : "See exactly what will be reported and why.",
+    "INVITATION_USAGE_DETAIL_URL"        : "https://github.com/adobe-research/theseus/wiki/Anonymous-Usage-Reporting",
+    "INVITATION_CONTACT"                 : "I might be willing to talk to you about how I use Theseus.",
+    "INVITATION_CONFIRM"                 : "Okay",
+    "INVITATION_CANCEL"                  : "Cancel",
+
+    "NODE_THESEUS_VERSION_ERROR_HEADER"  : "Theseus: Invalid Software Version",
+    "NODE_THESEUS_VERSION_ERROR_TEXT_1"  : "The Theseus extension just connected to a Node.js process started with node-theseus. Unfortunately, the version of node-theseus used is not compatible with this verison of Theseus. You should upgrade both of them to the latest versions.",
+    "NODE_THESEUS_VERSION_ERROR_CONFIRM" : "Okay",
 });

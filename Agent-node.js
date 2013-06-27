@@ -37,7 +37,13 @@
  */
 
 define(function (require, exports, module) {
-    var Agent = require("Agent");
+    var Agent   = require("Agent");
+    var Dialogs = brackets.getModule("widgets/Dialogs");
+    var semver  = require("./lib/semver");
+    var Strings = require("strings");
+
+    var dialogHTML     = require("text!InvalidVersion.html");
+    var dialogTemplate = Mustache.render(dialogHTML, {Strings : Strings});
 
     var _conn;
     var _connected = false;
@@ -48,6 +54,8 @@ define(function (require, exports, module) {
     var _nodeExceptionCounts = {};
     var _queuedScripts = [];
     var $exports = $(exports);
+
+    var REQUIRED_FONDUE_VERSION = JSON.parse(require("text!package.json")).dependencies.fondue;
 
     function Connection() {
         this.socket = new WebSocket("ws://localhost:8888/");
@@ -167,6 +175,15 @@ define(function (require, exports, module) {
 
         _conn.connected.done(function () {
             _connected = true;
+
+            // get the handle to use for tracking hits
+            _invoke("version", [], function (version) {
+                if (!semver.satisfies(version, REQUIRED_FONDUE_VERSION)) {
+                    var dialog = Dialogs.showModalDialogUsingTemplate(dialogTemplate);
+                    var $dialog = dialog.getElement();
+                    $dialog.find(".close").on("click", dialog.close.bind(dialog));
+                }
+            });
 
             $exports.triggerHandler("connect");
 
