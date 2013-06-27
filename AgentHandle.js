@@ -175,6 +175,22 @@ define(function (require, exports, module) {
         _refresh: function () { return this._agent.exceptionDelta(this._rawHandle) },
     });
 
+    var ConsoleLogsAggregateHandle = makeAggregateHandleConstructor({
+        _open: function () {
+            var d = new $.Deferred;
+            this._agent.trackLogs({ ids: [], logs: true }, function (handle) {
+                if (handle === undefined) {
+                    d.reject();
+                } else {
+                    d.resolve(handle);
+                }
+            }.bind(this));
+            return d.promise();
+        },
+        _free: function () { /* XXX TODO */ },
+        _refresh: function () { return this._agent.logCount(this._rawHandle) },
+    });
+
     /**
      * returns an object on which you can listen for 'data' events.
      * historical data will be sent with the first 'data' event.
@@ -198,7 +214,13 @@ define(function (require, exports, module) {
         return new ExceptionsAggregateHandle(updateInterval);
     }
 
+    function trackConsoleLogs(updateInterval) {
+        updateInterval || (updateInterval = 1000);
+        return new ConsoleLogsAggregateHandle(updateInterval);
+    }
+
     exports.trackEpochs = trackEpochs;
     exports.trackNodes = trackNodes;
     exports.trackExceptions = trackExceptions;
+    exports.trackConsoleLogs = trackConsoleLogs;
 });

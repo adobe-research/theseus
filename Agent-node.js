@@ -340,6 +340,8 @@ define(function (require, exports, module) {
         trackExceptions: "trackExceptions",
         untrackExceptions: "untrackExceptions",
         exceptionDelta: "newExceptions",
+
+        logCount: "logCount",
     };
     for (var fname in trackerFunctions) {
         wrapServerFunction(fname, trackerFunctions[fname]);

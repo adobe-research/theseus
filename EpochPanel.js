@@ -43,6 +43,10 @@ define(function (require, exports, module) {
     var exceptionCountByAgent = {}; // { agent-id: count }
     var combinedExceptionCount = 0;
 
+    var consoleLogsHandle;
+    var consoleLogsCountByAgent = {}; // { agent-id: count }
+    var combinedConsoleLogsCount = 0;
+
     function DisplayOrder() {
         this.objects = [];
     }
@@ -72,6 +76,11 @@ define(function (require, exports, module) {
         for (var agentId in exceptionCountByAgent) {
             combinedExceptionCount += exceptionCountByAgent[agentId];
         }
+
+        combinedConsoleLogsCount = 0;
+        for (var agentId in consoleLogsCountByAgent) {
+            combinedConsoleLogsCount += consoleLogsCountByAgent[agentId];
+        }
     }
 
     function hitsReceived(agent, hits) {
@@ -96,9 +105,18 @@ define(function (require, exports, module) {
         combineData();
     }
 
+    function consoleLogsReceived(agent, count) {
+        if (!(agent.id in consoleLogsCountByAgent)) {
+            consoleLogsCountByAgent[agent.id] = 0;
+        }
+        consoleLogsCountByAgent[agent.id] = count;
+        combineData();
+    }
+
     function agentLeft(agent) {
         delete hitsByAgent[agent.id];
         delete exceptionCountByAgent[agent.id];
+        delete consoleLogsCountByAgent[agent.id];
         combineData();
     }
 
@@ -126,10 +144,23 @@ define(function (require, exports, module) {
         return $dom;
     }
 
+    function consoleLogDom(count) {
+        var $dom = $("<span class='epoch logs' />");
+        var $nameDom = $("<span class='name' />").text("console.log").appendTo($dom);
+        var $hitsDom = $("<span class='hits' />").text(count).appendTo($dom);
+
+        // $dom.on("click", function () {
+        //     $exports.triggerHandler("exceptionsClicked", [name]);
+        // });
+
+        return $dom;
+    }
+
     function _haveEventData() { return Object.keys(combinedHits).length > 0 }
     function _haveExceptionData() { return combinedExceptionCount > 0 }
+    function _haveConsoleLogsData() { return combinedConsoleLogsCount > 0 }
     function _haveData() {
-        return _haveEventData() || _haveExceptionData();
+        return _haveEventData() || _haveExceptionData() || _haveConsoleLogsData();
     }
 
     function display() {
@@ -140,6 +171,10 @@ define(function (require, exports, module) {
 
             if (_haveExceptionData()) {
                 $events.append(exceptionDom(combinedExceptionCount));
+            }
+
+            if (_haveConsoleLogsData()) {
+                $events.append(consoleLogDom(combinedConsoleLogsCount));
             }
 
             if (_haveEventData()) {
@@ -187,6 +222,16 @@ define(function (require, exports, module) {
             display();
         });
         $(exceptionHandle).on("agentDisconnected", function (ev, agent) {
+            agentLeft(agent);
+            display();
+        });
+
+        consoleLogsHandle = AgentHandle.trackConsoleLogs(1000);
+        $(consoleLogsHandle).on("data", function (ev, data) {
+            consoleLogsReceived(data.agent, data.data);
+            display();
+        });
+        $(consoleLogsHandle).on("agentDisconnected", function (ev, agent) {
             agentLeft(agent);
             display();
         });
