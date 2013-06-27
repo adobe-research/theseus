@@ -347,7 +347,7 @@ define(function (require, exports, module) {
 
     exports.init = init;
     exports.isReady = isReady;
-    exports.id = 'agent-node';
+    exports.id = "agent-node";
 
     // satisfied from locally cached data (sync)
     exports.functionWithId = functionWithId;
