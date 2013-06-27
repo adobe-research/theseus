@@ -40,4 +40,8 @@ define({
     "NODE_THESEUS_VERSION_ERROR_HEADER"  : "Theseus: Invalid Software Version",
     "NODE_THESEUS_VERSION_ERROR_TEXT_1"  : "The Theseus extension just connected to a Node.js process started with node-theseus. Unfortunately, the version of node-theseus used is not compatible with this verison of Theseus. You should upgrade both of them to the latest versions.",
     "NODE_THESEUS_VERSION_ERROR_CONFIRM" : "Okay",
+
+    "INSTALLATION_CORRUPT_HEADER"  : "Theseus: Corrupt Installation",
+    "INSTALLATION_CORRUPT_TEXT_1"  : "Theseus appears to be missing some of its files. Please reinstall Theseus. If you installed it using the GitHub URL, please follow the installation instructions on the Theseus web site instead.",
+    "INSTALLATION_CORRUPT_CONFIRM" : "Okay",
 });

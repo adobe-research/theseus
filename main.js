@@ -37,20 +37,35 @@ define(function (require, exports, module) {
     var AppInit            = brackets.getModule("utils/AppInit");
     var CommandManager     = brackets.getModule("command/CommandManager");
     var Commands           = brackets.getModule("command/Commands");
+    var Dialogs            = brackets.getModule("widgets/Dialogs");
     var EpochPanel         = require("EpochPanel");
     var EditorInterface    = require("EditorInterface");
     var ExtensionUtils     = brackets.getModule("utils/ExtensionUtils");
     var Invitation         = require("Invitation");
     var Menus              = brackets.getModule("command/Menus");
     var NativeApp          = brackets.getModule("utils/NativeApp");
+    var NativeFileSystem   = brackets.getModule("file/NativeFileSystem").NativeFileSystem;
     var Panel              = require("Panel");
     var PreferencesManager = brackets.getModule("preferences/PreferencesManager")
+    var Strings            = require("strings");
     var UI                 = require("UI");
     var Usage              = require("Usage");
 
     var $exports = $(exports);
 
     var THESEUS_VERSION = JSON.parse(require("text!package.json")).version;
+
+    // check that node_modules is there and alert the user if it isn't
+    var corruptInstallationDialogHTML = require("text!InstallationCorrupt.html");
+    var corruptInstallationDialogTemplate = Mustache.render(corruptInstallationDialogHTML, {Strings : Strings});
+    var nodeModulesPath = ExtensionUtils.getModulePath(module, "node_modules");
+    NativeFileSystem.resolveNativeFileSystemPath(nodeModulesPath, function(entry) {}, function(err) {
+        var dialog = Dialogs.showModalDialogUsingTemplate(corruptInstallationDialogTemplate);
+        var $dialog = dialog.getElement();
+        $dialog.find(".close").on("click", dialog.close.bind(dialog));
+    });
+
+    // set up the menus
 
     var _modes = {
         "static" : { name: "static", displayName: "Serve files from disk" },
@@ -70,6 +85,8 @@ define(function (require, exports, module) {
 
     var ID_THESEUS_MODES = _orderedModes.map(function (mode) { return "brackets.theseus.mode." + mode.name });
     var NAME_THESEUS_MODES = _orderedModes.map(function (mode) { return "   Mode: " + mode.displayName });
+
+    // module variables
 
     var _enabled = false;
     var _mode = DEFAULT_MODE;
