@@ -157,20 +157,20 @@ define(function (require, exports, module) {
     // but whatever, this part is fine
 
     var NodesAggregateHandle = makeAggregateHandleConstructor({
-        _open: function () { return this._agent.trackNodes().done(function (handle) { this._rawHandle = handle }.bind(this)) },
+        _open: function () { return this._agent.trackNodes() },
         _free: function () { this._agent.untrackNodes(this._rawHandle) },
         _refresh: function () { return this._agent.nodeDelta(this._rawHandle) },
         _isEmpty: function (data) { return data.length === 0 },
     });
 
     var EpochsAggregateHandle = makeAggregateHandleConstructor({
-        _open: function () { return this._agent.trackEpochs().done(function (handle) { this._rawHandle = handle }.bind(this)) },
+        _open: function () { return this._agent.trackEpochs() },
         _free: function () { this._agent.untrackEpochs(this._rawHandle) },
         _refresh: function () { return this._agent.epochDelta(this._rawHandle) },
     });
 
     var ExceptionsAggregateHandle = makeAggregateHandleConstructor({
-        _open: function () { return this._agent.trackExceptions().done(function (handle) { this._rawHandle = handle }.bind(this)) },
+        _open: function () { return this._agent.trackExceptions() },
         _free: function () { this._agent.untrackExceptions(this._rawHandle) },
         _refresh: function () { return this._agent.exceptionDelta(this._rawHandle) },
     });
