@@ -230,7 +230,7 @@ define(function (require, exports, module) {
             display();
         });
 
-        consoleLogsHandle = AgentHandle.trackConsoleLogs(1000);
+        consoleLogsHandle = AgentHandle.trackConsoleLogs(100);
         $(consoleLogsHandle).on("data", function (ev, data) {
             consoleLogsReceived(data.agent, data.data);
             display();
