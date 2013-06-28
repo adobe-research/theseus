@@ -271,6 +271,16 @@ define(function (require, exports, module) {
         if (Agent.couldBeRemotePath(EditorInterface.currentPath(), path)) {
             _editorChanged(undefined, EditorInterface.currentEditor(), EditorInterface.currentEditor(), EditorInterface.currentPath());
         }
+
+        if (_loggingExceptions || _loggingConsoleLogs) {
+            // we assume for most queries that a particular file will only be
+            // executed by a single agent, so we don't reload queries
+            // automatically when a new agent connects. however, it's much more
+            // common for log statements and exceptions to be exceptions
+            _resetLogQuery();
+            _variablesPanel.clearDeadLogs();
+            _refreshLogQuery();
+        }
     }
 
     function _scriptWentAway(event, path) {
