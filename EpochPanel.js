@@ -28,6 +28,7 @@
 define(function (require, exports, module) {
     var AgentHandle  = require("AgentHandle");
     var PanelManager = brackets.getModule("view/PanelManager");
+    var UI           = require("UI");
 
     var $exports = $(exports);
 
@@ -168,12 +169,12 @@ define(function (require, exports, module) {
 
     function updateExceptionDisplay() {
         $exceptionCount.text(combinedExceptionCount);
-        $exceptionsContainer.toggle(_haveExceptionData());
+        $exceptionsContainer.css("display", _haveExceptionData() ? "inline-block" : "none");
     }
 
     function updateConsoleLogsDisplay() {
         $logCount.text(combinedConsoleLogsCount);
-        $logsContainer.toggle(_haveConsoleLogsData());
+        $logsContainer.css("display", _haveConsoleLogsData() ? "inline-block" : "none");
     }
 
     function updateEventsDisplay() {
@@ -225,8 +226,8 @@ define(function (require, exports, module) {
 
         $("<span class='heading' />").text("Events:").appendTo($panel);
         $allEventsContainer = $("<span class='events' />").appendTo($panel);
-        $exceptionsContainer = $("<span />").appendTo($allEventsContainer).append(exceptionDom()).hide();
-        $logsContainer = $("<span />").appendTo($allEventsContainer).append(consoleLogDom()).hide();
+        $exceptionsContainer = exceptionDom().appendTo($allEventsContainer);
+        $logsContainer = consoleLogDom().appendTo($allEventsContainer);
 
         exceptionHandle = AgentHandle.trackExceptions(100);
         $(exceptionHandle).on("data", function (ev, data) {
@@ -250,6 +251,14 @@ define(function (require, exports, module) {
         });
         $(epochHandle).on("agentDisconnected", function (ev, agent) {
             agentLeft(agent);
+        });
+
+        $(UI).on("queryChanged", function (ev, query) {
+            $exceptionsContainer.toggleClass("selected", query.exceptions);
+            $logsContainer.toggleClass("selected", query.logs);
+            for (var name in $eventContainers) {
+                $eventContainers[name].toggleClass("selected", query.eventNames.indexOf(name) !== -1);
+            }
         });
     }
 

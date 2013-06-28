@@ -107,6 +107,16 @@ define(function (require, exports, module) {
         });
     }
 
+    function _triggerQueryChangeEvent() {
+        var query = {
+            ids: _loggedNodes,
+            eventNames: _loggedEventNames,
+            exceptions: _loggingExceptions,
+            logs: _loggingConsoleLogs,
+        };
+        $exports.triggerHandler("queryChanged", [query]);
+    }
+
     function _gutterCallCountClicked(e) {
         _resetLogQuery();
 
@@ -137,6 +147,8 @@ define(function (require, exports, module) {
             Panel.toggle(true);
             _refreshLogQuery();
         }
+
+        _triggerQueryChangeEvent();
     }
 
     function _editorChanged(event, editor, oldEditor, path) {
@@ -310,6 +322,8 @@ define(function (require, exports, module) {
                 _variablesPanel.clearDeadLogs(); // do this immediately so that the user can't click on functions that are no longer there
                 _refreshLogQuery();
             }
+
+            _triggerQueryChangeEvent();
         } else if (_loggingExceptions || _loggingConsoleLogs) {
             // we might have exceptions or console.logs in the log from this script, but
             // we can't currently tell. so let's refresh just in case.
@@ -723,6 +737,7 @@ define(function (require, exports, module) {
             _resetLogQuery();
             _refreshLogQuery();
             _showPanelIfAppropriate();
+            _triggerQueryChangeEvent();
         });
 
         $(EpochPanel).on("exceptionsClicked", function (ev, name) {
@@ -730,6 +745,7 @@ define(function (require, exports, module) {
             _resetLogQuery();
             _refreshLogQuery();
             _showPanelIfAppropriate();
+            _triggerQueryChangeEvent();
         });
 
         $(EpochPanel).on("logsClicked", function (ev, name) {
@@ -737,6 +753,7 @@ define(function (require, exports, module) {
             _resetLogQuery();
             _refreshLogQuery();
             _showPanelIfAppropriate();
+            _triggerQueryChangeEvent();
         });
     }
 

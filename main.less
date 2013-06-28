@@ -263,10 +263,13 @@
 }
 
 #theseus-epoch-panel {
-    height: 20px;
-    max-height: 20px;
+    height: 26px;
+    min-height: 26px;
+    max-height: 26px;
     background: white;
-    padding-left: 4px;
+    padding: 4px 4px;
+    font-size: 13px;
+    line-height: 13px;
 
     .heading {
         margin-right: 8px;
@@ -276,6 +279,9 @@
     .epoch {
         margin-right: 8px;
         cursor: pointer;
+        padding: 2px;
+        display: inline-block;
+        vertical-align: baseline;
 
         .name {
             margin-right: 3px;
@@ -285,12 +291,26 @@
             font-weight: bold;
         }
 
-        &.exception .name {
-            color: #f00;
+        &.exception {
+            display: none;
+
+            .name {
+                color: #f00;
+            }
         }
 
-        &.logs .name {
-            color: #060;
+        &.logs {
+            display: none;
+
+            .name {
+                color: #060;
+            }
+        }
+
+        &.selected {
+            border-radius: 4px;
+            box-shadow: 0 0 4px 1px #0186cc;
+            background: #c1e1f2;
         }
 
         &:hover { .name, .hits { color: #0186cc; } }
