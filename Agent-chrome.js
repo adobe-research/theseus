@@ -440,6 +440,10 @@ define(function (require, exports, module) {
         return _invokePromise("trackExceptions", []);
     }
 
+    function untrackExceptions(handle) {
+        return _invokePromise("untrackExceptions", [{ value: handle }]);
+    }
+
     function exceptionDelta(handle) {
         return _invokePromise("newExceptions", [{ value: handle }]);
     }
@@ -481,6 +485,10 @@ define(function (require, exports, module) {
 
     function trackNodes() {
         return _invokePromise("trackNodes", []);
+    }
+
+    function logCount(handle) {
+        return _invokePromise("logCount", [{ value: handle }]);
     }
 
     function untrackNodes(handle) {
@@ -553,9 +561,10 @@ define(function (require, exports, module) {
     exports.refreshExceptionCounts = refreshExceptionCounts;
     exports.cachedHitCounts = cachedHitCounts;
     exports.trackLogs = trackLogs;
+    exports.logCount = logCount;
 
     exports.trackExceptions = trackExceptions; // XXX: uses promises
-    // exports.untrackExceptions = untrackExceptions; // XXX: uses promises
+    exports.untrackExceptions = untrackExceptions; // XXX: uses promises
     exports.exceptionDelta = exceptionDelta; // XXX: uses promises
 
     exports.trackEpochs = trackEpochs; // XXX: uses promises

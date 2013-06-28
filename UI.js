@@ -42,7 +42,7 @@ define(function (require, exports, module) {
     var _functionsInFile = [];
     var _deadCodeMarks = {}; // node id -> mark
     var _logHandle;
-    var _loggedNodes = [], _loggedEventNames = [], _loggingExceptions = false;
+    var _loggedNodes = [], _loggedEventNames = [], _loggingExceptions = false, _loggingConsoleLogs = false;;
     var _nodeGlyphs = {}; // node id -> glyph object
     var _variablesPanel;
 
@@ -97,7 +97,12 @@ define(function (require, exports, module) {
     }
 
     function _refreshLogQuery() {
-        Agent.trackLogs({ ids: _loggedNodes, eventNames: _loggedEventNames, exceptions: _loggingExceptions }, function (handle) {
+        Agent.trackLogs({
+            ids: _loggedNodes,
+            eventNames: _loggedEventNames,
+            exceptions: _loggingExceptions,
+            logs: _loggingConsoleLogs,
+        }, function (handle) {
             _logHandle = handle;
         });
     }
@@ -273,7 +278,10 @@ define(function (require, exports, module) {
             _editorChanged(undefined, EditorInterface.currentEditor(), EditorInterface.currentEditor(), EditorInterface.currentPath());
         }
 
-        var originalNodeCount = _loggedNodes.length, originalEventCount = _loggedEventNames.length, originalLoggingExceptions = _loggingExceptions;
+        var originalNodeCount = _loggedNodes.length,
+            originalEventCount = _loggedEventNames.length,
+            originalLoggingExceptions = _loggingExceptions,
+            originalLoggingLogs = _loggingConsoleLogs;
         _loggedNodes = _loggedNodes.filter(function (nodeId) {
             return Agent.functionWithId(nodeId);
         });
@@ -281,8 +289,9 @@ define(function (require, exports, module) {
             return EpochPanel.hasEvent(name);
         });
         _loggingExceptions = _loggingExceptions && EpochPanel.hasExceptions();
+        _loggingConsoleLogs = _loggingConsoleLogs && EpochPanel.hasLogs();
 
-        if (_loggedNodes.length !== originalNodeCount || _loggedEventNames.length !== originalEventCount || _loggingExceptions !== originalLoggingExceptions) {
+        if (_loggedNodes.length !== originalNodeCount || _loggedEventNames.length !== originalEventCount || _loggingExceptions !== originalLoggingExceptions || _loggingConsoleLogs !== originalLoggingLogs) {
             _resetLogQuery();
 
             if (_queryIsEmpty()) {
@@ -625,7 +634,7 @@ define(function (require, exports, module) {
     };
 
     function _queryIsEmpty() {
-        return _loggedNodes.length === 0 && _loggedEventNames.length === 0 && !_loggingExceptions;
+        return _loggedNodes.length === 0 && _loggedEventNames.length === 0 && !_loggingExceptions && !_loggingConsoleLogs;
     }
 
     function _showPanelIfAppropriate() {
@@ -652,6 +661,7 @@ define(function (require, exports, module) {
         _loggedNodes = [];
         _loggedEventNames = [];
         _loggingExceptions = false;
+        _loggingConsoleLogs = false;
 
         Panel.toggle(false);
         _variablesPanel.clearLogs();
@@ -701,6 +711,13 @@ define(function (require, exports, module) {
 
         $(EpochPanel).on("exceptionsClicked", function (ev, name) {
             _loggingExceptions = !_loggingExceptions;
+            _resetLogQuery();
+            _refreshLogQuery();
+            _showPanelIfAppropriate();
+        });
+
+        $(EpochPanel).on("logsClicked", function (ev, name) {
+            _loggingConsoleLogs = !_loggingConsoleLogs;
             _resetLogQuery();
             _refreshLogQuery();
             _showPanelIfAppropriate();

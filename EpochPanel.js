@@ -149,9 +149,9 @@ define(function (require, exports, module) {
         var $nameDom = $("<span class='name' />").text("console.log").appendTo($dom);
         var $hitsDom = $("<span class='hits' />").text(count).appendTo($dom);
 
-        // $dom.on("click", function () {
-        //     $exports.triggerHandler("exceptionsClicked", [name]);
-        // });
+        $dom.on("click", function () {
+            $exports.triggerHandler("logsClicked", [name]);
+        });
 
         return $dom;
     }
@@ -194,6 +194,10 @@ define(function (require, exports, module) {
 
     function hasExceptions() {
         return combinedExceptionCount > 0;
+    }
+
+    function hasLogs() {
+        return combinedConsoleLogsCount > 0;
     }
 
     function init() {
@@ -240,4 +244,5 @@ define(function (require, exports, module) {
     exports.init = init;
     exports.hasEvent = hasEvent;
     exports.hasExceptions = hasExceptions;
+    exports.hasLogs = hasLogs;
 });
