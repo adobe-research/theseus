@@ -270,7 +270,7 @@ define(function (require, exports, module) {
             });
 
             if (_logHandle !== undefined) {
-                Agent.refreshLogs(_logHandle, 10, function (results) {
+                Agent.refreshLogs(_logHandle, 20, function (results) {
                     if (results && results.length > 0) {
                         _variablesPanel.appendLogs(results);
                     }
@@ -345,6 +345,7 @@ define(function (require, exports, module) {
                 alert("You can't inspect this object any deeper.");
             });
 
+            // http://stackoverflow.com/questions/8858994/let-user-scrolling-stop-jquery-animation-of-scrolltop
             this.$dom.bind("scroll mousedown DOMMouseScroll mousewheel keyup", function (e) {
                 if (e.which > 0 || e.type === "mousedown" || e.type === "mousewheel") {
                     this._animating = false;
