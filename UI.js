@@ -300,6 +300,12 @@ define(function (require, exports, module) {
                 _variablesPanel.clearDeadLogs(); // do this immediately so that the user can't click on functions that are no longer there
                 _refreshLogQuery();
             }
+        } else if (_loggingExceptions || _loggingConsoleLogs) {
+            // we might have exceptions or console.logs in the log from this script, but
+            // we can't currently tell. so let's refresh just in case.
+            _resetLogQuery();
+            _variablesPanel.clearDeadLogs();
+            _refreshLogQuery();
         }
     }
 
