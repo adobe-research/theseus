@@ -64,7 +64,7 @@ Node.js: Files with paths containing `node_modules` will not be instrumented.
 
 Chrome: Files requested with the URL parameter `theseus=no` (for example, `<script src="script.js?theseus=no" />`) will not be instrumented.
 
-Any file containing the (exact) string `"/*theseus instrument: false */"` will not be instrumented by Theseus. You can also use the `--theseus-exclude=filename` option with `node-theseus` (which also has [some other options that you might find helpful](https://github.com/adobe-research/node-theseus)).
+Any file containing the (exact) string `/*theseus instrument: false */` will not be instrumented by Theseus. You can also use the `--theseus-exclude=filename` option with `node-theseus` (which also has [some other options that you might find helpful](https://github.com/adobe-research/node-theseus)).
 
 Bugs
 ----
