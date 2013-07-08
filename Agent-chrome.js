@@ -50,6 +50,7 @@ define(function (require, exports, module) {
     var $exports = $(exports);
 
     var _proxyURL;
+    var _tracerName = "__tracer";
     var _tracerObjectId;
     var _defaultTrackingHandle, _defaultExceptionTrackingHandle;
     var _queuedScripts;
@@ -212,7 +213,7 @@ define(function (require, exports, module) {
     }
 
     function _connectToTracer() {
-        Inspector.Runtime.evaluate("tracer.connect()", function (res) {
+        Inspector.Runtime.evaluate(_tracerName + ".connect()", function (res) {
             if (!res.wasThrown) {
                 _tracerObjectId = res.result.objectId;
                 fsm.trigger("tracerConnected");
@@ -269,7 +270,7 @@ define(function (require, exports, module) {
      * @param res is an object with keys nodeId, name, and value
      */
     function _onAttributeModified(event, res) {
-        if (res.name === 'data-tracer-scripts-added') {
+        if (res.name === 'data-' + _tracerName + '-scripts-added') {
             var data = JSON.parse(res.value);
             _addNodes(data.nodes);
 
@@ -372,7 +373,7 @@ define(function (require, exports, module) {
      */
     function _invoke(functionName, args, callback) {
         if (["initializingTracer", "initializingHits", "initializingExceptions", "connected"].indexOf(fsm.state) !== -1) {
-            Inspector.Runtime.callFunctionOn(_tracerObjectId, "tracer." + functionName, args, true, true, function (res) {
+            Inspector.Runtime.callFunctionOn(_tracerObjectId, _tracerName + "." + functionName, args, true, true, function (res) {
                 if (!res.wasThrown) {
                     callback && callback(res.result.value);
                 } else {
