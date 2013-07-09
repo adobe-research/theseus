@@ -206,11 +206,6 @@ define(function (require, exports, module) {
         });
     }
 
-    /** event handler for when a new page is loaded **/
-    function _gotDocument(e, res) {
-        fsm.trigger("gotDocument");
-    }
-
     function _connectToTracer() {
         Inspector.Runtime.evaluate("tracer.connect()", function (res) {
             if (!res.wasThrown) {
@@ -282,6 +277,12 @@ define(function (require, exports, module) {
         }
     }
 
+    function _loadEventFired(event, res) {
+        Inspector.DOM.getDocument(function onGetDocument(res) {
+            fsm.trigger("gotDocument");
+        });
+    }
+
     function _triggerReceivedScriptInfo(path) {
         if (isReady()) {
             $exports.triggerHandler("receivedScriptInfo", [path]);
@@ -320,9 +321,10 @@ define(function (require, exports, module) {
     }
 
     function _setInspectorCallbacks() {
-        Inspector.Page.enable();
-        $(DOMAgent).on("getDocument", _gotDocument);
         $(Inspector.DOM).on("attributeModified", _onAttributeModified);
+
+        Inspector.Page.enable();
+        $(Inspector.Page).on("loadEventFired", _loadEventFired);
 
         // AJAX testing
 
@@ -343,8 +345,8 @@ define(function (require, exports, module) {
     }
 
     function _clearInspectorCallbacks() {
-        $(DOMAgent).off("getDocument", _gotDocument);
         $(Inspector.DOM).off("attributeModified", _onAttributeModified);
+        $(Inspector.Page).off("loadEventFired", _loadEventFired);
     }
 
     function _resetAll() {
