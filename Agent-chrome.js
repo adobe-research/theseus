@@ -37,7 +37,6 @@
 define(function (require, exports, module) {
     var Agent                = require("Agent");
     var AppInit              = brackets.getModule("utils/AppInit");
-    var DOMAgent             = brackets.getModule("LiveDevelopment/Agents/DOMAgent");
     var ExtensionUtils       = brackets.getModule("utils/ExtensionUtils");
     var Fsm                  = require("fsm").Fsm;
     var Inspector            = brackets.getModule("LiveDevelopment/Inspector/Inspector");
