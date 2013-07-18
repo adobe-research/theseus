@@ -22,8 +22,7 @@
  *
  */
 
-/*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4,
-maxerr: 50, node: true */
+/*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, node: true */
 /*global */
 
 (function () {
@@ -87,12 +86,19 @@ maxerr: 50, node: true */
         }
     }
 
-    function _accept(req, contentType) {
-        var useTheseus = url.parse(req.url, true).query.theseus;
-        if (useTheseus === 'no' || useTheseus === 'false' || useTheseus === '0') {
-            return false;
-        }
-        return ['application/javascript', 'text/html'].indexOf(contentType) !== -1;
+    function _makeAccept(pathExcludeRegexp) {
+        console.log("it is " + pathExcludeRegexp)
+        return function (req, contentType) {
+            if (pathExcludeRegexp && pathExcludeRegexp.test(req.url)) {
+                return false;
+            }
+
+            var useTheseus = url.parse(req.url, true).query.theseus;
+            if (useTheseus === 'no' || useTheseus === 'false' || useTheseus === '0') {
+                return false;
+            }
+            return ['application/javascript', 'text/html'].indexOf(contentType) !== -1;
+        };
     }
 
     function _filter(req, contentType, content) {
@@ -138,11 +144,12 @@ maxerr: 50, node: true */
      * Helper function to create a new server.
      * @param {string} path The absolute path that should be the document root
      * @param {string} modeName The name of the mode to use ('static' or 'proxy')
+     * @param {RegExp} pathExcludeRegexp Exclusion regexp for paths
      * @param {function(?string, ?httpServer)} cb Callback function that receives
      *    an error (or null if there was no error) and the server (or null if there
      *    was an error).
      */
-    function _createServer(path, modeName, createCompleteCallback) {
+    function _createServer(path, modeName, pathExcludeRegexp, createCompleteCallback) {
         function requestRoot(server, cb) {
             var address = server.address();
 
@@ -170,7 +177,7 @@ maxerr: 50, node: true */
         }
 
         var app = connect().use(middleware(path, {
-            accept: _accept,
+            accept: _makeAccept(pathExcludeRegexp),
             filter: _filter,
             maxAge: STATIC_CACHE_MAX_AGE
         }));
@@ -199,6 +206,7 @@ maxerr: 50, node: true */
      * one.
      * @param {string} path The absolute path that should be the document root
      * @param {string} modeName The name of the mode ('static' or 'proxy')
+     * @param {string} pathExcludeRegexp Exclusion regexp (empty for no exclusions)
      * @param {function(?string, ?{address: string, family: string,
      *    port: number})} cb Callback that should receive the address information
      *    for the server. First argument is the error string (or null if no error),
@@ -206,13 +214,13 @@ maxerr: 50, node: true */
      *    The "family" property of the address indicates whether the address is,
      *    for example, IPv4, IPv6, or a UNIX socket.
      */
-    function _cmdGetServer(path, modeName, cb) {
+    function _cmdGetServer(path, modeName, pathExcludeRegexp, cb) {
         // Make sure the key doesn't conflict with some built-in property of Object.
         var pathKey = PATH_KEY_PREFIX + "-" + path + "-" + modeName;
         if (_servers[pathKey]) {
             cb(null, _servers[pathKey].address());
         } else {
-            _createServer(path, modeName, function (err, server) {
+            _createServer(path, modeName, pathExcludeRegexp === "" ? null : new RegExp(pathExcludeRegexp), function (err, server) {
                 if (err) {
                     cb(err, null);
                 } else {
@@ -271,6 +279,11 @@ maxerr: 50, node: true */
                     name: "modeName",
                     type: "string",
                     description: "name of the mode ('static' or 'proxy')"
+                },
+                {
+                    name: "pathExcludeRegexp",
+                    type: "string",
+                    description: "regexp against which paths will be matched and not instrumented if they match"
                 }
             ],
             [{

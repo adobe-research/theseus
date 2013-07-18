@@ -64,7 +64,7 @@ define(function (require, exports, module) {
 
         _nodeConnectionDeferred.done(function (nodeConnection) {
             if (nodeConnection.connected()) {
-                nodeConnection.domains.theseusServer.getServer(rootPath, mode).done(function (address) {
+                nodeConnection.domains.theseusServer.getServer(rootPath, mode, "thirdparty|node_modules").done(function (address) {
                     d.resolve({
                         address: address.address,
                         port: address.port,
