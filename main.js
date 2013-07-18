@@ -23,7 +23,7 @@
  */
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
-/*global define */
+/*global define, $, brackets, Mustache */
 
 /**
  * provides events:
@@ -32,6 +32,8 @@
  */
 
 define(function (require, exports, module) {
+    "use strict";
+
     var Agent              = require("Agent");
     var AgentManager       = require("AgentManager");
     var AppInit            = brackets.getModule("utils/AppInit");
@@ -48,7 +50,7 @@ define(function (require, exports, module) {
     var NativeApp          = brackets.getModule("utils/NativeApp");
     var NativeFileSystem   = brackets.getModule("file/NativeFileSystem").NativeFileSystem;
     var Panel              = require("Panel");
-    var PreferencesManager = brackets.getModule("preferences/PreferencesManager")
+    var PreferencesManager = brackets.getModule("preferences/PreferencesManager");
     var ProxyProvider      = require("ProxyProvider");
     var Strings            = require("strings");
     var UI                 = require("UI");
@@ -62,7 +64,7 @@ define(function (require, exports, module) {
     var corruptInstallationDialogHTML = require("text!InstallationCorrupt.html");
     var corruptInstallationDialogTemplate = Mustache.render(corruptInstallationDialogHTML, {Strings : Strings});
     var nodeModulesPath = ExtensionUtils.getModulePath(module, "node_modules");
-    NativeFileSystem.resolveNativeFileSystemPath(nodeModulesPath, function(entry) {}, function(err) {
+    NativeFileSystem.resolveNativeFileSystemPath(nodeModulesPath, function() {}, function() {
         var dialog = Dialogs.showModalDialogUsingTemplate(corruptInstallationDialogTemplate);
         var $dialog = dialog.getElement();
         $dialog.find(".close").on("click", dialog.close.bind(dialog));
@@ -89,8 +91,8 @@ define(function (require, exports, module) {
     var ID_THESEUS_DEBUG_BRACKETS = "brackets.theseus.debug-brackets";
     var NAME_THESEUS_DEBUG_BRACKETS = "Debug Brackets";
 
-    var ID_THESEUS_MODES = _orderedModes.map(function (mode) { return "brackets.theseus.mode." + mode.name });
-    var NAME_THESEUS_MODES = _orderedModes.map(function (mode) { return "   Mode: " + mode.displayName });
+    var ID_THESEUS_MODES = _orderedModes.map(function (mode) { return "brackets.theseus.mode." + mode.name; });
+    var NAME_THESEUS_MODES = _orderedModes.map(function (mode) { return "   Mode: " + mode.displayName; });
 
     // module variables
 
@@ -127,14 +129,14 @@ define(function (require, exports, module) {
     }
 
     function _setModeHandler(modeName) {
-        return function () { _setMode(modeName) };
+        return function () { _setMode(modeName); };
     }
 
     function _sendFeedback() {
-        var params = '?';
-        params += 'brackets_version=' + brackets.metadata.version;
-        params += '&theseus_version=' + THESEUS_VERSION;
-        NativeApp.openURLInDefaultBrowser('file://' + ExtensionUtils.getModuleUrl(module, "feedback.html") + params);
+        var params = "?";
+        params += "brackets_version=" + brackets.metadata.version;
+        params += "&theseus_version=" + THESEUS_VERSION;
+        NativeApp.openURLInDefaultBrowser("file://" + ExtensionUtils.getModuleUrl(module, "feedback.html") + params);
     }
 
     function _showWelcomeScreen() {
@@ -144,25 +146,24 @@ define(function (require, exports, module) {
     function _debugBrackets() {
         ProxyProvider.getServer("/", "static").done(function (proxy) {
             Inspector.getDebuggableWindows("127.0.0.1", 9234).done(function (response) {
-                var keys = Object.keys(response).sort(function (a, b) { return parseInt(a) - parseInt(b) });
+                var keys = Object.keys(response).sort(function (a, b) { return parseInt(a, 10) - parseInt(b, 10); });
                 if (keys.length > 0) {
                     // pick the last page
                     var page = response[keys[keys.length - 1]];
 
                     var redirect = function () {
                         Inspector.off("connect", redirect);
-                        Inspector.Runtime.evaluate("window.location = " + JSON.stringify(proxy.proxyRootURL + window.location.pathname), function (response) {
-                        });
-                    }
+                        Inspector.Runtime.evaluate("window.location = " + JSON.stringify(proxy.proxyRootURL + window.location.pathname), function () {});
+                    };
                     Inspector.on("connect", redirect);
 
                     Inspector.connect(page.webSocketDebuggerUrl);
                 }
             }).fail(function onFail(err) {
-                console.log("getting debuggable windows failed");
+                console.log("getting debuggable windows failed: " + err);
             });
         }).fail(function onFail(err) {
-            console.log("getting / proxy server failed");
+            console.log("getting / proxy server failed: " + err);
         });
     }
 

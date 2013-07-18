@@ -28,7 +28,6 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var AppInit              = brackets.getModule("utils/AppInit");
     var ExtensionUtils       = brackets.getModule("utils/ExtensionUtils");
     var LiveDevServerManager = brackets.getModule("LiveDevelopment/LiveDevServerManager");
     var NodeConnection       = brackets.getModule("utils/NodeConnection");
