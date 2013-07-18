@@ -503,8 +503,15 @@ define(function (require, exports, module) {
     }
 
     function trackEpochs() {
-        var d = new $.Deferred;
-        return d.reject().promise();
+        return _invokePromise("trackEpochs");
+    }
+
+    function untrackEpochs(handle) {
+        return _invokePromise("untrackEpochs", [{ value: handle }]);
+    }
+
+    function epochDelta(handle) {
+        return _invokePromise("epochDelta", [{ value: handle }]);
     }
 
     function trackFileCallGraph() {
@@ -583,6 +590,8 @@ define(function (require, exports, module) {
     exports.exceptionDelta = exceptionDelta; // XXX: uses promises
 
     exports.trackEpochs = trackEpochs; // XXX: uses promises
+    exports.untrackEpochs = untrackEpochs; // XXX: uses promises
+    exports.epochDelta = epochDelta; // XXX: uses promises
 
     exports.trackFileCallGraph = trackFileCallGraph; // XXX: uses promises
     exports.untrackFileCallGraph = untrackFileCallGraph; // XXX: uses promises
