@@ -39,7 +39,7 @@ define(function (require, exports, module) {
         },
         trigger: function (eventName) {
             var args = Array.prototype.slice.apply(arguments).slice(1);
-            console.log("fsm: !! " + eventName, args);
+            // console.log("fsm: !! " + eventName, args);
             if (this.desc[this.state] && (eventName in this.desc[this.state])) {
                 this.desc[this.state][eventName].apply(this, args);
             }

@@ -148,7 +148,7 @@ define(function (require, exports, module) {
         props["_date"] = new Date().getTime();
         for (var k in _properties) { props[k] = _properties[k]; }
         for (var k in properties) { props[k] = properties[k]; }
-        console.log(name, props);
+        // console.log(name, props);
         _eventQueue.push({ name: name, properties: props });
     }
 
