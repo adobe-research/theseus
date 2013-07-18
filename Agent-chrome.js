@@ -70,6 +70,8 @@ define(function (require, exports, module) {
      */
     var NODE_CONNECTION_TIMEOUT = 30000; // 30 seconds
 
+    var TRACER_NAME = "tracer";
+
     // instrumentation data
     var _nodes = {}; // id (string) -> {id: string, path: string, start: {line, column}, end: {line, column}, name: string (optional)}
     var _nodesByFilePath = {};
@@ -206,7 +208,7 @@ define(function (require, exports, module) {
     }
 
     function _connectToTracer() {
-        Inspector.Runtime.evaluate("tracer.connect()", function (res) {
+        Inspector.Runtime.evaluate(TRACER_NAME + ".connect()", function (res) {
             if (!res.wasThrown) {
                 _tracerObjectId = res.result.objectId;
                 fsm.trigger("tracerConnected");
@@ -263,7 +265,7 @@ define(function (require, exports, module) {
      * @param res is an object with keys nodeId, name, and value
      */
     function _onAttributeModified(event, res) {
-        if (res.name === 'data-tracer-scripts-added') {
+        if (res.name === 'data-' + TRACER_NAME + '-scripts-added') {
             var data = JSON.parse(res.value);
             _addNodes(data.nodes);
 
@@ -373,7 +375,7 @@ define(function (require, exports, module) {
      */
     function _invoke(functionName, args, callback) {
         if (["initializingTracer", "initializingHits", "initializingExceptions", "connected"].indexOf(fsm.state) !== -1) {
-            Inspector.Runtime.callFunctionOn(_tracerObjectId, "tracer." + functionName, args, true, true, function (res) {
+            Inspector.Runtime.callFunctionOn(_tracerObjectId, TRACER_NAME + "." + functionName, args, true, true, function (res) {
                 if (!res.wasThrown) {
                     callback && callback(res.result.value);
                 } else {
