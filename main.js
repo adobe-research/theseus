@@ -43,6 +43,7 @@ define(function (require, exports, module) {
     var EditorInterface    = require("EditorInterface");
     var ExtensionUtils     = brackets.getModule("utils/ExtensionUtils");
     var Invitation         = require("Invitation");
+    var Inspector          = brackets.getModule("LiveDevelopment/Inspector/Inspector");
     var Menus              = brackets.getModule("command/Menus");
     var NativeApp          = brackets.getModule("utils/NativeApp");
     var NativeFileSystem   = brackets.getModule("file/NativeFileSystem").NativeFileSystem;
@@ -84,6 +85,9 @@ define(function (require, exports, module) {
 
     var ID_THESEUS_ENABLE = "brackets.theseus.enable";
     var NAME_THESEUS_ENABLE = "Enable Theseus";
+
+    var ID_THESEUS_DEBUG_BRACKETS = "brackets.theseus.debug-brackets";
+    var NAME_THESEUS_DEBUG_BRACKETS = "Debug Brackets";
 
     var ID_THESEUS_MODES = _orderedModes.map(function (mode) { return "brackets.theseus.mode." + mode.name });
     var NAME_THESEUS_MODES = _orderedModes.map(function (mode) { return "   Mode: " + mode.displayName });
@@ -137,6 +141,31 @@ define(function (require, exports, module) {
         Invitation.showInvitation();
     }
 
+    function _debugBrackets() {
+        ProxyProvider.getServer("/", "static").done(function (proxy) {
+            Inspector.getDebuggableWindows("127.0.0.1", 9234).done(function (response) {
+                var keys = Object.keys(response).sort(function (a, b) { return parseInt(a) - parseInt(b) });
+                if (keys.length > 0) {
+                    // pick the last page
+                    var page = response[keys[keys.length - 1]];
+
+                    var redirect = function () {
+                        Inspector.off("connect", redirect);
+                        Inspector.Runtime.evaluate("window.location = " + JSON.stringify(proxy.proxyRootURL + window.location.pathname), function (response) {
+                        });
+                    }
+                    Inspector.on("connect", redirect);
+
+                    Inspector.connect(page.webSocketDebuggerUrl);
+                }
+            }).fail(function onFail(err) {
+                console.log("getting debuggable windows failed");
+            });
+        }).fail(function onFail(err) {
+            console.log("getting / proxy server failed");
+        });
+    }
+
     function _loadPreferences() {
         _prefs = PreferencesManager.getPreferenceStorage("com.adobe.theseus", { enabled: true, mode: "static" });
         _enabled = _prefs.getValue("enabled");
@@ -162,6 +191,12 @@ define(function (require, exports, module) {
             _toggleEnabled
         );
 
+        CommandManager.register(
+            NAME_THESEUS_DEBUG_BRACKETS,
+            ID_THESEUS_DEBUG_BRACKETS,
+            _debugBrackets
+        );
+
         _orderedModes.forEach(function (mode, i) {
             CommandManager.register(
                 NAME_THESEUS_MODES[i],
@@ -181,6 +216,10 @@ define(function (require, exports, module) {
             var prev = (i == 0) ? ID_THESEUS_ENABLE : ID_THESEUS_MODES[i - 1];
             fileMenu.addMenuItem(ID_THESEUS_MODES[i], null, Menus.AFTER, prev);
         });
+
+        var debugMenu = Menus.getMenu("debug-menu");
+        debugMenu.addMenuDivider(Menus.LAST, null);
+        debugMenu.addMenuItem(ID_THESEUS_DEBUG_BRACKETS, null, Menus.LAST, null);
 
         _updateMenuStates();
     }
