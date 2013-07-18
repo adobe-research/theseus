@@ -191,6 +191,13 @@ define(function (require, exports, module) {
         _refresh: function () { return this._agent.logCount(this._rawHandle) },
     });
 
+    var FileCallGraphAggregateHandle = makeAggregateHandleConstructor({
+        _open: function () { return this._agent.trackFileCallGraph() },
+        _free: function () { this._agent.untrackFileCallGraph(this._rawHandle) },
+        _refresh: function () { return this._agent.fileCallGraphDelta(this._rawHandle) },
+        _isEmpty: function (data) { return data.length === 0 },
+    });
+
     /**
      * returns an object on which you can listen for 'data' events.
      * historical data will be sent with the first 'data' event.
@@ -219,8 +226,14 @@ define(function (require, exports, module) {
         return new ConsoleLogsAggregateHandle(updateInterval);
     }
 
+    function trackFileCallGraph(updateInterval) {
+        updateInterval || (updateInterval = 1000);
+        return new FileCallGraphAggregateHandle(updateInterval);
+    }
+
     exports.trackEpochs = trackEpochs;
     exports.trackNodes = trackNodes;
     exports.trackExceptions = trackExceptions;
     exports.trackConsoleLogs = trackConsoleLogs;
+    exports.trackFileCallGraph = trackFileCallGraph;
 });

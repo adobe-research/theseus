@@ -39,6 +39,7 @@ define(function (require, exports, module) {
     var Commands           = brackets.getModule("command/Commands");
     var Dialogs            = brackets.getModule("widgets/Dialogs");
     var EpochPanel         = require("EpochPanel");
+    var FileCallGraphPanel = require("FileCallGraphPanel");
     var EditorInterface    = require("EditorInterface");
     var ExtensionUtils     = brackets.getModule("utils/ExtensionUtils");
     var Invitation         = require("Invitation");
@@ -213,6 +214,7 @@ define(function (require, exports, module) {
         UI.init();
         Panel.init();
         EpochPanel.init();
+        FileCallGraphPanel.init();
 
         // after a short delay, show 'Thank you!' popup if they haven't seen it
         setTimeout(function () {

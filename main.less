@@ -319,6 +319,58 @@
     }
 }
 
+#theseus-fcg-panel {
+    height: 82px;
+    min-height: 82px;
+    max-height: 82px;
+    background: white;
+    padding: 0;
+    position: relative;
+
+    .container {
+        position: absolute;
+        width: 78px;
+        top: 80px;
+        left: 0;
+        -webkit-transform-origin: 0 0;
+        -webkit-transform: rotate(-90deg);
+        overflow: hidden;
+    }
+    .container > .item {
+        width: 67px;
+    }
+    .caption {
+        margin-top: 12px;
+        margin-left: 3px;
+        padding: 0;
+        line-height: 0;
+        font-family: sans-serif;
+        font-size: 12px;
+        white-space: pre;
+    }
+    .item {
+        min-height: 6px;
+        padding: 0 6px 0 0;
+        margin: 6px 0;
+        border-radius: 0 3px 3px 0;
+        border-style: solid;
+        border-color: rgba(0, 0, 0, 0.5);
+        border-width: 1px 1px 1px 0;
+        cursor: pointer;
+    }
+    .item.active {
+        border-color: black;
+        box-shadow: 0 0 6px 2px rgba(0, 0, 0, 1);
+    }
+    .tooltip {
+        display: none;
+        position: absolute;
+        border: 2px solid black;
+        border-radius: 4px;
+        padding: 4px;
+    }
+}
+
 .theseus-popup {
     background: #fff;
     border: 1px solid #ddd;

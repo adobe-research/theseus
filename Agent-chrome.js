@@ -506,6 +506,18 @@ define(function (require, exports, module) {
         return d.reject().promise();
     }
 
+    function trackFileCallGraph() {
+        return _invokePromise("trackFileCallGraph");
+    }
+
+    function untrackFileCallGraph(handle) {
+        return _invokePromise("untrackFileCallGraph", [{ value: handle }]);
+    }
+
+    function fileCallGraphDelta(handle) {
+        return _invokePromise("fileCallGraphDelta", [{ value: handle }]);
+    }
+
     function refreshLogs(handle, maxResults, callback) {
         _invoke("logDelta", [{ value: handle }, { value: maxResults }], function (results) {
             if (results) {
@@ -570,6 +582,10 @@ define(function (require, exports, module) {
     exports.exceptionDelta = exceptionDelta; // XXX: uses promises
 
     exports.trackEpochs = trackEpochs; // XXX: uses promises
+
+    exports.trackFileCallGraph = trackFileCallGraph; // XXX: uses promises
+    exports.untrackFileCallGraph = untrackFileCallGraph; // XXX: uses promises
+    exports.fileCallGraphDelta = fileCallGraphDelta; // XXX: uses promises
 
     exports.trackNodes = trackNodes; // XXX: uses promises
     exports.untrackNodes = untrackNodes;

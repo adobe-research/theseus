@@ -341,6 +341,10 @@ define(function (require, exports, module) {
         untrackExceptions: "untrackExceptions",
         exceptionDelta: "newExceptions",
 
+        trackFileCallGraph: "trackFileCallGraph",
+        untrackFileCallGraph: "untrackFileCallGraph",
+        fileCallGraphDelta: "fileCallGraphDelta",
+
         logCount: "logCount",
     };
     for (var fname in trackerFunctions) {
