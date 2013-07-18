@@ -35,40 +35,17 @@
  */
 
 define(function (require, exports, module) {
-    var Agent                = require("Agent");
-    var AppInit              = brackets.getModule("utils/AppInit");
-    var ExtensionUtils       = brackets.getModule("utils/ExtensionUtils");
-    var Fsm                  = require("fsm").Fsm;
-    var Inspector            = brackets.getModule("LiveDevelopment/Inspector/Inspector");
-    var LiveDevServerManager = brackets.getModule("LiveDevelopment/LiveDevServerManager");
-    var NodeConnection       = brackets.getModule("utils/NodeConnection");
-    var ProjectManager       = brackets.getModule("project/ProjectManager");
-    var Util                 = require("Util");
-    var main                 = require("main");
+    var Agent     = require("Agent");
+    var AppInit   = brackets.getModule("utils/AppInit");
+    var Fsm       = require("fsm").Fsm;
+    var Inspector = brackets.getModule("LiveDevelopment/Inspector/Inspector");
+    var main      = require("main");
 
     var $exports = $(exports);
 
-    var _proxyURL;
     var _tracerObjectId;
     var _defaultTrackingHandle, _defaultExceptionTrackingHandle;
     var _queuedScripts;
-    var _proxyServerProvider;
-
-    /**
-     * @private
-     * @type{jQuery.Deferred.<NodeConnection>}
-     * A deferred which is resolved with a NodeConnection or rejected if
-     * we are unable to connect to Node.
-     */
-    var _nodeConnectionDeferred = new $.Deferred();
-
-    /**
-     * @const
-     * Amount of time to wait before automatically rejecting the connection
-     * deferred. If we hit this timeout, we'll never have a node connection
-     * for the static server in this run of Brackets.
-     */
-    var NODE_CONNECTION_TIMEOUT = 30000; // 30 seconds
 
     var TRACER_NAME = "tracer";
 
@@ -81,7 +58,7 @@ define(function (require, exports, module) {
 
     var fsm = new Fsm({
         waitingForApp: {
-            appReady:              function () { _resetAll(); _startProxy(); this.goto("disconnected"); },
+            appReady:              function () { _resetAll(); this.goto("disconnected"); },
         },
         disconnected: {
             enter:                 function () { _resetConnection(); },
@@ -124,88 +101,6 @@ define(function (require, exports, module) {
             inspectorDisconnected: function () { this.goto("disconnected"); },
         },
     }, "waitingForApp");
-
-    function ProxyServerProvider() {
-    }
-    ProxyServerProvider.prototype = {
-        canServe: function (localPath) {
-            return main.isEnabled() && fsm.state !== "waitingForApp";
-        },
-
-        readyToServe: function () {
-            var readyToServeDeferred = new $.Deferred();
-
-            _nodeConnectionDeferred.done(function (nodeConnection) {
-                if (nodeConnection.connected()) {
-                    nodeConnection.domains.theseusServer.getServer(
-                        ProjectManager.getProjectRoot().fullPath,
-                        main.getModeName()
-                    ).done(function (address) {
-                        _proxyURL = "http://" + address.address + ":" + address.port + "/";
-                        readyToServeDeferred.resolve();
-                    }).fail(function () {
-                        _proxyURL = undefined;
-                        readyToServeDeferred.reject();
-                    });
-                } else {
-                    // nodeConnection has been connected once (because the deferred
-                    // resolved, but is not currently connected).
-                    //
-                    // If we are in this case, then the node process has crashed
-                    // and is in the process of restarting. Once that happens, the
-                    // node connection will automatically reconnect and reload the
-                    // domain. Unfortunately, we don't have any promise to wait on
-                    // to know when that happens. The best we can do is reject this
-                    // readyToServe so that the user gets an error message to try
-                    // again later.
-                    //
-                    // The user will get the error immediately in this state, and
-                    // the new node process should start up in a matter of seconds
-                    // (assuming there isn't a more widespread error). So, asking
-                    // them to retry in a second is reasonable.
-                    readyToServeDeferred.reject();
-                }
-            });
-
-            _nodeConnectionDeferred.fail(function () {
-                readyToServeDeferred.reject();
-            });
-
-            return readyToServeDeferred.promise();
-        },
-
-        getBaseUrl: function () {
-            return _proxyURL;
-        },
-    };
-
-    function _startProxy() {
-        _proxyServerProvider = new ProxyServerProvider;
-        LiveDevServerManager.registerProvider(_proxyServerProvider, 10);
-
-        // initialize Node connection
-        var connectionTimeout = setTimeout(function () {
-            console.error("[StaticServer] Timed out while trying to connect to node");
-            _nodeConnectionDeferred.reject();
-        }, NODE_CONNECTION_TIMEOUT);
-
-        var nodeConnection = new NodeConnection();
-        nodeConnection.connect(true).then(function () {
-            nodeConnection.loadDomains(
-                [ExtensionUtils.getModulePath(module, "proxy/ProxyDomain")],
-                true
-            ).then(
-                function () {
-                    clearTimeout(connectionTimeout);
-                    _nodeConnectionDeferred.resolveWith(null, [nodeConnection]);
-                },
-                function () { // Failed to connect
-                    console.error("[StaticServer] Failed to connect to node", arguments);
-                    _nodeConnectionDeferred.reject();
-                }
-            );
-        });
-    }
 
     function _connectToTracer() {
         Inspector.Runtime.evaluate(TRACER_NAME + ".connect()", function (res) {
@@ -351,7 +246,6 @@ define(function (require, exports, module) {
     }
 
     function _resetAll() {
-        _proxyURL = undefined;
         _resetConnection();
     }
 

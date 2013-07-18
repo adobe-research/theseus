@@ -48,6 +48,7 @@ define(function (require, exports, module) {
     var NativeFileSystem   = brackets.getModule("file/NativeFileSystem").NativeFileSystem;
     var Panel              = require("Panel");
     var PreferencesManager = brackets.getModule("preferences/PreferencesManager")
+    var ProxyProvider      = require("ProxyProvider");
     var Strings            = require("strings");
     var UI                 = require("UI");
     var Usage              = require("Usage");
@@ -208,6 +209,7 @@ define(function (require, exports, module) {
         ExtensionUtils.loadStyleSheet(module, "main.less");
 
         Usage.init();
+        ProxyProvider.init();
         Agent.init();
         AgentManager.init();
         EditorInterface.init();
