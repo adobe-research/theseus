@@ -87,7 +87,6 @@
     }
 
     function _makeAccept(pathExcludeRegexp) {
-        console.log("it is " + pathExcludeRegexp)
         return function (req, contentType) {
             if (pathExcludeRegexp && pathExcludeRegexp.test(req.url)) {
                 return false;
