@@ -133,7 +133,14 @@
                 content = content.slice(0, loc.start) + _instrument(prefix + script, { path: path, include_prefix: false }) + content.slice(loc.end);
             }
 
-            content = '<script>\n' + fondue.instrumentationPrefix() + '\n</script>\n' + content;
+            var doctype = '';
+            var doctypeMatch = /^(<!doctype[^\n]+\n)/i.exec(content);
+            if (doctypeMatch) {
+                doctype = doctypeMatch[1];
+                content = content.slice(doctypeMatch[1].length);
+            }
+
+            content = doctype + '<script>\n' + fondue.instrumentationPrefix() + '\n</script>\n' + content;
             return content;
         }
     }
