@@ -129,8 +129,7 @@
             for (var i = scriptLocs.length - 1; i >= 0; i--) {
                 var loc = scriptLocs[i];
                 var script = content.slice(loc.start, loc.end);
-                var prefix = content.slice(0, loc.start).replace(/[^\n]/g, ' '); // padding it out so line numbers make sense
-                content = content.slice(0, loc.start) + _instrument(prefix + script, { path: path, include_prefix: false }) + content.slice(loc.end);
+                content = content.slice(0, loc.start) + _instrument(script, { path: path, include_prefix: false }) + content.slice(loc.end);
             }
 
             var doctype = '';
