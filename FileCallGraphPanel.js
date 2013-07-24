@@ -26,7 +26,9 @@
 /*global define */
 
 define(function (require, exports, module) {
+    var Agent        = require("Agent");
     var AgentHandle  = require("AgentHandle");
+    var EditorInterface = require("EditorInterface");
     var PanelManager = brackets.getModule("view/PanelManager");
     var UI           = require("UI");
 
@@ -153,6 +155,17 @@ define(function (require, exports, module) {
         }, function () {
             // $tooltip.fadeOut();
             $("." + className).removeClass("active");
+        });
+
+        $dom.on("click", function (e) {
+            e.stopPropagation();
+            var f = Agent.functionWithId(node.nodeId);
+            EditorInterface.revealFunction(f, function () {
+                EditorInterface.currentEditor()._codeMirror.setSelection(
+                    { line: f.start.line - 1, ch: f.start.column },
+                    { line: f.end.line - 1, ch: f.end.column }
+                );
+            });
         });
 
         node.children.forEach(function (child) {
