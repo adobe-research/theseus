@@ -144,26 +144,30 @@ define(function (require, exports, module) {
     }
 
     function _debugBrackets() {
-        ProxyProvider.getServer("/", "static").done(function (proxy) {
-            Inspector.getDebuggableWindows("127.0.0.1", 9234).done(function (response) {
-                var keys = Object.keys(response).sort(function (a, b) { return parseInt(a, 10) - parseInt(b, 10); });
-                if (keys.length > 0) {
-                    // pick the last page
-                    var page = response[keys[keys.length - 1]];
+        CommandManager.execute("debug.newBracketsWindow").done(function () {
+            ProxyProvider.getServer("/", "static").done(function (proxy) {
+                Inspector.getDebuggableWindows("127.0.0.1", 9234).done(function (response) {
+                    var keys = Object.keys(response).sort(function (a, b) { return parseInt(a, 10) - parseInt(b, 10); });
+                    if (keys.length > 0) {
+                        // pick the last page
+                        var page = response[keys[keys.length - 1]];
 
-                    var redirect = function () {
-                        Inspector.off("connect", redirect);
-                        Inspector.Runtime.evaluate("window.location = " + JSON.stringify(proxy.proxyRootURL + window.location.pathname), function () {});
-                    };
-                    Inspector.on("connect", redirect);
+                        var redirect = function () {
+                            Inspector.off("connect", redirect);
+                            Inspector.Runtime.evaluate("window.location = " + JSON.stringify(proxy.proxyRootURL + window.location.pathname), function () {});
+                        };
+                        Inspector.on("connect", redirect);
 
-                    Inspector.connect(page.webSocketDebuggerUrl);
-                }
+                        Inspector.connect(page.webSocketDebuggerUrl);
+                    }
+                }).fail(function onFail(err) {
+                    console.log("getting debuggable windows failed: " + err);
+                });
             }).fail(function onFail(err) {
-                console.log("getting debuggable windows failed: " + err);
+                console.log("getting / proxy server failed: " + err);
             });
         }).fail(function onFail(err) {
-            console.log("getting / proxy server failed: " + err);
+            console.log("open brackets window failed: " + err);
         });
     }
 
