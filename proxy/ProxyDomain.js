@@ -82,7 +82,7 @@
         if (digest in _instrumentedFileCache) {
             return _instrumentedFileCache[digest];
         } else {
-            return _instrumentedFileCache[digest] = fondue.instrument.apply(fondue, arguments);
+            return _instrumentedFileCache[digest] = fondue.instrument.apply(fondue, arguments).toString();
         }
     }
 
