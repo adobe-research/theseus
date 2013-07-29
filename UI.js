@@ -361,6 +361,7 @@ define(function (require, exports, module) {
 
             this.$dom.on("click", ".vars-table .objects-bad", function () {
                 alert("You can't inspect this object any deeper.");
+                $exports.triggerHandler("_inspectionLimitReached");
             });
 
             // http://stackoverflow.com/questions/8858994/let-user-scrolling-stop-jquery-animation-of-scrolltop

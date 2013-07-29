@@ -205,6 +205,7 @@ define(function (require, exports, module) {
         $(UI).on("_gutterCallCountClicked", function (e, node) { _recordEvent("Gutter Call Count Clicked", { nodeType: node.type }); });
         $(UI).on("_functionAddedToQuery", function (ev, o) { _recordEvent("Function Added To Query"); });
         $(UI).on("_functionRemovedFromQuery", function (ev, o) { _recordEvent("Function Removed From Query"); });
+        $(UI).on("_inspectionLimitReached", function () { _recordEvent("Inspection Limit Reached"); });
     }
 
     function _start() {
