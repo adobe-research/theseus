@@ -156,7 +156,6 @@ define(function (require, exports, module) {
         var nodeId = $(this).attr("data-node-id");
         var node = Agent.functionWithId(nodeId);
         var editor = EditorInterface.currentEditor();
-        console.log("over", node, editor)
 
         if (node && editor) {
             var from = { line: node.start.line - 1, ch: node.start.column };
