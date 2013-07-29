@@ -80,6 +80,15 @@ define(function (require, exports, module) {
 		$panel = $("<div id='theseus-panel' class='bottom-panel vert-resizable top-resizer' />").insertAfter(".bottom-panel:last");
 		$toolbar = $("<div class='toolbar simple-toolbar-layout' />").appendTo($panel);
 		$("<div class='title' />").appendTo($toolbar).text("Log");
+		var $close = $("<a class='close' />").appendTo($toolbar).html("&times;")
+
+		$close.on("click", function () {
+			if (_panel.close) {
+				_panel.close();
+			} else {
+				toggle(false);
+			}
+		});
 
 		$(Main).on("enable", _enable);
 		$(Main).on("disable", _disable);

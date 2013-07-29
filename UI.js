@@ -42,7 +42,7 @@ define(function (require, exports, module) {
     var _functionsInFile = [];
     var _deadCodeMarks = {}; // node id -> mark
     var _logHandle;
-    var _loggedNodes = [], _loggedEventNames = [], _loggingExceptions = false, _loggingConsoleLogs = false;;
+    var _loggedNodes = [], _loggedEventNames = [], _loggingExceptions = false, _loggingConsoleLogs = false;
     var _nodeGlyphs = {}; // node id -> glyph object
     var _variablesPanel;
 
@@ -384,6 +384,20 @@ define(function (require, exports, module) {
 
         remove: function () {
             this.$dom.remove();
+        },
+
+        close: function () {
+            _loggedNodes = [];
+            _loggedEventNames = [];
+            _loggingExceptions = false;
+            _loggingConsoleLogs = false;
+
+            _resetLogQuery();
+            _refreshLogQuery();
+            _showPanelIfAppropriate();
+            _triggerQueryChangeEvent();
+
+            $(".theseus-call-count").removeClass("set");
         },
 
         clearLogs: function () {
