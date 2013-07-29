@@ -22,6 +22,17 @@
  *
  */
 
+/* Change the settings for user-select and its counterparts, defaulting to none. */
+/* (copied from brackets_mixins.less) */
+.user-select(@type: none) {
+    -webkit-user-select: @type;
+    -khtml-user-select: @type;
+    -moz-user-select: @type;
+    -ms-user-select: @type;
+    -o-user-select: @type;
+    user-select: @type;
+}
+
 .CodeMirror {
     .CodeMirror-linenumbers {
         width: 60px;
@@ -255,6 +266,11 @@
 
         .objects-bad {
             cursor: not-allowed;
+        }
+
+        .theseus-selectable {
+            .user-select(text);
+            cursor: text;
         }
     }
 

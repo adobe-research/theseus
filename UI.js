@@ -500,14 +500,14 @@ define(function (require, exports, module) {
             var $container = $("<div />").addClass("source-" + log.source);
             var $table = $("<table class='vars-table' />").appendTo($container);
             var $row1 = $("<tr />").appendTo($table);
-            var $nameCell = $("<th class='fn' />").appendTo($row1);
+            var $nameCell = $("<th class='fn' />").addClass("theseus-selectable").appendTo($row1);
             var $timeCell = $("<th class='timestamp' />").appendTo($row1);
 
             $nameCell.append(_svgForGlyph(_nodeGlyph(log.nodeId)));
 
             var ts = new Date();
             ts.setTime(log.timestamp);
-            $timeCell.text(moment(ts).format("h:mm:ss.SSS"));
+            $timeCell.addClass("theseus-selectable").text(moment(ts).format("h:mm:ss.SSS"));
 
             if (log.nodeId === "log") {
                 $nameCell.append("console.log")
@@ -530,7 +530,7 @@ define(function (require, exports, module) {
                     $row1.append($("<td />").append(this._valueDom(arg.value)));
                 } else {
                     var name = arg.name || ("arguments[" + i + "]");
-                    $row1.append($("<td />").append($("<strong />").text(name + " = "))
+                    $row1.append($("<td />").append($("<strong />").addClass("theseus-selectable").text(name + " = "))
                                             .append(this._valueDom(arg.value)));
                 }
             }
@@ -542,7 +542,7 @@ define(function (require, exports, module) {
                                         .append(this._valueDom(log.exception, { wholePreview: true })));
             }
             if (log.this) {
-                $row1.append($("<td />").append($("<strong />").text("this = "))
+                $row1.append($("<td />").append($("<strong />").addClass("theseus-selectable").text("this = "))
                                         .append(this._valueDom(log.this)));
             }
 
@@ -567,13 +567,13 @@ define(function (require, exports, module) {
 
         _valueDom: function (val, options) {
             if (val.type === "number" || val.type === "boolean") {
-                return $("<span />").text(val.value);
+                return $("<span />").addClass("theseus-selectable").text(val.value);
             } else if (val.type === "string") {
-                return $("<span />").text(JSON.stringify(val.value));
+                return $("<span />").addClass("theseus-selectable").text(JSON.stringify(val.value));
             } else if (val.type === "undefined") {
-                return $("<span />").text("undefined");
+                return $("<span />").addClass("theseus-selectable").text("undefined");
             } else if (val.type === "null") {
-                return $("<span />").text("null");
+                return $("<span />").addClass("theseus-selectable").text("null");
             } else if (val.type === "object") {
                 return this._objectInspectorDom(val, options);
             } else if (val.type === "function") {

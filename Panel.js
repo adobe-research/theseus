@@ -77,7 +77,7 @@ define(function (require, exports, module) {
 
 	/** Initialize the panel */
 	function init() {
-		$panel = $("<div id='theseus-panel' class='bottom-panel vert-resizable top-resizer no-focus' />").insertAfter(".bottom-panel:last");
+		$panel = $("<div id='theseus-panel' class='bottom-panel vert-resizable top-resizer' />").insertAfter(".bottom-panel:last");
 		$toolbar = $("<div class='toolbar simple-toolbar-layout' />").appendTo($panel);
 		$("<div class='title' />").appendTo($toolbar).text("Log");
 
