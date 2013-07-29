@@ -47,7 +47,7 @@ define(function (require, exports, module) {
     var _defaultTrackingHandle, _defaultExceptionTrackingHandle;
     var _queuedScripts;
 
-    var TRACER_NAME = "tracer";
+    var TRACER_NAME = "__tracer";
 
     // instrumentation data
     var _nodes = {}; // id (string) -> {id: string, path: string, start: {line, column}, end: {line, column}, name: string (optional)}
