@@ -195,6 +195,7 @@ define(function (require, exports, module) {
     function _listenForEvents() {
         $(Main).on("enable", function () { _recordEvent("Theseus Enable"); _registerProperties({ theseusEnabled: true }); });
         $(Main).on("disable", function () { _recordEvent("Theseus Disable"); _registerProperties({ theseusEnabled: false }); });
+        $(Main).on("modeChange", function (e, modeName) { _recordEvent("Theseus Mode Change", { newMode: modeName }); _registerProperties({ mode: modeName }); });
 
         $(NodeAgent).on("connect", function () { _recordEvent("Node.js Connected"); _registerProperties({ nodeConnected: true }); })
         $(NodeAgent).on("disconnect", function () { _registerProperties({ nodeConnected: false }); _recordEvent("Node.js Disconnected"); })

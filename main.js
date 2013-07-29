@@ -129,7 +129,10 @@ define(function (require, exports, module) {
     }
 
     function _setModeHandler(modeName) {
-        return function () { _setMode(modeName); };
+        return function () {
+            _setMode(modeName);
+            $exports.triggerHandler("modeChange", modeName);
+        };
     }
 
     function _sendFeedback() {
