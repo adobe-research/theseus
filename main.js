@@ -46,6 +46,7 @@ define(function (require, exports, module) {
     var ExtensionUtils     = brackets.getModule("utils/ExtensionUtils");
     var Invitation         = require("Invitation");
     var Inspector          = brackets.getModule("LiveDevelopment/Inspector/Inspector");
+    var LiveDevelopment    = brackets.getModule("LiveDevelopment/LiveDevelopment");
     var Menus              = brackets.getModule("command/Menus");
     var NativeApp          = brackets.getModule("utils/NativeApp");
     var NativeFileSystem   = brackets.getModule("file/NativeFileSystem").NativeFileSystem;
@@ -269,6 +270,22 @@ define(function (require, exports, module) {
         setTimeout(function () {
             Invitation.showInvitationIfNecessary();
         }, 1000);
+
+        $(LiveDevelopment).on("statusChange", function (e, status) {
+            if (status === 1) { // "Connecting to the remote debugger"
+                setTimeout(function () {
+                    var $btnGoLive = $("#toolbar-go-live");
+
+                    $btnGoLive.twipsy("hide").removeData("twipsy");
+                    $btnGoLive.twipsy({
+                        placement: "left",
+                        trigger: "manual",
+                        autoHideDelay: 5000,
+                        title: function () { return "Live development has been started with Theseus in " + _mode.name.toUpperCase() + " mode." },
+                    }).twipsy("show");
+                }, 1000);
+            }
+        });
 
         if (_enabled) { // enable now if enabled in preferences
             _enable();
