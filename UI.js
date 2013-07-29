@@ -400,6 +400,13 @@ define(function (require, exports, module) {
             $(".theseus-call-count").removeClass("set");
         },
 
+        toggled: function (show) {
+            if (!show) {
+                this.$backtrace.hide();
+                this.$log.show();
+            }
+        },
+
         clearLogs: function () {
             if (this.$log) this.$log.empty();
             this._reset();

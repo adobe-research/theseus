@@ -65,6 +65,9 @@ define(function (require, exports, module) {
 			Resizer.hide($panel.get(0));
 		}
 		$panel.toggle(show);
+		if (_panel && _panel.toggled) {
+			_panel.toggled(Resizer.isVisible($panel.get(0)));
+		}
 	}
 
 	function _enable() {
