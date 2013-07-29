@@ -151,6 +151,28 @@ define(function (require, exports, module) {
         _triggerQueryChangeEvent();
     }
 
+    var pillHoverMarker;
+    function _gutterCallCountMouseOver(e) {
+        var nodeId = $(this).attr("data-node-id");
+        var node = Agent.functionWithId(nodeId);
+        var editor = EditorInterface.currentEditor();
+        console.log("over", node, editor)
+
+        if (node && editor) {
+            var from = { line: node.start.line - 1, ch: node.start.column };
+            var to = { line: node.end.line - 1, ch: node.end.column };
+            var markOptions = { className: 'theseus-hover-marker' };
+            pillHoverMarker = editor._codeMirror.markText(from, to, markOptions);
+        }
+    }
+
+    function _gutterCallCountMouseOut(e) {
+        if (pillHoverMarker) {
+            pillHoverMarker.clear();
+        }
+        pillHoverMarker = undefined;
+    }
+
     function _editorChanged(event, editor, oldEditor, path) {
         function cleanupEditor(editor) {
             // clear old marks
@@ -161,9 +183,6 @@ define(function (require, exports, module) {
 
             // clear all gutter markers
             editor._codeMirror.clearGutter("CodeMirror-linenumbers");
-
-            // unregister event handlers
-            $(editor._codeMirror.getWrapperElement()).off("click", ".theseus-call-count", _gutterCallCountClicked);
 
             // reset to default values
             _functionsInFile = [];
@@ -727,6 +746,8 @@ define(function (require, exports, module) {
         $(EditorInterface).on("editorChanged", _editorChanged);
 
         $(document).on("click", ".theseus-call-count", _gutterCallCountClicked);
+        $(document).on("mouseover", ".theseus-call-count", _gutterCallCountMouseOver);
+        $(document).on("mouseout", ".theseus-call-count", _gutterCallCountMouseOut);
 
         $(EpochPanel).on("eventNameClicked", function (ev, name) {
             var i = _loggedEventNames.indexOf(name);
