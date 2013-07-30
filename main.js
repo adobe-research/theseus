@@ -90,7 +90,7 @@ define(function (require, exports, module) {
     var NAME_THESEUS_ENABLE = "Enable Theseus";
 
     var ID_THESEUS_DEBUG_BRACKETS = "brackets.theseus.debug-brackets";
-    var NAME_THESEUS_DEBUG_BRACKETS = "Debug Brackets";
+    var NAME_THESEUS_DEBUG_BRACKETS = "Debug Brackets with Theseus";
 
     var ID_THESEUS_MODES = _orderedModes.map(function (mode) { return "brackets.theseus.mode." + mode.name; });
     var NAME_THESEUS_MODES = _orderedModes.map(function (mode) { return "   Mode: " + mode.displayName; });
