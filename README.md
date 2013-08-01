@@ -3,7 +3,7 @@ Theseus
 
 Theseus is a new type of JavaScript debugger for Node.js, Chrome, and both simultaneously. It is an extension for the [Brackets](https://github.com/adobe/brackets) code editor.
 
-Theseus is part of a collaboration between the [User Interface Design Group at MIT CSAIL](http://groups.csail.mit.edu/uid/) and [Adobe Research](http://research.adobe.com/).
+Theseus is part of a collaboration between the [User Interface Design Group at MIT CSAIL](http://groups.csail.mit.edu/uid/) and [Adobe Research](http://research.adobe.com/). Though it's a research project, I'm doing the best I can engineering-wise and I'm responsive to bug reports and feature requests. Patches welcome!
 
 ![Screenshot of Theseus](https://raw.github.com/adobe-research/theseus/gh-pages/screenshot.png)
 
