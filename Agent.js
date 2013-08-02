@@ -83,8 +83,35 @@ define(function (require, exports, module) {
         ];
     }
 
+    function _longestSharedSuffix(a, b) {
+        var s = [];
+        var minLength = Math.min(a.length, b.length);
+        for (var i = 0; i < minLength; i++) {
+            var c1 = a[a.length - 1 - i];
+            var c2 = b[b.length - 1 - i];
+            if (c1 === c2) {
+                s.unshift(c1)
+            } else {
+                return s;
+            }
+        }
+        return s;
+    }
+
     function couldBeRemotePath(localPath, remotePath) {
-        return possibleRemotePathsForLocalPath(localPath).indexOf(remotePath) !== -1;
+        var possibleRemotePaths = possibleRemotePathsForLocalPath(localPath);
+        if (possibleRemotePaths.indexOf(remotePath) !== -1) {
+            return true;
+        }
+
+        // if the file name and the name of the parent match, maybe it's the same file
+        var localPathComponents = localPath.split("/");
+        var remotePathComponents = remotePath.split("/");
+        if (_longestSharedSuffix(localPathComponents, remotePathComponents).length >= 2) {
+            return true;
+        }
+
+        return false;
     }
 
     function functionWithId(fid) {

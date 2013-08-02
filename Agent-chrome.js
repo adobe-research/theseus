@@ -315,11 +315,12 @@ define(function (require, exports, module) {
     }
 
     function functionsInFile(path) {
-        var possibleRemotePaths = Agent.possibleRemotePathsForLocalPath(path);
-        for (var i in possibleRemotePaths) {
-            var nodes = _nodesByFilePath[possibleRemotePaths[i]];
-            if (nodes) {
-                return nodes.filter(function (n) { return n.type === "function" });
+        for (var remotePath in _nodesByFilePath) {
+            if (Agent.couldBeRemotePath(path, remotePath)) {
+                var nodes = _nodesByFilePath[remotePath];
+                if (nodes) {
+                    return nodes.filter(function (n) { return n.type === "function" });
+                }
             }
         }
         return [];
