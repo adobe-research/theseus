@@ -125,6 +125,10 @@
                 }
             }
 
+            if (scriptLocs.length === 0) {
+                return content;
+            }
+
             // process the scripts in reverse order
             for (var i = scriptLocs.length - 1; i >= 0; i--) {
                 var loc = scriptLocs[i];
