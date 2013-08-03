@@ -32,14 +32,14 @@ define(function (require, exports, module) {
     }
     Fsm.prototype = {
         goto: function (state) {
-            console.log("fsm: -> " + state);
+            console.log("[theseus] fsm: -> " + state);
             this.trigger("exit");
             this.state = state;
             this.trigger("enter");
         },
         trigger: function (eventName) {
             var args = Array.prototype.slice.apply(arguments).slice(1);
-            // console.log("fsm: !! " + eventName, args);
+            // console.log("[theseus] fsm: !! " + eventName, args);
             if (this.desc[this.state] && (eventName in this.desc[this.state])) {
                 this.desc[this.state][eventName].apply(this, args);
             }
