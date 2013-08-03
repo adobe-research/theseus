@@ -162,7 +162,8 @@ define(function (require, exports, module) {
 
                 var redirect = function () {
                     Inspector.off("connect", redirect);
-                    Inspector.Runtime.evaluate("window.location = " + JSON.stringify(_proxy.proxyRootURL + window.location.pathname), function () {});
+                    var redirectTo = _proxy.proxyRootURL + (window.location.pathname[0] === "/" ? window.location.pathname.slice(1) : window.location.pathname)
+                    Inspector.Runtime.evaluate("window.location = " + JSON.stringify(redirectTo), function () {});
                 };
                 Inspector.on("connect", redirect);
 
