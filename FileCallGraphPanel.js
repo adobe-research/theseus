@@ -151,10 +151,14 @@ define(function (require, exports, module) {
             //     top: e.pageY + 12,
             //     left: e.pageX + 12,
             // });
-            $("." + className).addClass("active");
+
+            // $("." + className).addClass("active");
+            $dom.addClass("active");
         }, function () {
             // $tooltip.fadeOut();
-            $("." + className).removeClass("active");
+
+            // $("." + className).removeClass("active");
+            $dom.removeClass("active");
         });
 
         $dom.on("click", function (e) {
