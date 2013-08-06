@@ -201,7 +201,8 @@ define(function (require, exports, module) {
             $container.empty();
             // erase and render all of them
         }
-        $panel.animate({ scrollLeft: $panel[0].scrollWidth }, { duration: 200 });
+        // $panel.animate({ scrollLeft: $panel[0].scrollWidth }, { duration: 200 });
+        $panel.scrollLeft($panel[0].scrollWidth);
     }
 
     function _setPanelVisibility() {
