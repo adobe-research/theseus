@@ -72,6 +72,7 @@ define(function (require, exports, module) {
                     }
                 }.bind(this)).fail(function () {
                     console.log('[theseus] refresh failed');
+                    $(this).triggerHandler("error");
                 }.bind(this)).always(function () {
                     setTimeout(this._refreshPeriodically.bind(this), this._interval);
                 }.bind(this));
@@ -113,6 +114,11 @@ define(function (require, exports, module) {
 
             $(handle).on("data", function (ev, data) {
                 $(this).triggerHandler("data", [{ agent: agent, data: data }]);
+            }.bind(this));
+
+            $(handle).on("error", function (ev, data) {
+                handle.close();
+                this._agentConnected(agent);
             }.bind(this));
 
             $(handle).on("close", function (ev) {
