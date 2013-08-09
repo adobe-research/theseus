@@ -85,7 +85,11 @@ define(function (require, exports, module) {
             }
 
             if (resp.id in this._requests) {
-                this._requests[resp.id].resolve(resp.data);
+                if ("data" in resp) {
+                    this._requests[resp.id].resolve(resp.data);
+                } else {
+                    this._requests[resp.id].reject();
+                }
                 delete this._requests[resp.id];
             }
         },
