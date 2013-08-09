@@ -29,7 +29,7 @@
  var proxyMiddleware = require('middleware-proxy');
  var app = connect().use(proxyMiddleware(rootDir, {
    accept: function (req, contentType) { return true },
-   filter: function (req, contentType, content) { return content.replace(/foo/g, 'bar') }
+   filter: function (req, realPath, contentType, content) { return content.replace(/foo/g, 'bar') }
  }));
  */
 
@@ -71,7 +71,7 @@ module.exports = function (root, options) {
     var _end = res.end;
     res.end = function () {
       if (_process) {
-        var processedContent = options.filter(req, _contentType, _content);
+        var processedContent = options.filter(req, undefined, _contentType, _content);
         _headers['content-length'] = Buffer.byteLength(processedContent, 'utf8');
         _writeHead.call(res, _code, _headers);
         _write.call(res, processedContent);

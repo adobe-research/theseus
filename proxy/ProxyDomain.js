@@ -100,8 +100,8 @@
         };
     }
 
-    function _filter(req, contentType, content) {
-        var path = unescape(url.parse(req.url, true).pathname.slice(1));
+    function _filter(req, realPath, contentType, content) {
+        var path = realPath || unescape(url.parse(req.url, true).pathname.slice(1));
         if (path === "config/index.html") {
             return "<META http-equiv=\"refresh\" content=\"0;URL=/\">";
         } else if (contentType == 'application/javascript') {

@@ -37,7 +37,7 @@
  var staticMiddleware = require('middleware-static');
  var app = connect().use(staticMiddleware(rootDir, {
    accept: function (req, contentType) { return true },
-   filter: function (req, contentType, content) { return content.replace(/foo/g, 'bar') }
+   filter: function (req, realPath, contentType, content) { return content.replace(/foo/g, 'bar') }
  }));
  */
 
@@ -183,7 +183,7 @@ var send = exports.send = function(req, res, next, options){
     if (head) return res.end();
 
     if (options.accept(req, type)) {
-      var content = options.filter(req, type, fs.readFileSync(path, 'utf8'));
+      var content = options.filter(req, path, type, fs.readFileSync(path, 'utf8'));
       res.setHeader('Content-Length', Buffer.byteLength(content, 'utf8'));
       res.end(content);
       return;
