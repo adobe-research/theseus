@@ -52,7 +52,6 @@ define(function (require, exports, module) {
     var _hitsHandle, _exceptionsHandle;
     var _nodeHitCounts = {};
     var _nodeExceptionCounts = {};
-    var _queuedScripts = [];
     var $exports = $(exports);
 
     var REQUIRED_FONDUE_VERSION = JSON.parse(require("text!package.json")).dependencies.fondue;
@@ -167,7 +166,6 @@ define(function (require, exports, module) {
         _exceptionsHandle = undefined;
         _nodeHitCounts = {};
         _nodeExceptionCounts = {};
-        _queuedScripts = [];
     }
 
     function _connect() {
