@@ -219,7 +219,8 @@ define(function (require, exports, module) {
         menu.addMenuItem(ID_THESEUS_WELCOME_SCREEN, null, Menus.LAST, null);
 
         var fileMenu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
-        fileMenu.addMenuItem(ID_THESEUS_ENABLE, null, Menus.AFTER, Commands.FILE_LIVE_HIGHLIGHT);
+        fileMenu.addMenuDivider(Menus.LAST, null);
+        fileMenu.addMenuItem(ID_THESEUS_ENABLE, null, Menus.LAST, null);
         _orderedModes.forEach(function (mode, i) {
             var prev = (i == 0) ? ID_THESEUS_ENABLE : ID_THESEUS_MODES[i - 1];
             fileMenu.addMenuItem(ID_THESEUS_MODES[i], null, Menus.AFTER, prev);
