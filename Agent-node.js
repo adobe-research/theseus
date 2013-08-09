@@ -345,7 +345,7 @@ define(function (require, exports, module) {
             _reset();
 
             // clear the remote trace data
-            _invokePromise("resetTrace", []).then(function () {
+            _invokePromise("resetTrace", []).always(function () {
                 $exports.off("disconnect", detectRealDisconnect);
 
                 // if there wasn't a real disconnection in the meantime, simulate a reconnection
