@@ -278,7 +278,7 @@ define(function (require, exports, module) {
         UI.init();
         Panel.init();
         EpochPanel.init();
-        FileCallGraphPanel.init();
+        // FileCallGraphPanel.init();
 
         // after a short delay, show 'Thank you!' popup if they haven't seen it
         setTimeout(function () {
