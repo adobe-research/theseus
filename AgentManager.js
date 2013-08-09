@@ -67,6 +67,13 @@ define(function (require, exports, module) {
         return _connectedAgents.slice();
     }
 
+    function resetTrace() {
+        agents().forEach(function (agent) {
+            agent.resetTrace();
+        });
+    }
+
     exports.init = init;
     exports.agents = agents;
+    exports.resetTrace = resetTrace;
 });

@@ -92,6 +92,9 @@ define(function (require, exports, module) {
     var ID_THESEUS_DEBUG_BRACKETS = "brackets.theseus.debug-brackets";
     var NAME_THESEUS_DEBUG_BRACKETS = "Debug Brackets with Theseus";
 
+    var ID_THESEUS_RESET_TRACE = "brackets.theseus.reset-trace";
+    var NAME_THESEUS_RESET_TRACE = "Reset Theseus Trace Data (experimental)";
+
     var ID_THESEUS_MODES = _orderedModes.map(function (mode) { return "brackets.theseus.mode." + mode.name; });
     var NAME_THESEUS_MODES = _orderedModes.map(function (mode) { return "   Mode: " + mode.displayName; });
 
@@ -174,6 +177,10 @@ define(function (require, exports, module) {
         });
     }
 
+    function _resetTrace() {
+        AgentManager.resetTrace();
+    }
+
     function _loadPreferences() {
         _prefs = PreferencesManager.getPreferenceStorage("com.adobe.theseus", { enabled: true, mode: "static" });
         _enabled = _prefs.getValue("enabled");
@@ -205,6 +212,12 @@ define(function (require, exports, module) {
             _debugBrackets
         );
 
+        CommandManager.register(
+            NAME_THESEUS_RESET_TRACE,
+            ID_THESEUS_RESET_TRACE,
+            _resetTrace
+        );
+
         _orderedModes.forEach(function (mode, i) {
             CommandManager.register(
                 NAME_THESEUS_MODES[i],
@@ -225,6 +238,7 @@ define(function (require, exports, module) {
             var prev = (i == 0) ? ID_THESEUS_ENABLE : ID_THESEUS_MODES[i - 1];
             fileMenu.addMenuItem(ID_THESEUS_MODES[i], null, Menus.AFTER, prev);
         });
+        fileMenu.addMenuItem(ID_THESEUS_RESET_TRACE, null, Menus.AFTER, ID_THESEUS_MODES[ID_THESEUS_MODES.length - 1]);
 
         var debugMenu = Menus.getMenu("debug-menu");
         debugMenu.addMenuDivider(Menus.LAST, null);

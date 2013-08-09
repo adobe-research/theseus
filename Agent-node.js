@@ -171,44 +171,8 @@ define(function (require, exports, module) {
     function _connect() {
         _conn = new Connection();
 
-        _conn.connected.done(function () {
-            _connected = true;
+        _conn.connected.done(_onConnect);
 
-            // get the handle to use for tracking hits
-            _invoke("version", [], function (version) {
-                if (!semver.satisfies(version, REQUIRED_FONDUE_VERSION)) {
-                    var dialog = Dialogs.showModalDialogUsingTemplate(dialogTemplate);
-                    var $dialog = dialog.getElement();
-                    $dialog.find(".close").on("click", dialog.close.bind(dialog));
-                }
-            });
-
-            $exports.triggerHandler("connect");
-
-            // get the handle to use for tracking hits
-            _invoke("trackHits", [], function (handle) {
-                _hitsHandle = handle;
-            });
-
-            _invoke("trackExceptions", [], function (handle) {
-                _exceptionsHandle = handle;
-            });
-
-            // poll for new nodes
-            _invoke("trackNodes", [], function (handle) {
-                var id = setInterval(function () {
-                    _invoke("newNodes", [handle], function (nodes) {
-                        if (nodes) {
-                            _addNodes(nodes);
-                        }
-                    });
-                }, 1000);
-
-                _conn.disconnected.done(function () {
-                    clearInterval(id);
-                });
-            });
-        });
         _conn.disconnected.done(function () {
             if (_connected) $exports.triggerHandler("disconnect");
 
@@ -226,6 +190,45 @@ define(function (require, exports, module) {
             });
 
             setTimeout(_connect, 1000);
+        });
+    }
+
+    function _onConnect() {
+        _connected = true;
+
+        // get the handle to use for tracking hits
+        _invoke("version", [], function (version) {
+            if (!semver.satisfies(version, REQUIRED_FONDUE_VERSION)) {
+                var dialog = Dialogs.showModalDialogUsingTemplate(dialogTemplate);
+                var $dialog = dialog.getElement();
+                $dialog.find(".close").on("click", dialog.close.bind(dialog));
+            }
+        });
+
+        $exports.triggerHandler("connect");
+
+        // get the handle to use for tracking hits
+        _invoke("trackHits", [], function (handle) {
+            _hitsHandle = handle;
+        });
+
+        _invoke("trackExceptions", [], function (handle) {
+            _exceptionsHandle = handle;
+        });
+
+        // poll for new nodes
+        _invoke("trackNodes", [], function (handle) {
+            var id = setInterval(function () {
+                _invoke("newNodes", [handle], function (nodes) {
+                    if (nodes) {
+                        _addNodes(nodes);
+                    }
+                });
+            }, 1000);
+
+            _conn.disconnected.done(function () {
+                clearInterval(id);
+            });
         });
     }
 
@@ -321,6 +324,34 @@ define(function (require, exports, module) {
         });
     }
 
+    function resetTrace() {
+        if (_connected) {
+            var realDisconnect = false;
+            var detectRealDisconnect = function () {
+                realDisconnect = true;
+            };
+
+            // make everyone think we've disconnected
+            $exports.triggerHandler("disconnect"); // simulated
+
+            // detect whether we *actually* get disconnected before we emit another "connected" event
+            $exports.on("disconnect", detectRealDisconnect);
+
+            // clear all the locally cached trace data
+            _reset();
+
+            // clear the remote trace data
+            _invokePromise("resetTrace", []).then(function () {
+                $exports.off("disconnect", detectRealDisconnect);
+
+                // if there wasn't a real disconnection in the meantime, simulate a reconnection
+                if (!realDisconnect) {
+                    _onConnect();
+                }
+            });
+        }
+    }
+
     function wrapServerFunction(localName, remoteName) {
         exports[localName] = function () {
             return _invokePromise(remoteName, Array.prototype.slice.apply(arguments));
@@ -366,4 +397,6 @@ define(function (require, exports, module) {
     exports.refreshLogs = refreshLogs;
 
     exports.backtrace = backtrace;
+
+    exports.resetTrace = resetTrace;
 });
