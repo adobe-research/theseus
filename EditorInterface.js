@@ -97,7 +97,7 @@ define(function (require, exports, module) {
             if (currentPath() === path) {
                 callback(currentEditor());
                 return true;
-            } else if (ProjectManager.isWithinProject(path)) {
+            } else {
                 DocumentManager.getDocumentForPath(path).done(function (doc) {
                     DocumentManager.setCurrentDocument(doc);
                     callback(EditorManager.getCurrentFullEditor());
