@@ -689,7 +689,7 @@ define(function (require, exports, module) {
                             return 0;
                         });
                         names.forEach(function (name) {
-                            $expanded.append($("<div />").append($("<strong />").text(name + " = "))
+                            $expanded.append($("<div />").append($("<strong />").text(name + " = ").addClass("theseus-selectable"))
                                                          .append(this._valueDom(val.ownProperties[name])));
                         }.bind(this));
                     }
