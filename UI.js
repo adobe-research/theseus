@@ -146,6 +146,8 @@ define(function (require, exports, module) {
         } else {
             Panel.toggle(true);
             _refreshLogQuery();
+            EditorInterface.reveal({ line: node.start.line, ch: 0 });
+            // EditorInterface.revealFunction(node);
         }
 
         _triggerQueryChangeEvent();

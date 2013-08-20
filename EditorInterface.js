@@ -119,6 +119,12 @@ define(function (require, exports, module) {
         });
     }
 
+    function reveal(pos) {
+        if (_editor) {
+            _editor._codeMirror.scrollIntoView(pos);
+        }
+    }
+
     function _enable() {
         _enabled = true;
     }
@@ -148,4 +154,5 @@ define(function (require, exports, module) {
     exports.currentPath = currentPath;
     exports.switchToEditorFor = switchToEditorFor;
     exports.revealFunction = revealFunction;
+    exports.reveal = reveal;
 });
