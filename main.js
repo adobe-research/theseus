@@ -238,7 +238,7 @@ define(function (require, exports, module) {
             var prev = (i == 0) ? ID_THESEUS_ENABLE : ID_THESEUS_MODES[i - 1];
             fileMenu.addMenuItem(ID_THESEUS_MODES[i], null, Menus.AFTER, prev);
         });
-        fileMenu.addMenuItem(ID_THESEUS_RESET_TRACE, null, Menus.AFTER, ID_THESEUS_MODES[ID_THESEUS_MODES.length - 1]);
+        // fileMenu.addMenuItem(ID_THESEUS_RESET_TRACE, null, Menus.AFTER, ID_THESEUS_MODES[ID_THESEUS_MODES.length - 1]);
 
         var debugMenu = Menus.getMenu("debug-menu");
         debugMenu.addMenuDivider(Menus.LAST, null);
