@@ -25,11 +25,11 @@ Features
 Install
 -------
 
-Theseus **requires** Brackets Sprint 26 or later.
-
-1. In Brackets, click the menu item *File > Extension Manager...*
-2. Click the *Install from URL...* button in the lower left.
-3. Enter this URL: https://s3.amazonaws.com/theseus-downloads/theseus-0.3.1.zip (Do not use the GitHub repository URL. It won't work.)
+1. Install [Brackets](http://download.brackets.io/) Sprint 28 or later.
+2. In Brackets, click the menu item *File > Extension Manager...*
+3. Go to the "Available" tab of the dialog that appears.
+4. Type "Theseus" in the search box.
+5. Click the "Install" button in the search result for Theseus.
 
 For Node.js support, also run `npm install -g node-theseus` in a terminal to get the command-line helper. Theseus **requires** node-theseus 0.1.x.
 
