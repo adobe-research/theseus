@@ -611,19 +611,7 @@ define(function (require, exports, module) {
             if (val.type === "number" || val.type === "boolean") {
                 return $("<span />").addClass("theseus-selectable").text(val.value);
             } else if (val.type === "string") {
-                var cutoff = 100;
-                var encoded = JSON.stringify(val.value);
-                if (encoded.length > cutoff) {
-                    var excerpt = encoded.slice(0, cutoff);
-                    var $text = $("<span />").addClass("theseus-selectable").text(excerpt);
-                    var $more = $("<a href='#' />").html("[&#8230;]").on("click", function () {
-                        $text.text(encoded);
-                        $more.hide();
-                    });
-                    return $("<span />").append($text).append(" ").append($more);
-                } else {
-                    return $("<span />").addClass("theseus-selectable").text(encoded);
-                }
+                return this._stringDom(val);
             } else if (val.type === "undefined") {
                 return $("<span />").addClass("theseus-selectable").text("undefined");
             } else if (val.type === "null") {
@@ -638,6 +626,53 @@ define(function (require, exports, module) {
                 return $dom;
             }
             return $("<span />").text(JSON.stringify(val));
+        },
+
+        _stringDom: function (val) {
+            var cutoff = 100;
+            var encoded = JSON.stringify(val.value);
+
+            var $dom = $("<div />").css({
+                "display" : "inline-block",
+                "vertical-align" : "top",
+                "max-width" : 200,
+                "word-wrap" : "break-word",
+            });
+
+            if (encoded.length > cutoff) {
+                var arrowURL = ExtensionUtils.getModuleUrl(module, "images/arrow.png");
+
+                var excerpt = encoded.slice(0, cutoff);
+
+                var $image = $("<img />").attr("src", arrowURL).css({
+                    "-webkit-transform-origin" : "40% 50% 0",
+                    "-webkit-transition" : "all 100ms",
+                });
+                var $title = $("<span />").appendTo($dom)
+                                          .append($image)
+                                          .append("&nbsp;");
+                var $text = $("<span />").appendTo($title).text(excerpt).addClass("theseus-selectable");
+                var $dots = $("<span />").appendTo($title).html(" &#8230;");
+
+                var showing = false;
+                $image.on("click", function () {
+                    if (showing) {
+                        $image.css("-webkit-transform", "");
+                        $text.text(excerpt);
+                        $dots.show();
+                    } else {
+                        $image.css("-webkit-transform", "rotate(90deg)");
+                        $text.text(encoded);
+                        $dots.hide();
+                    }
+                    showing = !showing;
+                }.bind(this));
+                $image.css({ cursor: "pointer" });
+            } else {
+                return $dom.addClass("theseus-selectable").text(encoded);
+            }
+
+            return $dom;
         },
 
         _objectInspectorDom: function (val, options) {
