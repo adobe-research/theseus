@@ -242,7 +242,7 @@ define(function (require, exports, module) {
 
         var debugMenu = Menus.getMenu("debug-menu");
         debugMenu.addMenuDivider(Menus.LAST, null);
-        debugMenu.addMenuItem(ID_THESEUS_DEBUG_BRACKETS, null, Menus.LAST, null);
+        debugMenu.addMenuItem(ID_THESEUS_DEBUG_BRACKETS, [{ "key": "F10" }, { "key": "Cmd-Opt-T", "platform": "mac" }], Menus.LAST, null);
 
         _updateMenuStates();
     }
