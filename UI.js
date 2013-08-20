@@ -611,7 +611,19 @@ define(function (require, exports, module) {
             if (val.type === "number" || val.type === "boolean") {
                 return $("<span />").addClass("theseus-selectable").text(val.value);
             } else if (val.type === "string") {
-                return $("<span />").addClass("theseus-selectable").text(JSON.stringify(val.value));
+                var cutoff = 100;
+                var encoded = JSON.stringify(val.value);
+                if (encoded.length > cutoff) {
+                    var excerpt = encoded.slice(0, cutoff);
+                    var $text = $("<span />").addClass("theseus-selectable").text(excerpt);
+                    var $more = $("<a href='#' />").html("[&#8230;]").on("click", function () {
+                        $text.text(encoded);
+                        $more.hide();
+                    });
+                    return $("<span />").append($text).append(" ").append($more);
+                } else {
+                    return $("<span />").addClass("theseus-selectable").text(encoded);
+                }
             } else if (val.type === "undefined") {
                 return $("<span />").addClass("theseus-selectable").text("undefined");
             } else if (val.type === "null") {
