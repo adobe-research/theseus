@@ -31,7 +31,7 @@ Install
 4. Type "Theseus" in the search box.
 5. Click the "Install" button in the search result for Theseus.
 
-For Node.js support, also run `npm install -g node-theseus` in a terminal to get the command-line helper. Theseus **requires** node-theseus 0.1.x.
+For Node.js support, also run `npm install -g node-theseus` in a terminal to get the command-line helper. Theseus **requires** node-theseus 0.2.x.
 
 Usage: Debug JavaScript running in Node.js
 ------------------------------------------
