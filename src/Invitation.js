@@ -28,10 +28,10 @@
 define(function (require, exports, module) {
     var Dialogs        = brackets.getModule("widgets/Dialogs");
     var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
-    var Strings        = require("strings");
-    var Usage          = require("Usage");
+    var Strings        = require("./strings");
+    var Usage          = require("./Usage");
 
-    var dialogHTML     = require("text!Invitation.html");
+    var dialogHTML     = require("text!./Invitation.html");
     var dialogTemplate = Mustache.render(dialogHTML, {Strings : Strings});
 
     /** recordCancel: if true, records cancellation as opting out of everything **/

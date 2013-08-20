@@ -37,7 +37,7 @@ define(function (require, exports, module) {
     var DocumentManager = brackets.getModule("document/DocumentManager");
     var EditorManager   = brackets.getModule("editor/EditorManager");
     var ProjectManager  = brackets.getModule("project/ProjectManager");
-    var Main            = require("main");
+    var Main            = require("../main");
 
     var $exports = $(exports);
     var _editor;

@@ -30,7 +30,7 @@ define(function (require, exports, module) {
 
 	var EditorManager = brackets.getModule("editor/EditorManager");
 	var Inspector     = brackets.getModule("LiveDevelopment/Inspector/Inspector");
-	var Main          = require("main");
+	var Main          = require("../main");
 	var Resizer       = brackets.getModule("utils/Resizer");
 
 	var $panel, $toolbar;

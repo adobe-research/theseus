@@ -34,35 +34,35 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var Agent              = require("Agent");
-    var AgentManager       = require("AgentManager");
+    var Agent              = require("./src/Agent");
+    var AgentManager       = require("./src/AgentManager");
     var AppInit            = brackets.getModule("utils/AppInit");
     var CommandManager     = brackets.getModule("command/CommandManager");
     var Commands           = brackets.getModule("command/Commands");
     var Dialogs            = brackets.getModule("widgets/Dialogs");
-    var EpochPanel         = require("EpochPanel");
-    var FileCallGraphPanel = require("FileCallGraphPanel");
-    var EditorInterface    = require("EditorInterface");
+    var EpochPanel         = require("./src/EpochPanel");
+    var FileCallGraphPanel = require("./src/FileCallGraphPanel");
+    var EditorInterface    = require("./src/EditorInterface");
     var ExtensionUtils     = brackets.getModule("utils/ExtensionUtils");
-    var Invitation         = require("Invitation");
+    var Invitation         = require("./src/Invitation");
     var Inspector          = brackets.getModule("LiveDevelopment/Inspector/Inspector");
     var LiveDevelopment    = brackets.getModule("LiveDevelopment/LiveDevelopment");
     var Menus              = brackets.getModule("command/Menus");
     var NativeApp          = brackets.getModule("utils/NativeApp");
     var NativeFileSystem   = brackets.getModule("file/NativeFileSystem").NativeFileSystem;
-    var Panel              = require("Panel");
+    var Panel              = require("./src/Panel");
     var PreferencesManager = brackets.getModule("preferences/PreferencesManager");
-    var ProxyProvider      = require("ProxyProvider");
-    var Strings            = require("strings");
-    var UI                 = require("UI");
-    var Usage              = require("Usage");
+    var ProxyProvider      = require("./src/ProxyProvider");
+    var Strings            = require("./src/strings");
+    var UI                 = require("./src/UI");
+    var Usage              = require("./src/Usage");
 
     var $exports = $(exports);
 
     var THESEUS_VERSION = JSON.parse(require("text!package.json")).version;
 
     // check that node_modules is there and alert the user if it isn't
-    var corruptInstallationDialogHTML = require("text!InstallationCorrupt.html");
+    var corruptInstallationDialogHTML = require("text!./src/InstallationCorrupt.html");
     var corruptInstallationDialogTemplate = Mustache.render(corruptInstallationDialogHTML, {Strings : Strings});
     var nodeModulesPath = ExtensionUtils.getModulePath(module, "node_modules");
     NativeFileSystem.resolveNativeFileSystemPath(nodeModulesPath, function() {}, function() {
@@ -143,7 +143,7 @@ define(function (require, exports, module) {
         var params = "?";
         params += "brackets_version=" + brackets.metadata.version;
         params += "&theseus_version=" + THESEUS_VERSION;
-        NativeApp.openURLInDefaultBrowser("file://" + ExtensionUtils.getModuleUrl(module, "feedback.html") + params);
+        NativeApp.openURLInDefaultBrowser("file://" + ExtensionUtils.getModuleUrl(module, "src/feedback.html") + params);
     }
 
     function _showWelcomeScreen() {
@@ -268,7 +268,7 @@ define(function (require, exports, module) {
         _loadPreferences();
         _setupMenu();
 
-        ExtensionUtils.loadStyleSheet(module, "main.less");
+        ExtensionUtils.loadStyleSheet(module, "src/main.less");
 
         Usage.init();
         ProxyProvider.init();

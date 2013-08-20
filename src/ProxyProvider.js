@@ -32,7 +32,7 @@ define(function (require, exports, module) {
     var LiveDevServerManager = brackets.getModule("LiveDevelopment/LiveDevServerManager");
     var NodeConnection       = brackets.getModule("utils/NodeConnection");
     var ProjectManager       = brackets.getModule("project/ProjectManager");
-    var main                 = require("main");
+    var main                 = require("../main");
 
     var _proxyURL;
     var _proxyServerProvider;

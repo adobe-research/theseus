@@ -26,7 +26,7 @@
 /*global define */
 
 define(function (require, exports, module) {
-    var AgentManager = require("AgentManager");
+    var AgentManager = require("./AgentManager");
 
     /**
      * emits 'data' and 'close'.

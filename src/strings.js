@@ -26,55 +26,5 @@
 /*global define */
 
 define(function (require, exports, module) {
-	var Util = require("Util");
-
-	function Popup(options) {
-        this.$dom = $("<div />");
-        this.$dom.css({
-            "z-index" : 100,
-            "display" : "inline-block",
-            "position" : "fixed",
-            "overflow" : "auto",
-        });
-
-        this._clickHandler = this._click.bind(this);
-	}
-	Popup.prototype = {
-		show: function (options) {
-			options = Util.mergeInto(options, {
-				x: 10,
-				y: 10,
-				margin: 10,
-			});
-			this.$dom.css({
-			    "top" : options.y,
-			    "left" : options.x,
-			    "max-width" : $(document.body).innerWidth() - options.x - options.margin,
-			    "max-height" : $(document.body).innerHeight() - options.y - options.margin,
-			});
-			this.$dom.appendTo(document.body);
-			this._registerHandlers();
-		},
-
-		close: function () {
-			this.$dom.detach();
-			this._unregisterHandlers();
-		},
-
-		_registerHandlers: function () {
-			$(document.body).on("click", this._clickHandler);
-		},
-
-		_unregisterHandlers: function () {
-			$(document.body).off("click", this._clickHandler);
-		},
-
-		_click: function (e) {
-			if (e.target !== this.$dom.get(0) && $(e.target).has(this.$dom).length === 0) {
-				this.close();
-			}
-		},
-	}
-
-	exports.Popup = Popup;
+    module.exports = require("i18n!./nls/strings");
 });

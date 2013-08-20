@@ -35,11 +35,11 @@
  */
 
 define(function (require, exports, module) {
-    var Agent     = require("Agent");
+    var Agent     = require("./Agent");
     var AppInit   = brackets.getModule("utils/AppInit");
-    var Fsm       = require("fsm").Fsm;
+    var Fsm       = require("./fsm").Fsm;
     var Inspector = brackets.getModule("LiveDevelopment/Inspector/Inspector");
-    var main      = require("main");
+    var main      = require("../main");
 
     var $exports = $(exports);
 

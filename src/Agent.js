@@ -38,8 +38,8 @@
 
 define(function (require, exports, module) {
     var Async = brackets.getModule("utils/Async");
-    var NodeAgent = require("Agent-node");
-    var ChromeAgent = require("Agent-chrome");
+    var NodeAgent = require("./Agent-node");
+    var ChromeAgent = require("./Agent-chrome");
     var ProjectManager = brackets.getModule("project/ProjectManager");
     var $exports = $(exports);
 

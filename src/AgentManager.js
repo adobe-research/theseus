@@ -25,6 +25,55 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define */
 
+/**
+ * Provides these events:
+ *
+ *   - agentConnected (agent):
+ *       when information about functions and call sites has been received
+ */
+
 define(function (require, exports, module) {
-    module.exports = require("i18n!nls/strings");
+    var ChromeAgent = require("./Agent-chrome");
+    var NodeAgent   = require("./Agent-node");
+
+    var $exports = $(exports);
+
+    var _connectedAgents = [];
+
+    function _addAgent(agent) {
+        var i = _connectedAgents.indexOf(agent);
+        if (i === -1) {
+            _connectedAgents.push(agent);
+        }
+        $exports.triggerHandler("agentConnected", agent);
+    }
+
+    function _removeAgent(agent) {
+        var i = _connectedAgents.indexOf(agent);
+        if (i !== -1) {
+            _connectedAgents.splice(i, 1);
+        }
+    }
+
+    function init() {
+        $(NodeAgent).on("connect", function () { _addAgent(NodeAgent) });
+        $(NodeAgent).on("disconnect", function () { _removeAgent(NodeAgent) });
+
+        $(ChromeAgent).on("connect", function () { _addAgent(ChromeAgent) });
+        $(ChromeAgent).on("disconnect", function () { _removeAgent(ChromeAgent) });
+    }
+
+    function agents() {
+        return _connectedAgents.slice();
+    }
+
+    function resetTrace() {
+        agents().forEach(function (agent) {
+            agent.resetTrace();
+        });
+    }
+
+    exports.init = init;
+    exports.agents = agents;
+    exports.resetTrace = resetTrace;
 });

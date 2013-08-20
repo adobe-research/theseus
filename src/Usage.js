@@ -26,17 +26,17 @@
 /*global define */
 
 define(function (require, exports, module) {
-    var Agent              = require("Agent");
-    var ChromeAgent        = require("Agent-chrome");
+    var Agent              = require("./Agent");
+    var ChromeAgent        = require("./Agent-chrome");
     var Dialogs            = brackets.getModule("widgets/Dialogs");
-    var EditorInterface    = require("EditorInterface");
+    var EditorInterface    = require("./EditorInterface");
     var ExtensionUtils     = brackets.getModule("utils/ExtensionUtils");
     var Inspector          = brackets.getModule("LiveDevelopment/Inspector/Inspector");
-    var Main               = require("main");
-    var NodeAgent          = require("Agent-node");
-    var Panel              = require("Panel");
+    var Main               = require("../main");
+    var NodeAgent          = require("./Agent-node");
+    var Panel              = require("./Panel");
     var PreferencesManager = brackets.getModule("preferences/PreferencesManager")
-    var UI                 = require("UI");
+    var UI                 = require("./UI");
 
     var $exports = $(exports);
 

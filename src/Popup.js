@@ -25,55 +25,56 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define */
 
-/**
- * Provides these events:
- *
- *   - agentConnected (agent):
- *       when information about functions and call sites has been received
- */
-
 define(function (require, exports, module) {
-    var ChromeAgent = require("Agent-chrome");
-    var NodeAgent   = require("Agent-node");
+	var Util = require("./Util");
 
-    var $exports = $(exports);
-
-    var _connectedAgents = [];
-
-    function _addAgent(agent) {
-        var i = _connectedAgents.indexOf(agent);
-        if (i === -1) {
-            _connectedAgents.push(agent);
-        }
-        $exports.triggerHandler("agentConnected", agent);
-    }
-
-    function _removeAgent(agent) {
-        var i = _connectedAgents.indexOf(agent);
-        if (i !== -1) {
-            _connectedAgents.splice(i, 1);
-        }
-    }
-
-    function init() {
-        $(NodeAgent).on("connect", function () { _addAgent(NodeAgent) });
-        $(NodeAgent).on("disconnect", function () { _removeAgent(NodeAgent) });
-
-        $(ChromeAgent).on("connect", function () { _addAgent(ChromeAgent) });
-        $(ChromeAgent).on("disconnect", function () { _removeAgent(ChromeAgent) });
-    }
-
-    function agents() {
-        return _connectedAgents.slice();
-    }
-
-    function resetTrace() {
-        agents().forEach(function (agent) {
-            agent.resetTrace();
+	function Popup(options) {
+        this.$dom = $("<div />");
+        this.$dom.css({
+            "z-index" : 100,
+            "display" : "inline-block",
+            "position" : "fixed",
+            "overflow" : "auto",
         });
-    }
 
-    exports.init = init;
-    exports.agents = agents;
-    exports.resetTrace = resetTrace;
+        this._clickHandler = this._click.bind(this);
+	}
+	Popup.prototype = {
+		show: function (options) {
+			options = Util.mergeInto(options, {
+				x: 10,
+				y: 10,
+				margin: 10,
+			});
+			this.$dom.css({
+			    "top" : options.y,
+			    "left" : options.x,
+			    "max-width" : $(document.body).innerWidth() - options.x - options.margin,
+			    "max-height" : $(document.body).innerHeight() - options.y - options.margin,
+			});
+			this.$dom.appendTo(document.body);
+			this._registerHandlers();
+		},
+
+		close: function () {
+			this.$dom.detach();
+			this._unregisterHandlers();
+		},
+
+		_registerHandlers: function () {
+			$(document.body).on("click", this._clickHandler);
+		},
+
+		_unregisterHandlers: function () {
+			$(document.body).off("click", this._clickHandler);
+		},
+
+		_click: function (e) {
+			if (e.target !== this.$dom.get(0) && $(e.target).has(this.$dom).length === 0) {
+				this.close();
+			}
+		},
+	}
+
+	exports.Popup = Popup;
 });

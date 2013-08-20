@@ -26,14 +26,14 @@
 /*global define */
 
 define(function (require, exports, module) {
-    var Agent           = require("Agent");
-    var EditorInterface = require("EditorInterface");
-    var EpochPanel      = require("EpochPanel");
+    var Agent           = require("./Agent");
+    var EditorInterface = require("./EditorInterface");
+    var EpochPanel      = require("./EpochPanel");
     var ExtensionUtils  = brackets.getModule("utils/ExtensionUtils");
-    var Main            = require("main");
-    var Panel           = require("Panel");
-    var Popup           = require("Popup").Popup;
-    var Util            = require("Util");
+    var Main            = require("../main");
+    var Panel           = require("./Panel");
+    var Popup           = require("./Popup").Popup;
+    var Util            = require("./Util");
 
     require("./lib/moment");
 

@@ -26,9 +26,9 @@
 /*global define */
 
 define(function (require, exports, module) {
-    var AgentHandle  = require("AgentHandle");
+    var AgentHandle  = require("./AgentHandle");
     var PanelManager = brackets.getModule("view/PanelManager");
-    var UI           = require("UI");
+    var UI           = require("./UI");
 
     var $exports = $(exports);
 

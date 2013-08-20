@@ -37,12 +37,12 @@
  */
 
 define(function (require, exports, module) {
-    var Agent   = require("Agent");
+    var Agent   = require("./Agent");
     var Dialogs = brackets.getModule("widgets/Dialogs");
     var semver  = require("./lib/semver");
-    var Strings = require("strings");
+    var Strings = require("./strings");
 
-    var dialogHTML     = require("text!InvalidVersion.html");
+    var dialogHTML     = require("text!./InvalidVersion.html");
     var dialogTemplate = Mustache.render(dialogHTML, {Strings : Strings});
 
     var _conn;
@@ -54,7 +54,7 @@ define(function (require, exports, module) {
     var _nodeExceptionCounts = {};
     var $exports = $(exports);
 
-    var REQUIRED_FONDUE_VERSION = JSON.parse(require("text!package.json")).dependencies.fondue;
+    var REQUIRED_FONDUE_VERSION = JSON.parse(require("text!../package.json")).dependencies.fondue;
 
     function Connection() {
         this.socket = new WebSocket("ws://localhost:8888/");

@@ -26,11 +26,11 @@
 /*global define */
 
 define(function (require, exports, module) {
-    var Agent        = require("Agent");
-    var AgentHandle  = require("AgentHandle");
-    var EditorInterface = require("EditorInterface");
-    var PanelManager = brackets.getModule("view/PanelManager");
-    var UI           = require("UI");
+    var Agent           = require("./Agent");
+    var AgentHandle     = require("./AgentHandle");
+    var EditorInterface = require("./EditorInterface");
+    var PanelManager    = brackets.getModule("view/PanelManager");
+    var UI              = require("./UI");
 
     var $exports = $(exports);
 
