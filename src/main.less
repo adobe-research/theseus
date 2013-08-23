@@ -33,6 +33,11 @@
     user-select: @type;
 }
 
+@-webkit-keyframes waggle {
+    from { -webkit-transform: rotate(-5deg); }
+    to { -webkit-transform: rotate(5deg); }
+}
+
 .CodeMirror {
     .CodeMirror-linenumbers {
         width: 60px;
@@ -174,6 +179,13 @@
             display: none;
             margin-left: 5px;
         }
+    }
+}
+
+.waggle {
+    .theseus-dead {
+        -webkit-animation: waggle 2s ease-in-out alternate infinite;
+        display: inline-block;
     }
 }
 

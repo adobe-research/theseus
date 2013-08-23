@@ -36,6 +36,7 @@ define(function (require, exports, module) {
     var Util            = require("./Util");
 
     require("./lib/moment");
+    require("./lib/konami");
 
     var $exports = $(exports);
     var _enabled = false;
@@ -752,6 +753,10 @@ define(function (require, exports, module) {
             return $dom;
         },
     };
+
+    new Konami(function () {
+        $(document.body).addClass("waggle");
+    });
 
     function _queryIsEmpty() {
         return _loggedNodes.length === 0 && _loggedEventNames.length === 0 && !_loggingExceptions && !_loggingConsoleLogs;
