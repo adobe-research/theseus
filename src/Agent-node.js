@@ -39,6 +39,7 @@
 define(function (require, exports, module) {
     var Agent   = require("./Agent");
     var Dialogs = brackets.getModule("widgets/Dialogs");
+    var Main    = require("../main");
     var semver  = require("./lib/semver");
     var Strings = require("./strings");
 
@@ -203,7 +204,9 @@ define(function (require, exports, module) {
         // get the handle to use for tracking hits
         _invoke("version", [], function (version) {
             if (!semver.satisfies(version, REQUIRED_FONDUE_VERSION)) {
-                var dialog = Dialogs.showModalDialogUsingTemplate(dialogTemplate);
+                var template = dialogTemplate.replace("{fondue version}", version || "unknown")
+                                             .replace("{theseus version}", Main.version);
+                var dialog = Dialogs.showModalDialogUsingTemplate(template);
                 var $dialog = dialog.getElement();
                 $dialog.find(".close").on("click", dialog.close.bind(dialog));
             }

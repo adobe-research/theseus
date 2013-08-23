@@ -38,7 +38,7 @@ define({
     "INVITATION_CANCEL"                  : "Cancel",
 
     "NODE_THESEUS_VERSION_ERROR_HEADER"  : "Theseus: Invalid Software Version",
-    "NODE_THESEUS_VERSION_ERROR_TEXT_1"  : "The Theseus extension just connected to a Node.js process started with node-theseus. Unfortunately, the version of node-theseus used is not compatible with this verison of Theseus. You should upgrade both of them to the latest versions.",
+    "NODE_THESEUS_VERSION_ERROR_TEXT_1"  : "The Theseus extension just connected to a Node.js process started with node-theseus. Unfortunately, the version of node-theseus used is not compatible with this verison of Theseus. You should upgrade both of them to the latest versions. (Theseus: {theseus version}, fondue: {fondue version})",
     "NODE_THESEUS_VERSION_ERROR_CONFIRM" : "Okay",
 
     "INSTALLATION_CORRUPT_HEADER"  : "Theseus: Corrupt Installation",
