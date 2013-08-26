@@ -152,22 +152,44 @@ define(function (require, exports, module) {
 
     function _debugBrackets() {
         var _proxy;
+
+        var bracketsPath = window.location.pathname;
+        var bracketsRoot = "/", bracketsRelativePath = bracketsPath;
+        var pathMatch;
+        if (bracketsRelativePath[0] === "/") {
+            bracketsRelativePath = bracketsRelativePath.slice(1);
+        }
+        if (pathMatch = /^[a-z]\:[\/\\]/i.exec(bracketsRelativePath)) {
+            bracketsRoot = pathMatch[0];
+            bracketsRelativePath = bracketsRelativePath.slice(pathMatch[0].length);
+        }
+
+        console.log('[theseus] opening new brackets window');
         CommandManager.execute("debug.newBracketsWindow").then(function () {
-            return ProxyProvider.getServer("/", "static");
+            console.log('[theseus] getting a proxy server for ' + bracketsRoot);
+            return ProxyProvider.getServer(bracketsRoot, "static");
         }).then(function (proxy) {
             _proxy = proxy;
+            console.log('[theseus] finding debuggable windows');
             return Inspector.getDebuggableWindows("127.0.0.1", 9234);
         }).then(function (response) {
-            var keys = Object.keys(response).sort(function (a, b) { return parseInt(a, 10) - parseInt(b, 10); });
+            console.log('[theseus] got windows');
+            var keys = Object.keys(response).filter(function (k) {
+                return response[k].webSocketDebuggerUrl;
+            }).sort(function (a, b) {
+                return parseInt(a, 10) - parseInt(b, 10);
+            });
             if (keys.length > 0) {
                 // pick the last page
                 var page = response[keys[keys.length - 1]];
 
                 var redirect = function () {
                     Inspector.off("connect", redirect);
-                    var redirectTo = _proxy.proxyRootURL + (window.location.pathname[0] === "/" ? window.location.pathname.slice(1) : window.location.pathname)
+                    var redirectTo = _proxy.proxyRootURL + bracketsRelativePath;
+                    console.log('[theseus] redirecting to ' + redirectTo);
                     Inspector.Runtime.evaluate("window.location = " + JSON.stringify(redirectTo), function () {});
                 };
+                console.log('[theseus] waiting to redirect');
                 Inspector.on("connect", redirect);
 
                 Inspector.connect(page.webSocketDebuggerUrl);
