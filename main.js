@@ -164,6 +164,11 @@ define(function (require, exports, module) {
             bracketsRelativePath = bracketsRelativePath.slice(pathMatch[0].length);
         }
 
+        if (!_enabled) {
+            _enabled = true;
+            _enable();
+        }
+
         console.log('[theseus] opening new brackets window');
         CommandManager.execute("debug.newBracketsWindow").then(function () {
             console.log('[theseus] getting a proxy server for ' + bracketsRoot);
