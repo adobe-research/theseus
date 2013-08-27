@@ -296,6 +296,8 @@ define(function (require, exports, module) {
         }, 1000);
 
         $(LiveDevelopment).on("statusChange", function (e, status) {
+            if (!_enabled) return;
+
             if (status === 1) { // "Connecting to the remote debugger"
                 setTimeout(function () {
                     var $btnGoLive = $("#toolbar-go-live");
