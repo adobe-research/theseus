@@ -80,9 +80,6 @@ define(function (require, exports, module) {
     var _orderedModes = [_modes["static"], _modes["proxy"]];
     var DEFAULT_MODE = _modes["static"];
 
-    var ID_THESEUS_SEND_FEEDBACK   = "brackets.theseus.sendFeedback";
-    var NAME_THESEUS_SEND_FEEDBACK = "Send Theseus Feedback...";
-
     var ID_THESEUS_WELCOME_SCREEN   = "brackets.theseus.welcome";
     var NAME_THESEUS_WELCOME_SCREEN = "Theseus Welcome Screen...";
 
@@ -137,13 +134,6 @@ define(function (require, exports, module) {
             _setMode(modeName);
             $exports.triggerHandler("modeChange", modeName);
         };
-    }
-
-    function _sendFeedback() {
-        var params = "?";
-        params += "brackets_version=" + brackets.metadata.version;
-        params += "&theseus_version=" + THESEUS_VERSION;
-        NativeApp.openURLInDefaultBrowser("file://" + ExtensionUtils.getModuleUrl(module, "src/feedback.html") + params);
     }
 
     function _showWelcomeScreen() {
@@ -216,12 +206,6 @@ define(function (require, exports, module) {
 
     function _setupMenu() {
         CommandManager.register(
-            NAME_THESEUS_SEND_FEEDBACK,
-            ID_THESEUS_SEND_FEEDBACK,
-            _sendFeedback
-        );
-
-        CommandManager.register(
             NAME_THESEUS_WELCOME_SCREEN,
             ID_THESEUS_WELCOME_SCREEN,
             _showWelcomeScreen
@@ -255,7 +239,6 @@ define(function (require, exports, module) {
 
         var menu = Menus.getMenu(Menus.AppMenuBar.HELP_MENU);
         menu.addMenuDivider(Menus.LAST, null);
-        menu.addMenuItem(ID_THESEUS_SEND_FEEDBACK, null, Menus.LAST, null);
         menu.addMenuItem(ID_THESEUS_WELCOME_SCREEN, null, Menus.LAST, null);
 
         var fileMenu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
