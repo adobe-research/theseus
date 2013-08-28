@@ -23,7 +23,7 @@
  */
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
-/*global define, $, brackets */
+/*global window, define, $, brackets */
 
 define(function (require, exports, module) {
     "use strict";
@@ -32,6 +32,7 @@ define(function (require, exports, module) {
     var LiveDevServerManager = brackets.getModule("LiveDevelopment/LiveDevServerManager");
     var NodeConnection       = brackets.getModule("utils/NodeConnection");
     var ProjectManager       = brackets.getModule("project/ProjectManager");
+    var BaseServer           = brackets.getModule("LiveDevelopment/Servers/BaseServer").BaseServer;
     var main                 = require("../main");
 
     var _proxyURL;
@@ -68,7 +69,7 @@ define(function (require, exports, module) {
                     d.resolve({
                         address: address.address,
                         port: address.port,
-                        proxyRootURL: "http://" + address.address + ":" + address.port + "/",
+                        proxyRootURL: "http://" + address.address + ":" + address.port + "/"
                     });
                 }).fail(function () {
                     d.reject();
@@ -91,33 +92,41 @@ define(function (require, exports, module) {
         return d.promise();
     }
 
-    function ProxyServerProvider() {
+    function ProxyServer(config) {
+        BaseServer.call(this, config);
     }
-    ProxyServerProvider.prototype = {
-        canServe: function (localPath) {
-            return main.isEnabled();
-        },
-
-        readyToServe: function () {
-            var d = getServer(ProjectManager.getProjectRoot().fullPath, main.getModeName());
-            d.done(function (proxy) {
-                _proxyURL = proxy.proxyRootURL;
-            });
-            return d;
-        },
-
-        getBaseUrl: function () {
-            return _proxyURL;
-        },
+    
+    ProxyServer.prototype = Object.create(BaseServer.prototype);
+    ProxyServer.prototype.constructor = ProxyServer;
+    
+    ProxyServer.prototype.canServe = function (localPath) {
+        return main.isEnabled();
     };
+
+    ProxyServer.prototype.readyToServe = function () {
+        var self = this;
+        var d = getServer(ProjectManager.getProjectRoot().fullPath, main.getModeName());
+        d.done(function (proxy) {
+            self._baseUrl = proxy.proxyRootURL;
+        });
+        return d;
+    };
+    
+    function _createProxyServer() {
+        var config = {
+            pathResolver    : ProjectManager.makeProjectRelativeIfPossible,
+            root            : ProjectManager.getProjectRoot().fullPath
+        };
+        
+        return new ProxyServer(config);
+    }
 
     function init() {
         // register proxy server provider
-        _proxyServerProvider = new ProxyServerProvider();
-        LiveDevServerManager.registerProvider(_proxyServerProvider, 10);
+        LiveDevServerManager.registerProvider({ create: _createProxyServer }, 10);
 
         // set up timeout for initializing the Node connection (below)
-        var connectionTimeout = setTimeout(function () {
+        var connectionTimeout = window.setTimeout(function () {
             console.error("[Theseus] Timed out while trying to connect to node");
             _nodeConnectionDeferred.reject();
         }, NODE_CONNECTION_TIMEOUT);
@@ -126,7 +135,7 @@ define(function (require, exports, module) {
         var nodeConnection = new NodeConnection();
         nodeConnection.connect(true).then(function () {
             nodeConnection.loadDomains([ExtensionUtils.getModulePath(module, "proxy/ProxyDomain")], true).done(function () {
-                clearTimeout(connectionTimeout);
+                window.clearTimeout(connectionTimeout);
                 _nodeConnectionDeferred.resolveWith(null, [nodeConnection]);
             }).fail(function () {
                 console.error("[Theseus] Failed to connect to node", arguments);
