@@ -13,6 +13,6 @@
 		"fondue" : "0.5.x"
 	},
 	"engines" : {
-		"brackets" : ">=0.26.0"
+		"brackets" : "0.26.0 - 0.29.0"
 	}
 }
