@@ -29,6 +29,7 @@ define(function (require, exports, module) {
     "use strict";
 
     var ExtensionUtils       = brackets.getModule("utils/ExtensionUtils");
+    var FileUtils            = brackets.getModule("file/FileUtils");
     var LiveDevServerManager = brackets.getModule("LiveDevelopment/LiveDevServerManager");
     var NodeConnection       = brackets.getModule("utils/NodeConnection");
     var ProjectManager       = brackets.getModule("project/ProjectManager");
@@ -100,7 +101,7 @@ define(function (require, exports, module) {
     ProxyServer.prototype.constructor = ProxyServer;
     
     ProxyServer.prototype.canServe = function (localPath) {
-        return main.isEnabled();
+        return main.isEnabled() && FileUtils.isStaticHtmlFileExt(localPath);
     };
 
     ProxyServer.prototype.readyToServe = function () {
