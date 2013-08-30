@@ -324,5 +324,5 @@ define(function (require, exports, module) {
 
     // initialize the extension
 
-    AppInit.htmlReady(_init);
+    AppInit.appReady(_init);
 });
