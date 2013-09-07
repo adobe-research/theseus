@@ -47,7 +47,7 @@ define(function (require, exports, module) {
     var _nodeGlyphs = {}; // node id -> glyph object
     var _variablesPanel;
 
-    var _colors = "#1f77b4 #ff7f0e #2ca02c #d62728 #9467bd #8c564b #e377c2 #7f7f7f #bcbd22 #17becf #000000".split(" ");
+    var _colors = "#1488d8 #ff7f0e #1aaf1a #e21d61 #984fd9 #BE6818 #de55b4 #9b9b9b #B8B905 #17becf #000000".split(" ");
     var _nextColor = 0;
     var _shapes = ["circle", "square"];
     var _nextShape = 0;
