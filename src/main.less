@@ -56,7 +56,7 @@
     }
 
     .theseus-hover-marker {
-        background: #a1d3e7;
+        background: #D9EFF7;
     }
 
     .theseus-call-site {
@@ -89,7 +89,6 @@
         background: white;
         border: 1px solid #aaa;
         padding: 4px;
-        font-family: "Helvetica Neue", Helvetica, sans-serif;
         max-width: 400px;
         max-height: 300px;
         overflow: auto;
@@ -102,81 +101,86 @@
 
     .theseus-call-count {
         pointer-events: auto;
-        color: #111;
-        font-family: sans-serif;
+        color: #0055AD;
         line-height: 0; /* otherwise sans-serif font pushes line height > 15px */
         background: #fff;
-        border: 1px solid #0186cc;
-        border-radius: 0 6px 6px 0;
+        border-top: 1px solid #e0e0e0;
+        border-right: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+        border-left: none;
+        border-radius: 0 999px 999px 0;
         border-left: 0;
-        padding: 0 5px 0 4px;
+        padding: 1px 5px;
         cursor: pointer;
         white-space: nowrap;
+        font-family: sans-serif;
+        font-size: 12px;
 
         &:hover {
-            background: #0186cc;
+            background: #288EDF;
+            border-color: #288EDF;
             color: #fff;
         }
 
         &:active {
-            color: #00f;
+            color: #fff;
         }
 
         &.uninitialized {
         }
 
         &.none {
-            border-color: #ccc;
-            color: #666;
+            background: #fff;
+            border-color: #eee;
+            color: #888;
 
             &:hover {
-                background: #ccc;
-                color: #fff;
+                background: #eee;
+                color: #888;
             }
 
             &:active {
-                color: #000;
+                color: #333;
             }
 
             &.set {
-                box-shadow: 0 0 4px 1px #ccc;
-                background: #ccc;
-                border-color: #ccc;
-                color: #000;
+                background: #eee;
+                border: 1px solid #ddd;
+                color: #333;
             }
         }
 
         &.exception {
-            border-width: 0;
-            box-shadow: 0 0 2px 1px #f00;
-            color: #950000;
+            background: #fff;
+            color: #dd0035;
 
             &:hover {
-                background: #f00;
+                background: #F74687;
+                border-color: #f03479;
                 color: #fff;
             }
 
             &.set {
-                box-shadow: 0 0 4px 1px #f00;
-                background: #ffc0c0;
-                color: #000;
+                border-color: #eacdd3;
+                background: #fae0e5;
+                color: #333;
             }
         }
 
         &.set {
-            border-width: 0;
-            box-shadow: 0 0 4px 1px #0186cc;
-            background: #c1e1f2;
+            border-color: #b6d0e2;
+            background: #d6eaf7;
+            color: #333;
 
             .glyph {
                 display: inline;
-                position: relative;
-                top: 1px;
             }
         }
 
         .glyph {
             display: none;
+            position: relative;
+            top: 1px;            
             margin-left: 5px;
         }
     }
@@ -203,44 +207,35 @@
     padding-left: 3px;
 
     .resizable-content {
-        background: #eeefef;
+        background: #DFE2E2;
         overflow: auto;
         height: 100px;
-
-        // the next two rules force the scrollbar to appear even on OS X when a trackpad is connected
-        &::-webkit-scrollbar {
-            -webkit-appearance: none;
-
-            &:vertical {
-                width: 11px;
-            }
-        }
-
-        &::-webkit-scrollbar-thumb {
-            border-radius: 8px;
-            border: 2px solid #dfe2e2; // should match background
-            background-color: rgba(0, 0, 0, .5);
-        }
+        padding: 15px 10px;
     }
 
     .source-chrome .vars-table {
-        background-color: #fff5cc;
+        background-color: #E6E9E9;
     }
 
     .source-node .vars-table {
-        background-color: #e2f0e2;
+        background-color: #F0F3F3;
     }
 
     table.vars-table {
         // display: inline-table;
         text-align: center;
         vertical-align: middle;
-        border: 1px solid #ddd;
+        border: 1px solid #DFE2E2;
         border-spacing: 0;
         border-collapse: collapse;
         margin: 0px;
         width: auto;
-        color: black;
+        color: #333;
+        
+        tr:hover th,
+        tr:hover td {
+            background: #e0f0fa;
+        }
 
         td, th {
             border-width: 0px;
@@ -251,7 +246,7 @@
         }
 
         th.fn {
-            border: 1px solid #666;
+            border: 1px solid #CDD0D0;
             border-width: 0 0 0 1px;
             font-weight: normal;
             cursor: pointer;
@@ -265,7 +260,8 @@
             }
 
             span.path {
-                color: #888;
+                color: #777;
+                font-size: 11px;
             }
         }
 
@@ -307,12 +303,11 @@
     line-height: 13px;
 
     .heading {
-        margin-right: 8px;
-        color: #999;
+        margin: 0 6px;
+        color: #888;
     }
 
     .epoch {
-        margin-right: 8px;
         cursor: pointer;
         padding: 2px;
         display: inline-block;
@@ -323,14 +318,14 @@
         }
 
         .hits {
-            font-weight: bold;
+            font-weight: 500;
         }
 
         &.exception {
             display: none;
 
             .name {
-                color: #f00;
+                color: #dd0035;
             }
         }
 
@@ -338,17 +333,17 @@
             display: none;
 
             .name {
-                color: #060;
+                color: #2c7201;
             }
         }
 
         &.selected {
             border-radius: 4px;
-            box-shadow: 0 0 4px 1px #0186cc;
+            box-shadow: 0 0 4px 1px #288EDF;
             background: #c1e1f2;
         }
 
-        &:hover { .name, .hits { color: #0186cc; } }
+        &:hover { .name, .hits { color: #288EDF; } }
         &:active { .name, .hits { color: #cc0186; } }
     }
 }
