@@ -34,5 +34,6 @@ define(function (require, exports, module) {
     // All other bundles for languages need to add a prefix to the exports below so i18n can find them.
     module.exports = {
         root: true,
+        de: true,
     };
 });
