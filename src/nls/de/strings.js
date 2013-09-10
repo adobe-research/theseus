@@ -29,15 +29,15 @@ define({
     "PRODUCT_NAME"                       : "Theseus",
 
     "INVITATION_HEADER"                  : "Danke, dass Sie Theseus installiert haben!",
-    "INVITATION_TEXT_1"                  : "Theseus ist ein Forschungsprojekt des MIT-Doktoranden Tom Lieber (rechts abgebildet), und er würde gerne wissen, wie sie Theseus nutzen!",
-    "INVITATION_USAGE"                   : "Sie dürfen anonyme Informationen über meine Theseus-Nutzung sammeln.",
+    "INVITATION_TEXT_1"                  : "Theseus ist ein Forschungsprojekt des MIT-Doktoranden Tom Lieber (rechts abgebildet), und er wÃ¼rde gerne wissen, wie sie Theseus nutzen!",
+    "INVITATION_USAGE"                   : "Sie dÃ¼rfen anonyme Informationen Ã¼ber meine Theseus-Nutzung sammeln.",
     "INVITATION_USAGE_DETAIL"            : "Genau ansehen, was hochgeladen wird - und wieso.",
     "INVITATION_USAGE_DETAIL_URL"        : "https://github.com/adobe-research/theseus/wiki/Anonymous-Usage-Reporting",
-    "INVITATION_CONTACT"                 : "Ich bin bereit, Informationen über die Nutzung weiterzugeben.",
+    "INVITATION_CONTACT"                 : "Ich bin bereit, Ã¼ber die Nutzung zu reden.",
     "INVITATION_CONFIRM"                 : "OK",
     "INVITATION_CANCEL"                  : "Abbrechen",
 
-    "NODE_THESEUS_VERSION_ERROR_HEADER"  : "Theseus: Ungültige Software-Version",
+    "NODE_THESEUS_VERSION_ERROR_HEADER"  : "Theseus: UngÃ¼ltige Software-Version",
     "NODE_THESEUS_VERSION_ERROR_TEXT_1"  : "Die Theseus-Erweiterung hat sich gerade mit einem Node.js-Prozess verbunden, der mit node-theseus gestartet wurde. Leider ist die benutzte Version von node-theseus nicht mit dieser Version von Theseus kompatibel. Sie sollten beide auf die neueste Version upgraden. (Theseus: {theseus version}, fondue: {fondue version})",
     "NODE_THESEUS_VERSION_ERROR_CONFIRM" : "OK",
 
