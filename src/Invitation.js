@@ -42,7 +42,7 @@ define(function (require, exports, module) {
         var $dialog = dialog.getElement();
 
         var $photo = $("<img />").attr({
-            src: "file://" + ExtensionUtils.getModuleUrl(module, "tom.jpg"),
+            src: ExtensionUtils.getModuleUrl(module, "tom.jpg"),
             width: 48,
             height: 48,
             align: "right",
