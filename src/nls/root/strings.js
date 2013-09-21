@@ -52,6 +52,7 @@ define({
     "UI_NO_MORE_INSPECTION"              : "You can't inspect this object any deeper.",
     "UI_ITEMS_TRUNCATED_FROM_LOG"        : "{0} of this object's items were truncated from the log.",
     "UI_KEYS_TRUNCATED_FROM_LOG"         : "{0} of this object's keys were truncated from the log.",
+    "UI_DEFAULT_TIME_FORMAT"             : "h:mm:ss.SSS",
     
     //Panel
     "PANEL_LOG"                          : "Log",
@@ -77,5 +78,5 @@ define({
     "MENU_NAME_THESEUS_RESET_TRACE"      : "Reset Theseus Trace Data (experimental)",
     
     //Notifications
-    "NOTIFICATION_LIVE_DEV_WITH_THESEUS" : "Live development has been started with Theseus in {0} mode.",
+    "NOTIFICATION_LIVE_DEV_WITH_THESEUS" : "Live development has been started with Theseus in {0} mode."
 });

@@ -552,7 +552,7 @@ define(function (require, exports, module) {
 
             var ts = new Date();
             ts.setTime(log.timestamp);
-            $timeCell.addClass("theseus-selectable").text(moment(ts).format("h:mm:ss.SSS"));
+            $timeCell.addClass("theseus-selectable").text(moment(ts).format(Strings.UI_DEFAULT_TIME_FORMAT));
 
             if (log.nodeId === "log") {
                 $nameCell.append("console.log")

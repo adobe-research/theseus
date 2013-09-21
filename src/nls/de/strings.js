@@ -52,6 +52,7 @@ define({
     "UI_NO_MORE_INSPECTION"              : "Sie können dieses Objekt nicht näher einsehen.",
     "UI_ITEMS_TRUNCATED_FROM_LOG"        : "{0} der Inhalte dieses Objekts wurden in diesem Log ausgelassen.",
     "UI_KEYS_TRUNCATED_FROM_LOG"         : "{0} der Schlüssel dieses Objekts wurden in diesem Log ausgelassen.",
+    "UI_DEFAULT_TIME_FORMAT"             : "HH:mm:ss.SSS",
     
     //Panel
     "PANEL_LOG"                          : "Log",
@@ -77,5 +78,5 @@ define({
     "MENU_NAME_THESEUS_RESET_TRACE"      : "Von Theseus aufgezeichnete Daten zurücksetzen (experimentell)",
     
     //Notifications
-    "NOTIFICATION_LIVE_DEV_WITH_THESEUS" : "Die Live-Vorschau wurde mit Theseus im {0}-Modus gestartet.",
+    "NOTIFICATION_LIVE_DEV_WITH_THESEUS" : "Die Live-Vorschau wurde mit Theseus im {0}-Modus gestartet."
 });
