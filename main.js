@@ -56,6 +56,7 @@ define(function (require, exports, module) {
     var Strings            = require("./src/strings");
     var UI                 = require("./src/UI");
     var Usage              = require("./src/Usage");
+    var StringUtils        = brackets.getModule("utils/StringUtils");
 
     var $exports = $(exports);
 
@@ -74,26 +75,26 @@ define(function (require, exports, module) {
     // set up the menus
 
     var _modes = {
-        "static" : { name: "static", displayName: "Serve files from disk" },
-        "proxy" : { name: "proxy", displayName: "Proxy to localhost:3000 (experimental)" },
+        "static" : { name: "static", displayName: Strings.MENU_MODE_STATIC_DISPLAYNAME },
+        "proxy" : { name: "proxy", displayName: Strings.MENU_MODE_PROXY_DISPLAYNAME },
     };
     var _orderedModes = [_modes["static"], _modes["proxy"]];
     var DEFAULT_MODE = _modes["static"];
 
     var ID_THESEUS_WELCOME_SCREEN   = "brackets.theseus.welcome";
-    var NAME_THESEUS_WELCOME_SCREEN = "Theseus Welcome Screen...";
+    var NAME_THESEUS_WELCOME_SCREEN = Strings.MENU_NAME_THESEUS_WELCOME_SCREEN;
 
     var ID_THESEUS_ENABLE = "brackets.theseus.enable";
-    var NAME_THESEUS_ENABLE = "Enable Theseus";
+    var NAME_THESEUS_ENABLE = Strings.MENU_NAME_THESEUS_ENABLE;
 
     var ID_THESEUS_DEBUG_BRACKETS = "brackets.theseus.debug-brackets";
-    var NAME_THESEUS_DEBUG_BRACKETS = "Debug Brackets with Theseus";
+    var NAME_THESEUS_DEBUG_BRACKETS = Strings.MENU_NAME_THESEUS_DEBUG_BRACKETS;
 
     var ID_THESEUS_RESET_TRACE = "brackets.theseus.reset-trace";
-    var NAME_THESEUS_RESET_TRACE = "Reset Theseus Trace Data (experimental)";
+    var NAME_THESEUS_RESET_TRACE = Strings.MENU_NAME_THESEUS_RESET_TRACE;
 
     var ID_THESEUS_MODES = _orderedModes.map(function (mode) { return "brackets.theseus.mode." + mode.name; });
-    var NAME_THESEUS_MODES = _orderedModes.map(function (mode) { return "   Mode: " + mode.displayName; });
+    var NAME_THESEUS_MODES = _orderedModes.map(function (mode) { return "   " + Strings.MENU_MODE + " " + mode.displayName; });
 
     // module variables
 
@@ -307,7 +308,7 @@ define(function (require, exports, module) {
                         placement: "left",
                         trigger: "manual",
                         autoHideDelay: 5000,
-                        title: function () { return "Live development has been started with Theseus in " + _mode.name.toUpperCase() + " mode." },
+                        title: function () { return StringUtils.format(Strings.NOTIFICATION_LIVE_DEV_WITH_THESEUS, _mode.name.toUpperCase()) },
                     }).twipsy("show");
                 }, 1000);
             }
