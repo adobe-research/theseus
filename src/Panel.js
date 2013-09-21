@@ -32,6 +32,7 @@ define(function (require, exports, module) {
 	var Inspector     = brackets.getModule("LiveDevelopment/Inspector/Inspector");
 	var Main          = require("../main");
 	var Resizer       = brackets.getModule("utils/Resizer");
+    var Strings       = require("./strings")
 
 	var $panel, $toolbar;
 	var _panel, _shown = false;
@@ -82,7 +83,7 @@ define(function (require, exports, module) {
 	function init() {
 		$panel = $("<div id='theseus-panel' class='bottom-panel vert-resizable top-resizer' />").insertAfter(".bottom-panel:last");
 		$toolbar = $("<div class='toolbar simple-toolbar-layout' />").appendTo($panel);
-		$("<div class='title' />").appendTo($toolbar).text("Log");
+		$("<div class='title' />").appendTo($toolbar).text(Strings.PANEL_LOG);
 		var $close = $("<a class='close' />").appendTo($toolbar).html("&times;")
 
 		$close.on("click", function () {

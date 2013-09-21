@@ -34,6 +34,8 @@ define(function (require, exports, module) {
     var Panel           = require("./Panel");
     var Popup           = require("./Popup").Popup;
     var Util            = require("./Util");
+    var Strings         = require("./strings");
+    var StringUtils     = brackets.getModule("utils/StringUtils");
 
     require("./lib/moment");
     require("./lib/konami");
@@ -203,7 +205,7 @@ define(function (require, exports, module) {
                 usedLines[node.start.line] = true;
 
                 var $glyph = $(_svgForGlyph(_nodeGlyph(node.id), "tiny"));
-                var $dom = $("<span class='uninitialized uninitialized-exceptions none theseus-call-count' id='" + _domIdForNodeId(node.id) + "' data-node-id='" + node.id + "'><span class='counts'>0 calls</span></span>");
+                var $dom = $("<span class='uninitialized uninitialized-exceptions none theseus-call-count' id='" + _domIdForNodeId(node.id) + "' data-node-id='" + node.id + "'><span class='counts'>" + Strings.UI_NO_CALLS + "</span></span>");
                 $dom.append($glyph);
                 editor._codeMirror.setGutterMarker(node.start.line - 1, "CodeMirror-linenumbers", $dom.get(0));
             });
@@ -252,7 +254,7 @@ define(function (require, exports, module) {
                 // update the call counts in the sidebar
                 for (var id in hitDeltas) {
                     var count = hits[id] || 0;
-                    var html = count + " call" + (count === 1 ? "" : "s");
+                    var html = " " + (count === 0 ? Strings.UI_NO_CALLS : (count === 1 ? Strings.UI_SINGLE_CALL : StringUtils.format(Strings.UI_MULTIPLE_CALLS, count)));
                     _getNodeMarker(id).toggleClass("none", count === 0)
                                       .toggleClass("uninitialized", false)
                                       .find(".counts").html(html);
@@ -264,7 +266,7 @@ define(function (require, exports, module) {
                     $(this).toggleClass("uninitialized", false);
                     var id = $(this).attr("data-node-id");
                     var count = hits[id] || 0;
-                    var html = count + " call" + (count === 1 ? "" : "s");
+                    var html = " " + (count === 0 ? Strings.UI_NO_CALLS : (count === 1 ? Strings.UI_SINGLE_CALL : StringUtils.format(Strings.UI_MULTIPLE_CALLS, count)));
                     _getNodeMarker(id).toggleClass("none", count === 0)
                                       .toggleClass("set", _loggedNodes.indexOf(id) !== -1)
                                       .toggleClass("uninitialized", false)
@@ -363,7 +365,7 @@ define(function (require, exports, module) {
             this._reset();
 
             this.$dom.on("click", ".vars-table .objects-bad", function () {
-                alert("You can't inspect this object any deeper.");
+                alert(Strings.UI_NO_MORE_INSPECTION);
                 $exports.triggerHandler("_inspectionLimitReached");
             });
 
@@ -517,10 +519,10 @@ define(function (require, exports, module) {
         _showBacktrace: function (invocationId) {
             this.$log.hide();
             this.$backtrace.show();
-            this.$backtrace.append("Loading backtrace...");
+            this.$backtrace.append(Strings.UI_BACKTRACE_LOADING);
             Agent.backtrace({ invocationId: invocationId, range: [0, 20] }, function (backtrace) {
                 this.$backtrace.empty();
-                this.$backtrace.append($("<p />").append($("<a />").html("&larr; Back").click(function () {
+                this.$backtrace.append($("<p />").append($("<a />").html("&larr; " + Strings.UI_BACKTRACE_BACK).click(function () {
                     this.$log.show();
                     this.$backtrace.hide();
                 }.bind(this))));
@@ -572,25 +574,25 @@ define(function (require, exports, module) {
                 if (log.nodeId === "log") {
                     $row1.append($("<td />").append(this._valueDom(arg.value)));
                 } else {
-                    var name = arg.name || ("arguments[" + i + "]");
+                    var name = arg.name || (Strings.UI_DETAILS_ARGUMENTS + "[" + i + "]");
                     $row1.append($("<td />").append($("<strong />").addClass("theseus-selectable").text(name + " = "))
                                             .append(this._valueDom(arg.value)));
                 }
             }
             if (log.returnValue) {
-                $row1.append($("<td />").append($("<strong />").text("return value = "))
+                $row1.append($("<td />").append($("<strong />").text(Strings.UI_DETAILS_RETURN_VALUE + " = "))
                                         .append(this._valueDom(log.returnValue)));
             } else if (log.exception) {
-                $row1.append($("<td />").append($("<strong style='color: red' />").text("exception = "))
+                $row1.append($("<td />").append($("<strong style='color: red' />").text(Strings.UI_DETAILS_EXCEPTION + " = "))
                                         .append(this._valueDom(log.exception, { wholePreview: true })));
             }
             if (log.this) {
-                $row1.append($("<td />").append($("<strong />").addClass("theseus-selectable").text("this = "))
+                $row1.append($("<td />").append($("<strong />").addClass("theseus-selectable").text(Strings.UI_DETAILS_THIS + " = "))
                                         .append(this._valueDom(log.this)));
             }
 
             if (options.backtraceLinks && log.nodeId !== "log") {
-                $row1.append($("<td class='backtrace-link' />").append($("<a />").html("Backtrace &rarr;").click(function () {
+                $row1.append($("<td class='backtrace-link' />").append($("<a />").html(Strings.UI_BACKTRACE + " &rarr;").click(function () {
                     this._showBacktrace(log.invocationId);
                 }.bind(this))));
             }
@@ -623,7 +625,7 @@ define(function (require, exports, module) {
                 var $image = $("<img />").attr("src", ExtensionUtils.getModuleUrl(module, "images/arrow.png"));
                 var $dom = $("<span />").toggleClass("objects-bad", true)
                                         .append($image)
-                                        .append(" Function");
+                                        .append(" " + Strings.UI_DETAILS_FUNCTION);
                 return $dom;
             }
             return $("<span />").text(JSON.stringify(val));
@@ -689,7 +691,7 @@ define(function (require, exports, module) {
             var preview = val.preview;
             if (preview === null || preview === undefined) preview = "";
             preview = preview.trim();
-            if (preview.length === 0) preview = "[Object]";
+            if (preview.length === 0) preview = "[" + Strings.UI_DETAILS_OBJECT + "]";
             if (preview.length > 20 && !options.wholePreview) preview = val.preview.slice(0, 20) + "...";
 
             var $dom = $("<div />").css({ "display" : "inline-block", "vertical-align" : "top" });
@@ -740,10 +742,10 @@ define(function (require, exports, module) {
                 var $icon = $("<img />").attr("src", ExtensionUtils.getModuleUrl(module, "images/warning-icon.png"));
                 var messages = [];
                 if (val.truncated.length && val.truncated.length.amount) {
-                    messages.push(val.truncated.length.amount + " of this object's items were truncated from the log.");
+                    messages.push(StringUtils.format(Strings.UI_ITEMS_TRUNCATED_FROM_LOG, val.truncated.length.amount));
                 }
                 if (val.truncated.keys && val.truncated.keys.amount) {
-                    messages.push(val.truncated.keys.amount + " of this object's keys were truncated from the log.");
+                    messages.push(StringUtils.format(Strings.UI_KEYS_TRUNCATED_FROM_LOG, val.truncated.keys.amount));
                 }
                 $icon.prop("title", messages.join(" "));
 
