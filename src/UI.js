@@ -574,7 +574,7 @@ define(function (require, exports, module) {
                 if (log.nodeId === "log") {
                     $row1.append($("<td />").append(this._valueDom(arg.value)));
                 } else {
-                    var name = arg.name || (Strings.UI_DETAILS_ARGUMENTS + "[" + i + "]");
+                    var name = arg.name || ("arguments[" + i + "]");
                     $row1.append($("<td />").append($("<strong />").addClass("theseus-selectable").text(name + " = "))
                                             .append(this._valueDom(arg.value)));
                 }
@@ -587,7 +587,7 @@ define(function (require, exports, module) {
                                         .append(this._valueDom(log.exception, { wholePreview: true })));
             }
             if (log.this) {
-                $row1.append($("<td />").append($("<strong />").addClass("theseus-selectable").text(Strings.UI_DETAILS_THIS + " = "))
+                $row1.append($("<td />").append($("<strong />").addClass("theseus-selectable").text("this = "))
                                         .append(this._valueDom(log.this)));
             }
 
@@ -691,7 +691,7 @@ define(function (require, exports, module) {
             var preview = val.preview;
             if (preview === null || preview === undefined) preview = "";
             preview = preview.trim();
-            if (preview.length === 0) preview = "[" + Strings.UI_DETAILS_OBJECT + "]";
+            if (preview.length === 0) preview = "[Object]";
             if (preview.length > 20 && !options.wholePreview) preview = val.preview.slice(0, 20) + "...";
 
             var $dom = $("<div />").css({ "display" : "inline-block", "vertical-align" : "top" });
