@@ -125,6 +125,13 @@ define(function (require, exports, module) {
         return functions;
     }
 
+    function probesInFile(path) {
+        var probes = [];
+        probes.push.apply(probes, NodeAgent.probesInFile(path));
+        probes.push.apply(probes, ChromeAgent.probesInFile(path));
+        return probes;
+    }
+
     function refreshHitCounts(callback) {
         NodeAgent.refreshHitCounts(function (nodeHits, nodeDeltas) {
             ChromeAgent.refreshHitCounts(function (chromeHits, chromeDeltas) {
@@ -280,6 +287,7 @@ define(function (require, exports, module) {
     // satisfied from locally cached data (sync)
     exports.functionWithId = functionWithId;
     exports.functionsInFile = functionsInFile;
+    exports.probesInFile = probesInFile;
     exports.cachedHitCounts = cachedHitCounts;
 
     // fetch data from the instrumented app (async)

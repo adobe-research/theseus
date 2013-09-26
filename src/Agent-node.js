@@ -263,6 +263,18 @@ define(function (require, exports, module) {
         return [];
     }
 
+    function probesInFile(path) {
+        for (var remotePath in _nodesByFilePath) {
+            if (Agent.couldBeRemotePath(path, remotePath)) {
+                var nodes = _nodesByFilePath[remotePath];
+                if (nodes) {
+                    return nodes.filter(function (n) { return n.type === "probe" });
+                }
+            }
+        }
+        return [];
+    }
+
     function refreshHitCounts(callback) {
         if (_hitsHandle === undefined) {
             callback && callback();
@@ -382,6 +394,10 @@ define(function (require, exports, module) {
         untrackFileCallGraph: "untrackFileCallGraph",
         fileCallGraphDelta: "fileCallGraphDelta",
 
+        trackProbeValues: "trackProbeValues",
+        untrackProbeValues: "untrackProbeValues",
+        probeValuesDelta: "probeValuesDelta",
+
         logCount: "logCount",
     };
     for (var fname in trackerFunctions) {
@@ -395,6 +411,7 @@ define(function (require, exports, module) {
     // satisfied from locally cached data (sync)
     exports.functionWithId = functionWithId;
     exports.functionsInFile = functionsInFile;
+    exports.probesInFile = probesInFile;
     exports.cachedHitCounts = cachedHitCounts;
 
     // fetch data from the instrumented app (async)

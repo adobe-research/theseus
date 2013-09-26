@@ -137,12 +137,12 @@ define(function (require, exports, module) {
     // so, this is clearly not how JavaScript is supposed to be used
 
     function makeHandleConstructor(functions) {
-        var constructor = function (agent, interval) {
+        var constructor = function (agent, interval, query) {
             this._open = functions._open;
             this._free = functions._free;
             this._refresh = functions._refresh;
             if (functions._isEmpty) this._isEmpty = functions._isEmpty;
-            Handle.call(this, agent, interval, null /* query */);
+            Handle.call(this, agent, interval, query);
         };
         constructor.prototype = Handle.prototype;
         return constructor;
@@ -151,10 +151,12 @@ define(function (require, exports, module) {
     function makeAggregateHandleConstructor(handleFunctions) {
         var handleConstructor = makeHandleConstructor(handleFunctions);
 
-        var constructor = function (interval) {
-            this._newHandle = function (agent) { return new handleConstructor(agent, interval) };
+        var constructor = function (interval, query) {
+            this._newHandle = function (agent) {
+                return new handleConstructor(agent, interval, query);
+            };
 
-            AggregateHandle.call(this);
+            AggregateHandle.call(this, query);
         }
         constructor.prototype = AggregateHandle.prototype;
         return constructor;
@@ -204,6 +206,13 @@ define(function (require, exports, module) {
         _isEmpty: function (data) { return data.length === 0 },
     });
 
+    var ProbeValuesAggregateHandle = makeAggregateHandleConstructor({
+        _open: function (query) { return this._agent.trackProbeValues(query) },
+        _free: function () { this._agent.untrackProbeValues(this._rawHandle) },
+        _refresh: function () { return this._agent.probeValuesDelta(this._rawHandle) },
+        _isEmpty: function (data) { return Object.keys(data).length === 0 },
+    });
+
     /**
      * returns an object on which you can listen for 'data' events.
      * historical data will be sent with the first 'data' event.
@@ -237,9 +246,15 @@ define(function (require, exports, module) {
         return new FileCallGraphAggregateHandle(updateInterval);
     }
 
+    function trackProbeValues(updateInterval, query) {
+        updateInterval || (updateInterval = 1000);
+        return new ProbeValuesAggregateHandle(updateInterval, query);
+    }
+
     exports.trackEpochs = trackEpochs;
     exports.trackNodes = trackNodes;
     exports.trackExceptions = trackExceptions;
     exports.trackConsoleLogs = trackConsoleLogs;
     exports.trackFileCallGraph = trackFileCallGraph;
+    exports.trackProbeValues = trackProbeValues;
 });

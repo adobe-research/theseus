@@ -327,6 +327,18 @@ define(function (require, exports, module) {
         return [];
     }
 
+    function probesInFile(path) {
+        for (var remotePath in _nodesByFilePath) {
+            if (Agent.couldBeRemotePath(path, remotePath)) {
+                var nodes = _nodesByFilePath[remotePath];
+                if (nodes) {
+                    return nodes.filter(function (n) { return n.type === "probe" });
+                }
+            }
+        }
+        return [];
+    }
+
     function cachedHitCounts() {
         return _nodeHitCounts;
     }
@@ -422,6 +434,18 @@ define(function (require, exports, module) {
         return _invokePromise("fileCallGraphDelta", [{ value: handle }]);
     }
 
+    function trackProbeValues(query) {
+        return _invokePromise("trackProbeValues", [{ value: query }]);
+    }
+
+    function untrackProbeValues(handle) {
+        return _invokePromise("untrackProbeValues", [{ value: handle }]);
+    }
+
+    function probeValuesDelta(handle) {
+        return _invokePromise("probeValuesDelta", [{ value: handle }]);
+    }
+
     function refreshLogs(handle, maxResults, callback) {
         _invoke("logDelta", [{ value: handle }, { value: maxResults }], function (results) {
             if (results) {
@@ -472,6 +496,7 @@ define(function (require, exports, module) {
     // (read-only once received from browser)
     exports.functionWithId = functionWithId;
     exports.functionsInFile = functionsInFile;
+    exports.probesInFile = probesInFile;
 
     // fetch data from the browser
     exports.trackHits = trackHits;
@@ -496,6 +521,10 @@ define(function (require, exports, module) {
     exports.trackNodes = trackNodes; // XXX: uses promises
     exports.untrackNodes = untrackNodes;
     exports.nodeDelta = nodeDelta; // XXX: uses promises
+
+    exports.trackProbeValues = trackProbeValues; // XXX: uses promises
+    exports.untrackProbeValues = untrackProbeValues;
+    exports.probeValuesDelta = probeValuesDelta; // XXX: uses promises
 
     exports.refreshLogs = refreshLogs;
     exports.backtrace = backtrace;

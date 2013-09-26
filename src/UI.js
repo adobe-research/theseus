@@ -27,6 +27,7 @@
 
 define(function (require, exports, module) {
     var Agent           = require("./Agent");
+    var AgentHandle     = require("./AgentHandle");
     var EditorInterface = require("./EditorInterface");
     var EpochPanel      = require("./EpochPanel");
     var ExtensionUtils  = brackets.getModule("utils/ExtensionUtils");
@@ -44,7 +45,9 @@ define(function (require, exports, module) {
     var _enabled = false;
     var _functionsInFile = [];
     var _deadCodeMarks = {}; // node id -> mark
-    var _logHandle;
+    var _probeWidgets = {}; // node id -> $widget
+    var _probeMarks = {}; // node id -> mark
+    var _logHandle, _probeHandle;
     var _loggedNodes = [], _loggedEventNames = [], _loggingExceptions = false, _loggingConsoleLogs = false;
     var _nodeGlyphs = {}; // node id -> glyph object
     var _variablesPanel;
@@ -120,6 +123,54 @@ define(function (require, exports, module) {
         $exports.triggerHandler("queryChanged", [query]);
     }
 
+    function _resetProbeQuery() {
+        if (_probeHandle !== undefined) {
+            _probeHandle.close();
+            _probeHandle = undefined;
+        }
+    }
+
+    function _refreshProbeQuery(nodeIds) {
+        _probeHandle = AgentHandle.trackProbeValues(100, { nodeIds: nodeIds });
+        $(_probeHandle).on("data", function (ev, data) {
+            console.log(data.agent, "probe data", data.data);
+            for (var id in data.data) {
+                var val = data.data[id];
+                var $widget = _probeWidgets[id];
+                if ($widget) {
+                    $widget.text(_probeValueString(val));
+                }
+            }
+        });
+        $(_probeHandle).on("agentDisconnected", function (ev, agent) {
+            // TODO
+        });
+    }
+
+    function _probeValueString(val) {
+        if (val.type === "number" || val.type === "boolean") {
+            return val.value;
+        } else if (val.type === "string") {
+            var s = val.value;
+            var maxLen = 5;
+            if (s.length > maxLen) {
+                return "\"" + s.slice(0, maxLen) + "...\" (len: " + s.length + ")";
+            } else {
+                return "\"" + s + "\"";
+            }
+            return this._stringDom(val);
+        } else if (val.type === "undefined") {
+            return "undefined";
+        } else if (val.type === "null") {
+            return "null";
+        } else if (val.type === "object") {
+            return "{}";
+        } else if (val.type === "function") {
+            return "func";
+        }
+        return "?";
+    }
+
     function _gutterCallCountClicked(e) {
         _resetLogQuery();
 
@@ -190,7 +241,12 @@ define(function (require, exports, module) {
             // clear old marks
             for (var id in _deadCodeMarks) {
                 _deadCodeMarks[id].clear();
-                delete _deadCodeMarks[id];
+            }
+            for (var id in _probeWidgets) {
+                _probeWidgets[id].remove();
+            }
+            for (var id in _probeMarks) {
+                _probeMarks[id].clear();
             }
 
             // clear all gutter markers
@@ -199,6 +255,10 @@ define(function (require, exports, module) {
             // reset to default values
             _functionsInFile = [];
             _deadCodeMarks = {};
+            _probeWidgets = {};
+            _probeMarks = {};
+
+            _resetProbeQuery();
         }
 
         function setupEditor(editor) {
@@ -237,6 +297,23 @@ define(function (require, exports, module) {
 
                 if (timeSinceStart() > 1) break;
             }
+
+            // add markers for probe locations
+            var probesInFile = Agent.probesInFile(path);
+            probesInFile.forEach(function (probe) {
+                var $dom = $("<span />", { class: "theseus-probe" });
+                var mark = editor._codeMirror.setBookmark({
+                    line: probe.start.line - 1,
+                    ch: probe.start.column,
+                }, {
+                    widget: $dom[0],
+                    insertLeft: true, // text will be inserted to the left of the bookmark
+                });
+
+                _probeWidgets[probe.id] = $dom;
+                _probeMarks[probe.id] = mark;
+            });
+            _refreshProbeQuery(probesInFile.map(function (p) { return p.id }));
         }
     }
 
