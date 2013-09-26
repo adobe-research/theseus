@@ -178,6 +178,14 @@ define(function (require, exports, module) {
     }
 
     function _editorChanged(event, editor, oldEditor, path) {
+        if (oldEditor) {
+            cleanupEditor(oldEditor);
+        }
+
+        if (editor) {
+            setupEditor(editor);
+        }
+
         function cleanupEditor(editor) {
             // clear old marks
             for (var id in _deadCodeMarks) {
@@ -229,13 +237,6 @@ define(function (require, exports, module) {
 
                 if (timeSinceStart() > 1) break;
             }
-        }
-
-        if (oldEditor) {
-            cleanupEditor(oldEditor);
-        }
-        if (editor) {
-            setupEditor(editor);
         }
     }
 
