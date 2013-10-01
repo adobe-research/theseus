@@ -146,28 +146,36 @@ define(function (require, exports, module) {
         });
     }
 
-    function _probeValueString(val) {
-        if (val.type === "number" || val.type === "boolean") {
-            return val.value;
-        } else if (val.type === "string") {
-            var s = val.value;
-            var maxLen = 5;
-            if (s.length > maxLen) {
-                return "\"" + s.slice(0, maxLen) + "...\" (len: " + s.length + ")";
-            } else {
-                return "\"" + s + "\"";
-            }
-            return this._stringDom(val);
-        } else if (val.type === "undefined") {
-            return "undefined";
-        } else if (val.type === "null") {
-            return "null";
-        } else if (val.type === "object") {
-            return "{}";
-        } else if (val.type === "function") {
-            return "func";
+    function _probeValueString(pv) {
+        if (("arguments" in pv)) {
+            return "(" + pv.arguments.map(unit).join(", ") + ") -> " + unit(pv.val);
+        } else {
+            return unit(pv.val);
         }
-        return "?";
+
+        function unit(val) {
+            if (val.type === "number" || val.type === "boolean") {
+                return val.value;
+            } else if (val.type === "string") {
+                var s = val.value;
+                var maxLen = 5;
+                if (s.length > maxLen) {
+                    return "\"" + s.slice(0, maxLen) + "...\" (len: " + s.length + ")";
+                } else {
+                    return "\"" + s + "\"";
+                }
+                return this._stringDom(val);
+            } else if (val.type === "undefined") {
+                return "undefined";
+            } else if (val.type === "null") {
+                return "null";
+            } else if (val.type === "object") {
+                return "{}";
+            } else if (val.type === "function") {
+                return "func";
+            }
+            return "?";
+        };
     }
 
     function _gutterCallCountClicked(e) {
