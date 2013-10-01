@@ -227,6 +227,7 @@ define(function (require, exports, module) {
             _bracketsVersion: brackets.metadata.version,
             _userId: _prefs.getValue("user_id"),
             _sessionId: _guid(),
+            _platform: brackets.platform
         });
 
         if (_agreedToUsageReporting()) {
