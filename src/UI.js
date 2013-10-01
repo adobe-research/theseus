@@ -133,7 +133,6 @@ define(function (require, exports, module) {
     function _refreshProbeQuery(nodeIds) {
         _probeHandle = AgentHandle.trackProbeValues(100, { nodeIds: nodeIds });
         $(_probeHandle).on("data", function (ev, data) {
-            console.log(data.agent, "probe data", data.data);
             for (var id in data.data) {
                 var val = data.data[id];
                 var $widget = _probeWidgets[id];
