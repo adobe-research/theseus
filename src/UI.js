@@ -158,9 +158,9 @@ define(function (require, exports, module) {
                 return val.value;
             } else if (val.type === "string") {
                 var s = val.value;
-                var maxLen = 5;
+                var maxLen = 20, excerptLen = 10;
                 if (s.length > maxLen) {
-                    return "\"" + s.slice(0, maxLen) + "...\" (len: " + s.length + ")";
+                    return "\"" + s.slice(0, excerptLen) + "...\" (len: " + s.length + ")";
                 } else {
                     return "\"" + s + "\"";
                 }
@@ -170,7 +170,12 @@ define(function (require, exports, module) {
             } else if (val.type === "null") {
                 return "null";
             } else if (val.type === "object") {
-                return "{}";
+                var preview = val.preview;
+                if (preview === null || preview === undefined) preview = "";
+                preview = preview.trim();
+                if (preview.length === 0) preview = "[Object]";
+                if (preview.length > 20 && !options.wholePreview) preview = val.preview.slice(0, 20) + "...";
+                return preview;
             } else if (val.type === "function") {
                 return "func";
             }
