@@ -131,13 +131,15 @@ define(function (require, exports, module) {
     }
 
     function _refreshProbeQuery(nodeIds) {
+        _resetProbeQuery();
+
         _probeHandle = AgentHandle.trackProbeValues(100, { nodeIds: nodeIds });
         $(_probeHandle).on("data", function (ev, data) {
             for (var id in data.data) {
                 var val = data.data[id];
                 var $widget = _probeWidgets[id];
                 if ($widget) {
-                    $widget.text(_probeValueString(val));
+                    $widget.empty().append(_probeValueString(val));
                 }
             }
         });
@@ -148,38 +150,49 @@ define(function (require, exports, module) {
 
     function _probeValueString(pv) {
         if (("arguments" in pv)) {
-            return "(" + pv.arguments.map(unit).join(", ") + ") -> " + unit(pv.val);
+            var $span = $("<span />");
+            $span.append("(");
+            pv.arguments.map(unit).forEach(function ($dom, i, arr) {
+                $span.append($dom);
+                if (i < arr.length - 1) {
+                    $span.append(", ");
+                }
+            });
+            $span.append(") &rarr; ", unit(pv.val));
+            return $span;
+            // return $span.append("(", pv.arguments.map(unit).join(", ") + ") -> " + unit(pv.val);
         } else {
             return unit(pv.val);
         }
 
         function unit(val) {
+            var $span = $("<span />");
             if (val.type === "number" || val.type === "boolean") {
-                return val.value;
+                return $span.text(val.value);
             } else if (val.type === "string") {
                 var s = val.value;
                 var maxLen = 20, excerptLen = 10;
                 if (s.length > maxLen) {
-                    return "\"" + s.slice(0, excerptLen) + "...\" (len: " + s.length + ")";
+                    return $span.text("\"" + s.slice(0, excerptLen) + "...\" (len: " + s.length + ")");
                 } else {
-                    return "\"" + s + "\"";
+                    return $span.text("\"" + s + "\"");
                 }
                 return this._stringDom(val);
             } else if (val.type === "undefined") {
-                return "undefined";
+                return $span.text("undefined");
             } else if (val.type === "null") {
-                return "null";
+                return $span.text("null");
             } else if (val.type === "object") {
                 var preview = val.preview;
                 if (preview === null || preview === undefined) preview = "";
                 preview = preview.trim();
                 if (preview.length === 0) preview = "[Object]";
-                if (preview.length > 20 && !options.wholePreview) preview = val.preview.slice(0, 20) + "...";
-                return preview;
+                if (preview.length > 20) preview = val.preview.slice(0, 20) + "...";
+                return $span.text(preview);
             } else if (val.type === "function") {
-                return "func";
+                return $span.text("func");
             }
-            return "?";
+            return $span.text("?");
         };
     }
 
@@ -314,10 +327,13 @@ define(function (require, exports, module) {
             var probesInFile = Agent.probesInFile(path);
             probesInFile.forEach(function (probe) {
                 var $dom = $("<span />", { class: "theseus-probe" });
-                var mark = editor._codeMirror.setBookmark({
+
+                var pos = {
                     line: probe.start.line - 1,
                     ch: probe.start.column,
-                }, {
+                };
+
+                var mark = editor._codeMirror.setBookmark(pos, {
                     widget: $dom[0],
                     insertLeft: true, // text will be inserted to the left of the bookmark
                 });
@@ -943,6 +959,16 @@ define(function (require, exports, module) {
             _refreshLogQuery();
             _showPanelIfAppropriate();
             _triggerQueryChangeEvent();
+        });
+
+        var $probeCheckbox = $("<input />", { type: "checkbox" });
+        $probeCheckbox.appendTo($("#main-toolbar .buttons"));
+        $probeCheckbox.on("change", function () {
+            if ($(this).prop("checked")) {
+                $(document.body).addClass("probes");
+            } else {
+                $(document.body).removeClass("probes");
+            }
         });
     }
 

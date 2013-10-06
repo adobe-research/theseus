@@ -189,8 +189,18 @@
         margin-left: 2em;
         background: #ccf;
         border-radius: 4px;
-        opacity: 0.6;
     }
+}
+
+.theseus-probe {
+    opacity: 0;
+
+    -webkit-transition: opacity 3s ease-in-out;
+    -moz-transition: opacity 3s ease-in-out;
+    transition: opacity 3s ease-in-out;
+}
+.probes .theseus-probe {
+    opacity: 1;
 }
 
 .waggle {
