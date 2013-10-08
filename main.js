@@ -271,6 +271,10 @@ define(function (require, exports, module) {
         return _enabled;
     }
 
+    function isInsideTheseus() {
+        return typeof __tracer !== "undefined";
+    }
+
     function getModeName() {
         return _mode.name;
     }
@@ -293,7 +297,9 @@ define(function (require, exports, module) {
 
         // after a short delay, show 'Thank you!' popup if they haven't seen it
         setTimeout(function () {
-            Invitation.showInvitationIfNecessary();
+            if (!isInsideTheseus()) {
+                Invitation.showInvitationIfNecessary();
+            }
         }, 1000);
 
         $(LiveDevelopment).on("statusChange", function (e, status) {
@@ -322,6 +328,7 @@ define(function (require, exports, module) {
     // exports
 
     exports.isEnabled = isEnabled;
+    exports.isInsideTheseus = isInsideTheseus;
     exports.getModeName = getModeName;
     exports.version = THESEUS_VERSION;
 
