@@ -161,7 +161,9 @@ define(function (require, exports, module) {
         }
 
         console.log('[theseus] opening new brackets window');
-        CommandManager.execute("debug.newBracketsWindow").then(function () {
+        var debugWindowMarker = "debug_"+Date.now()+Math.floor(Math.random()*100).toString();  //Very likely to be unique
+        location.hash = debugWindowMarker; CommandManager.execute("debug.newBracketsWindow").then(function () {
+            location.hash = "";
             console.log('[theseus] getting a proxy server for ' + bracketsRoot);
             return ProxyProvider.getServer(bracketsRoot, "static");
         }).then(function (proxy) {
@@ -171,13 +173,10 @@ define(function (require, exports, module) {
         }).then(function (response) {
             console.log('[theseus] got windows');
             var keys = Object.keys(response).filter(function (k) {
-                return response[k].webSocketDebuggerUrl;
-            }).sort(function (a, b) {
-                return parseInt(a, 10) - parseInt(b, 10);
+               return (response[k].webSocketDebuggerUrl && response[k].url.indexOf(debugWindowMarker) != -1);
             });
-            if (keys.length > 0) {
-                // pick the last page
-                var page = response[keys[keys.length - 1]];
+            if (keys.length == 1) {
+                var page = response[keys[0]];
 
                 var redirect = function () {
                     Inspector.off("connect", redirect);
@@ -190,8 +189,11 @@ define(function (require, exports, module) {
 
                 Inspector.connect(page.webSocketDebuggerUrl);
             }
+            else {
+                console.log("[theseus] unable to get debuggable window");
+            }
         }).fail(function onFail(err) {
-            console.log("debugging brackets failed: " + err);
+            console.log("[theseus] debugging brackets failed: " + err);
         });
     }
 
