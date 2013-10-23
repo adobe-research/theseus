@@ -55,6 +55,7 @@ define(function (require, exports, module) {
     var ProxyProvider      = require("./src/ProxyProvider");
     var Strings            = require("./src/strings");
     var UI                 = require("./src/UI");
+    var Update             = require("./src/Update");
     var Usage              = require("./src/Usage");
     var StringUtils        = brackets.getModule("utils/StringUtils");
 
