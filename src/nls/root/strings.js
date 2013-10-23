@@ -78,5 +78,10 @@ define({
     "MENU_NAME_THESEUS_RESET_TRACE"      : "Reset Theseus Trace Data (experimental)",
     
     //Notifications
-    "NOTIFICATION_LIVE_DEV_WITH_THESEUS" : "Live development has been started with Theseus in {0} mode."
+    "NOTIFICATION_LIVE_DEV_WITH_THESEUS" : "Live development has been started with Theseus in {0} mode.",
+    
+    //New version
+    "NEW_VERSION_AVAILABLE_HEADER"       : "Theseus update available!",
+    "NEW_VERSION_AVAILABLE_IGNORE"       : "Ignore",
+    "NEW_VERSION_AVAILABLE_UPDATE"       : "Update"
 });

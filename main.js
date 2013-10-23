@@ -318,6 +318,9 @@ define(function (require, exports, module) {
         if (_enabled) { // enable now if enabled in preferences
             _enable();
         }
+        
+        // Do update procedure, if necessary
+        Update.updateIfNecessary();
     }
 
     // exports

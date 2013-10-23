@@ -136,7 +136,6 @@ define(function(require, exports, module) {
         $dialog.on("hide", function () {
             if ($dialog.data("buttonId") == "upgrade") {
                 _doUpdate(version);
-       
             }
             else {
                 _prefs.setValue("update_ignored", true);
