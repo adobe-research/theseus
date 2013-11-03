@@ -53,14 +53,13 @@ define(function(require, exports, module) {
             var theseus = ExtensionManager.extensions.theseus;
             if(!theseus.registryInfo.updateAvailable) {
                 result.resolve({hasUpdateAvailable: false});
-            }
-            else {
+            } else {
                 var bracketsVersion = brackets.metadata.version;
                 var theseusVersions = theseus.registryInfo.versions;
                 var currentTheseusVersion = theseus.installInfo.metadata.version;
                 for(var i = theseusVersions.length-1; i >= 0; i--) { //Find the latest compatible version
                     var version = theseusVersions[i];
-                    if(version.version == currentTheseusVersion) { //Already checked all newer versions?
+                    if(version.version === currentTheseusVersion) { //Already checked all newer versions?
                         break; //Quit
                     }
                     var checkAgainst = { metadata: { engines: { brackets: version.brackets }}}; //Assemble the data from each version into a format that getCompatibilityInfo likes
@@ -77,7 +76,7 @@ define(function(require, exports, module) {
                 result.resolve({hasUpdateAvailable: false}); //Nothing was found: no update available
             }
         });
-        return result.promise({hasUpdateAvailable: false});
+        return result.promise();
     }
     
     /**
@@ -86,11 +85,10 @@ define(function(require, exports, module) {
      */
     function _doUpdate(version) {
         CommandManager.execute(Commands.FILE_EXTENSION_MANAGER).done(function() {
-            var searchBox = $(".search")[0];
-            searchBox.value = "Theseus";
-            var event = jQuery.Event("input");
+            var $searchBox = $(".extension-manager-dialog .search");
+            $searchBox.prop("value", "Theseus");
             setTimeout(function() {
-                jQuery(searchBox).trigger(event);
+                $searchBox.trigger("input");
             }, 800);
         });
     }
@@ -103,13 +101,12 @@ define(function(require, exports, module) {
         var newVersionDialogTemplate = Mustache.render(newVersionDialogHTML, {Strings : Strings});
         var dialog = Dialogs.showModalDialogUsingTemplate(newVersionDialogTemplate);
         var $dialog = dialog.getElement();
-        $dialog.find(".dialog-message")[0].innerHTML = currentVersion+" &#8594; "+newVersion;
+        $dialog.find(".dialog-message").html(currentVersion+" &#8594; "+newVersion);
         $dialog.find(".close").on("click", dialog.close.bind(dialog));
         $dialog.on("hide", function () {
-            if ($dialog.data("buttonId") == "upgrade") {
+            if ($dialog.data("buttonId") === "upgrade") {
                 _doUpdate(newVersion);
-            }
-            else {
+            } else {
                 _prefs.setValue("update_ignored", true);
                 _prefs.setValue("last_ignored_version", newVersion); 
             }
@@ -126,15 +123,15 @@ define(function(require, exports, module) {
         var now = new Date();
         var MILLIS_IN_DAY = 86400000;
         if((now-lastCheckedAt) < MILLIS_IN_DAY) {
-            return;
+            //return;
         }
         
         _checkForUpdate().done(function(update) {
             _prefs.setValue("last_checked_at",now.getTime());
             if(update.hasUpdateAvailable) {
-                if(!_prefs.getValue("update_ignored") || _prefs.getValue("last_ignored_version") != update.version) {
+                //if(!_prefs.getValue("update_ignored") || _prefs.getValue("last_ignored_version") != update.version) {
                     showUpdateDialog(update.version,update.current);
-                }
+               // }
             }
         });
     }
