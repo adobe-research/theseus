@@ -24,16 +24,16 @@
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define, $, brackets, Mustache */
-define(function(require, exports, module) {
+define(function (require, exports, module) {
     "use strict";
-    
+
     var Commands                = brackets.getModule("command/Commands");
     var CommandManager          = brackets.getModule("command/CommandManager");
     var Dialogs                 = brackets.getModule("widgets/Dialogs");
     var ExtensionManager        = brackets.getModule("extensibility/ExtensionManager");
     var PreferencesManager      = brackets.getModule("preferences/PreferencesManager");
     var Strings                 = require("./strings");
-    
+
     var _prefs;
     function _loadPreferences() {
         _prefs = PreferencesManager.getPreferenceStorage("com.adobe.theseus.update", {
@@ -42,29 +42,29 @@ define(function(require, exports, module) {
             last_checked_at: 0
         });
     }
-    
+
     /**
      * @private
      * @return {$.Promise} A promise object that is resolved with {hasUpdate: true/false, version: version string}
      */
     function _checkForUpdate() {
         var result = new $.Deferred();
-        ExtensionManager.downloadRegistry().done(function() {
+        ExtensionManager.downloadRegistry().done(function () {
             var theseus = ExtensionManager.extensions.theseus;
-            if(!theseus.registryInfo.updateAvailable) {
+            if (!theseus.registryInfo.updateAvailable) {
                 result.resolve({hasUpdateAvailable: false});
             } else {
                 var bracketsVersion = brackets.metadata.version;
                 var theseusVersions = theseus.registryInfo.versions;
                 var currentTheseusVersion = theseus.installInfo.metadata.version;
-                for(var i = theseusVersions.length-1; i >= 0; i--) { //Find the latest compatible version
+                for (var i = theseusVersions.length - 1; i >= 0; i--) { //Find the latest compatible version
                     var version = theseusVersions[i];
-                    if(version.version === currentTheseusVersion) { //Already checked all newer versions?
+                    if (version.version === currentTheseusVersion) { //Already checked all newer versions?
                         break; //Quit
                     }
                     var checkAgainst = { metadata: { engines: { brackets: version.brackets }}}; //Assemble the data from each version into a format that getCompatibilityInfo likes
-                    var compatibility = ExtensionManager.getCompatibilityInfo(checkAgainst,bracketsVersion);
-                    if(compatibility.isCompatible) { //Is the update compatible with this Brackets?
+                    var compatibility = ExtensionManager.getCompatibilityInfo(checkAgainst, bracketsVersion);
+                    if (compatibility.isCompatible) { //Is the update compatible with this Brackets?
                         result.resolve({ //Cool, there's an update available
                             hasUpdateAvailable: true,
                             version: version.version,
@@ -78,64 +78,64 @@ define(function(require, exports, module) {
         });
         return result.promise();
     }
-    
+
     /**
      * @private
      * Open the extension manager and (try to) search for Theseus
      */
-    function _doUpdate(version) {
-        CommandManager.execute(Commands.FILE_EXTENSION_MANAGER).done(function() {
+    function _doUpdate() {
+        CommandManager.execute(Commands.FILE_EXTENSION_MANAGER).done(function () {
             var $searchBox = $(".extension-manager-dialog .search");
             $searchBox.prop("value", "Theseus");
-            setTimeout(function() {
+            setTimeout(function () {
                 $searchBox.trigger("input");
             }, 800);
         });
     }
-    
+
     /**
      * Alerts user that Theseus is updatable and prompts to upgrade
      */
-    function showUpdateDialog(newVersion,currentVersion) {
+    function showUpdateDialog(newVersion, currentVersion) {
         var newVersionDialogHTML = require("text!./NewVersionAvailable.html");
         var newVersionDialogTemplate = Mustache.render(newVersionDialogHTML, {Strings : Strings});
         var dialog = Dialogs.showModalDialogUsingTemplate(newVersionDialogTemplate);
         var $dialog = dialog.getElement();
-        $dialog.find(".dialog-message").html(currentVersion+" &#8594; "+newVersion);
+        $dialog.find(".dialog-message").html(currentVersion + " &#8594; " + newVersion);
         $dialog.find(".close").on("click", dialog.close.bind(dialog));
         $dialog.on("hide", function () {
             if ($dialog.data("buttonId") === "upgrade") {
                 _doUpdate(newVersion);
             } else {
                 _prefs.setValue("update_ignored", true);
-                _prefs.setValue("last_ignored_version", newVersion); 
+                _prefs.setValue("last_ignored_version", newVersion);
             }
         });
     }
-    
+
     /**
      * Determines if a Theseus update is necessary and, if so, whether to show the dialog
      */
     function updateIfNecessary() {
         _loadPreferences();
-        
+
         var lastCheckedAt = _prefs.getValue("last_checked_at");
         var now = new Date();
         var MILLIS_IN_DAY = 86400000;
-        if((now-lastCheckedAt) < MILLIS_IN_DAY) {
+        if ((now - lastCheckedAt) < MILLIS_IN_DAY) {
             return;
         }
-        
-        _checkForUpdate().done(function(update) {
-            _prefs.setValue("last_checked_at",now.getTime());
-            if(update.hasUpdateAvailable) {
-                if(!_prefs.getValue("update_ignored") || _prefs.getValue("last_ignored_version") != update.version) {
-                    showUpdateDialog(update.version,update.current);
+
+        _checkForUpdate().done(function (update) {
+            _prefs.setValue("last_checked_at", now.getTime());
+            if (update.hasUpdateAvailable) {
+                if (!_prefs.getValue("update_ignored") || _prefs.getValue("last_ignored_version") !== update.version) {
+                    showUpdateDialog(update.version, update.current);
                 }
             }
         });
     }
-    
+
     exports.updateIfNecessary = updateIfNecessary;
     exports.showUpdateDialog = showUpdateDialog;
 });
