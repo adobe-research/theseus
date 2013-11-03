@@ -123,15 +123,15 @@ define(function(require, exports, module) {
         var now = new Date();
         var MILLIS_IN_DAY = 86400000;
         if((now-lastCheckedAt) < MILLIS_IN_DAY) {
-            //return;
+            return;
         }
         
         _checkForUpdate().done(function(update) {
             _prefs.setValue("last_checked_at",now.getTime());
             if(update.hasUpdateAvailable) {
-                //if(!_prefs.getValue("update_ignored") || _prefs.getValue("last_ignored_version") != update.version) {
+                if(!_prefs.getValue("update_ignored") || _prefs.getValue("last_ignored_version") != update.version) {
                     showUpdateDialog(update.version,update.current);
-               // }
+                }
             }
         });
     }
