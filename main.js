@@ -49,7 +49,7 @@ define(function (require, exports, module) {
     var LiveDevelopment    = brackets.getModule("LiveDevelopment/LiveDevelopment");
     var Menus              = brackets.getModule("command/Menus");
     var NativeApp          = brackets.getModule("utils/NativeApp");
-    var NativeFileSystem   = brackets.getModule("file/NativeFileSystem").NativeFileSystem;
+    var FileSystem         = brackets.getModule("filesystem/FileSystem");
     var Panel              = require("./src/Panel");
     var PreferencesManager = brackets.getModule("preferences/PreferencesManager");
     var ProxyProvider      = require("./src/ProxyProvider");
@@ -66,10 +66,12 @@ define(function (require, exports, module) {
     var corruptInstallationDialogHTML = require("text!./src/InstallationCorrupt.html");
     var corruptInstallationDialogTemplate = Mustache.render(corruptInstallationDialogHTML, {Strings : Strings});
     var nodeModulesPath = ExtensionUtils.getModulePath(module, "node_modules");
-    NativeFileSystem.resolveNativeFileSystemPath(nodeModulesPath, function() {}, function() {
-        var dialog = Dialogs.showModalDialogUsingTemplate(corruptInstallationDialogTemplate);
-        var $dialog = dialog.getElement();
-        $dialog.find(".close").on("click", dialog.close.bind(dialog));
+    FileSystem.resolve(nodeModulesPath, function (err) {
+        if (err) {
+            var dialog = Dialogs.showModalDialogUsingTemplate(corruptInstallationDialogTemplate);
+            var $dialog = dialog.getElement();
+            $dialog.find(".close").on("click", dialog.close.bind(dialog));
+        }
     });
 
     // set up the menus
