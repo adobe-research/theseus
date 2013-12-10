@@ -55,6 +55,7 @@ define(function (require, exports, module) {
     var ProxyProvider      = require("./src/ProxyProvider");
     var Strings            = require("./src/strings");
     var UI                 = require("./src/UI");
+    var Update             = require("./src/Update");
     var Usage              = require("./src/Usage");
     var StringUtils        = brackets.getModule("utils/StringUtils");
 
@@ -328,6 +329,9 @@ define(function (require, exports, module) {
         if (_enabled) { // enable now if enabled in preferences
             _enable();
         }
+        
+        // Do update procedure, if necessary
+        Update.updateIfNecessary();
     }
 
     // exports
