@@ -78,5 +78,10 @@ define({
     "MENU_NAME_THESEUS_RESET_TRACE"      : "Von Theseus aufgezeichnete Daten zurücksetzen (experimentell)",
     
     //Notifications
-    "NOTIFICATION_LIVE_DEV_WITH_THESEUS" : "Die Live-Vorschau wurde mit Theseus im {0}-Modus gestartet."
+    "NOTIFICATION_LIVE_DEV_WITH_THESEUS" : "Die Live-Vorschau wurde mit Theseus im {0}-Modus gestartet.",
+    
+    //New version
+    "NEW_VERSION_AVAILABLE_HEADER"       : "Ein Theseus-Update ist verfügbar!",
+    "NEW_VERSION_AVAILABLE_IGNORE"       : "Ignorieren",
+    "NEW_VERSION_AVAILABLE_UPDATE"       : "Updaten"
 });
