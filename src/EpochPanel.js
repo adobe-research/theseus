@@ -205,7 +205,10 @@ define(function (require, exports, module) {
     }
 
     function setPanelVisibility() {
-        panel.setVisible(_haveData());
+        var shouldShow = _haveData();
+        if (shouldShow != panel.isVisible()) {
+            panel.setVisible(shouldShow);
+        }
     }
 
     function hasExceptions() {
