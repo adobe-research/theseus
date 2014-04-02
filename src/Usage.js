@@ -35,8 +35,8 @@ define(function (require, exports, module) {
     var Main               = require("../main");
     var NodeAgent          = require("./Agent-node");
     var Panel              = require("./Panel");
-    var PreferencesManager = brackets.getModule("preferences/PreferencesManager")
     var UI                 = require("./UI");
+    var Preferences        = require("./Preferences");
 
     var $exports = $(exports);
 
@@ -51,22 +51,12 @@ define(function (require, exports, module) {
 
     var AGREEMENT_ID = 0; // increment every time the information we report changes
 
-    function _loadPreferences() {
-        _prefs = PreferencesManager.getPreferenceStorage("com.adobe.theseus.usage-reporting", {
-            user_id: _guid(),
-            last_agreement_shown: -1,
-            usage_reporting_approved: false,
-            research_contact_approved: false,
-            research_contact_email: undefined,
-        });
-    }
-
     function sawAgreement() {
-        return _prefs.getValue("last_agreement_shown") === AGREEMENT_ID;
+        return Preferences.get("usage.last_agreement_shown") === AGREEMENT_ID;
     }
 
     function _agreedToUsageReporting() {
-        return sawAgreement() && _prefs.getValue("usage_reporting_approved");
+        return sawAgreement() && Preferences.get("usage.usage_reporting_approved");
     }
 
     /**
@@ -77,13 +67,14 @@ define(function (require, exports, module) {
     }
     **/
     function recordAgreementResult(result) {
-        _prefs.setValue("last_agreement_shown", AGREEMENT_ID);
-        _prefs.setValue("usage_reporting_approved", result.usageOkay);
-        _prefs.setValue("research_contact_approved", result.contactOkay);
+        Preferences.set("usage.last_agreement_shown", AGREEMENT_ID);
+        Preferences.set("usage.usage_reporting_approved", result.usageOkay);
+        Preferences.set("usage.research_contact_approved", result.contactOkay);
+        console.log("Test");
         if (result.email === undefined) {
-            _prefs.remove("research_contact_email", result.email);
+            Preferences.set("usage.research_contact_email", null, true);
         } else {
-            _prefs.setValue("research_contact_email", result.email);
+            Preferences.set("usage.research_contact_email", result.email, true);
         }
 
         if (result.usageOkay) {
@@ -100,9 +91,9 @@ define(function (require, exports, module) {
     /** returns the last hash passed to recordAgreementResult **/
     function lastAgreementResult() {
         return {
-            usageOkay: _prefs.getValue("usage_reporting_approved"),
-            contactOkay: _prefs.getValue("research_contact_approved"),
-            email: _prefs.getValue("research_contact_email"),
+            usageOkay: Preferences.get("usage.usage_reporting_approved"),
+            contactOkay: Preferences.get("usage.research_contact_approved"),
+            email: Preferences.get("usage.research_contact_email")
         };
     }
 
@@ -220,12 +211,16 @@ define(function (require, exports, module) {
     }
 
     function init() {
-        _loadPreferences();
+        var userId = Preferences.get("usage.user_id");
+        if (!userId) {
+            userId = _guid();
+            Preferences.set("usage.user_id", userId, true);
+        }
 
         _registerProperties({
             _theseusVersion: Main.version,
             _bracketsVersion: brackets.metadata.version,
-            _userId: _prefs.getValue("user_id"),
+            _userId: userId,
             _sessionId: _guid(),
             _platform: brackets.platform
         });
