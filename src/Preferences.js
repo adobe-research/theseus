@@ -54,6 +54,23 @@ define(function (require, exports, module) {
         }
     };
 
+    PreferencesManager.convertPreferences("com.adobe.theseus", { // main.js
+        "enabled": "user theseus.enabled",
+        "mode": "user theseus.mode"
+    });
+    PreferencesManager.convertPreferences("com.adobe.theseus.usage-reporting", { // Usage.js
+        "user_id": "user theseus.usage.user_id",
+        "last_agreement_shown": "user theseus.usage.last_agreement_shown",
+        "usage_reporting_approved": "user theseus.usage.usage_reporting_approved",
+        "research_contact_approved": "user theseus.usage.research_contact_approved",
+        "research_contact_email": "user theseus.usage.research_contact_email"
+    }, true);
+    PreferencesManager.convertPreferences("com.adobe.theseus.update", { // Update.js
+        "update_ignored": "theseus.update.update_ignored",
+        "last_ignored_version": "theseus.update.last_ignored_version",
+        "last_checked_at": "theseus.update.last_checked_at"
+    }, true);
+
     _.each(preferences.prefs, function (definition, key) {
         prefs.definePreference(key, definition.type, definition.value)
             .on("change", function () {
