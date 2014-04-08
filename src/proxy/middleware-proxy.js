@@ -40,8 +40,17 @@ var proxy = new httpProxy.RoutingProxy();
 
 module.exports = function (root, options) {
   return function (req, res, next) {
-    var buffer = httpProxy.buffer(req);
+    if (req.url.indexOf("public") !== -1) {
+      var modifiedUrl = req.url.replace("/public", "");
+      var fullURL = "http://" + req.headers.host + modifiedUrl;
 
+      res.writeHead(302, { Location: fullURL });
+      res.end();
+
+      return;
+    }
+
+    var buffer = httpProxy.buffer(req);
     var _process = false;
     var _contentType;
     var _code, _headers;
