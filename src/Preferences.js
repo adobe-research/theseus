@@ -96,6 +96,6 @@ define(function (require, exports, module) {
         return _getPrefLocation(key).get(key);
     }
 
-    exports.set     = set;
-    exports.get     = get;
+    exports.set = set;
+    exports.get = get;
 });
