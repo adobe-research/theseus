@@ -51,13 +51,13 @@ define(function (require, exports, module) {
     var NativeApp          = brackets.getModule("utils/NativeApp");
     var FileSystem         = brackets.getModule("filesystem/FileSystem");
     var Panel              = require("./src/Panel");
-    var PreferencesManager = brackets.getModule("preferences/PreferencesManager");
     var ProxyProvider      = require("./src/ProxyProvider");
     var Strings            = require("./src/strings");
     var UI                 = require("./src/UI");
     var Update             = require("./src/Update");
     var Usage              = require("./src/Usage");
     var StringUtils        = brackets.getModule("utils/StringUtils");
+    var Preferences        = require("./src/Preferences");
 
     var $exports = $(exports);
 
@@ -103,7 +103,6 @@ define(function (require, exports, module) {
 
     var _enabled = false;
     var _mode = DEFAULT_MODE;
-    var _prefs;
 
     function _enable() {
         $exports.triggerHandler("enable");
@@ -113,10 +112,14 @@ define(function (require, exports, module) {
         $exports.triggerHandler("disable");
     }
 
-    function _toggleEnabled() {
+    function _toggleEnabled(enabled) {
         // TODO: disable or enable immediately
-        _enabled = !_enabled;
-        _prefs.setValue("enabled", _enabled);
+        if (enabled !== undefined) { // set to a given state
+            _enabled = enabled;
+        } else {
+            _enabled = !_enabled;
+        }
+        Preferences.set("enabled", _enabled, true);
         _updateMenuStates();
 
         if (_enabled) {
@@ -129,7 +132,7 @@ define(function (require, exports, module) {
     function _setMode(modeName) {
         // TODO: warn user that connection will need to be restarted
         _mode = _modes[modeName] || DEFAULT_MODE;
-        _prefs.setValue("mode", _mode.name);
+        Preferences.set("mode", _mode.name, true);
         _updateMenuStates();
     }
 
@@ -206,9 +209,8 @@ define(function (require, exports, module) {
     }
 
     function _loadPreferences() {
-        _prefs = PreferencesManager.getPreferenceStorage("com.adobe.theseus", { enabled: true, mode: "static" });
-        _enabled = _prefs.getValue("enabled");
-        _mode = _modes[_prefs.getValue("mode")] || DEFAULT_MODE;
+        _enabled = Preferences.get("enabled");
+        _mode = _modes[Preferences.get("mode")] || DEFAULT_MODE;
     }
 
     function _setupMenu() {
@@ -327,6 +329,13 @@ define(function (require, exports, module) {
                     }).twipsy("show");
                 }, 1000);
             }
+        });
+
+        $(Preferences).on("change.enabled", function () {
+            _toggleEnabled(Preferences.get("enabled"));
+        });
+        $(Preferences).on("change.mode", function () {
+            _setMode(Preferences.get("mode"));
         });
 
         if (_enabled) { // enable now if enabled in preferences

@@ -31,17 +31,8 @@ define(function (require, exports, module) {
     var CommandManager          = brackets.getModule("command/CommandManager");
     var Dialogs                 = brackets.getModule("widgets/Dialogs");
     var ExtensionManager        = brackets.getModule("extensibility/ExtensionManager");
-    var PreferencesManager      = brackets.getModule("preferences/PreferencesManager");
     var Strings                 = require("./strings");
-
-    var _prefs;
-    function _loadPreferences() {
-        _prefs = PreferencesManager.getPreferenceStorage("com.adobe.theseus.update", {
-            update_ignored: false,
-            last_ignored_version: 0,
-            last_checked_at: 0
-        });
-    }
+    var Preferences             = require("./Preferences");
 
     /**
      * @private
@@ -107,8 +98,8 @@ define(function (require, exports, module) {
             if ($dialog.data("buttonId") === "upgrade") {
                 _doUpdate(newVersion);
             } else {
-                _prefs.setValue("update_ignored", true);
-                _prefs.setValue("last_ignored_version", newVersion);
+                Preferences.set("update.update_ignored", true);
+                Preferences.set("update.last_ignored_version", newVersion, true);
             }
         });
     }
@@ -117,9 +108,7 @@ define(function (require, exports, module) {
      * Determines if a Theseus update is necessary and, if so, whether to show the dialog
      */
     function updateIfNecessary() {
-        _loadPreferences();
-
-        var lastCheckedAt = _prefs.getValue("last_checked_at");
+        var lastCheckedAt = Preferences.get("update.last_checked_at");
         var now = new Date();
         var MILLIS_IN_DAY = 86400000;
         if ((now - lastCheckedAt) < MILLIS_IN_DAY) {
@@ -127,9 +116,9 @@ define(function (require, exports, module) {
         }
 
         _checkForUpdate().done(function (update) {
-            _prefs.setValue("last_checked_at", now.getTime());
+            Preferences.set("update.last_checked_at", now.getTime(), true);
             if (update.hasUpdateAvailable) {
-                if (!_prefs.getValue("update_ignored") || _prefs.getValue("last_ignored_version") !== update.version) {
+                if (!Preferences.get("update.update_ignored") || Preferences.get("update.last_ignored_version") !== update.version) {
                     showUpdateDialog(update.version, update.current);
                 }
             }
