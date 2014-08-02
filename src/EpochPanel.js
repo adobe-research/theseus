@@ -78,9 +78,7 @@ define(function (require, exports, module) {
         if (!(agent.id in exceptionCountByAgent)) {
             exceptionCountByAgent[agent.id] = 0;
         }
-        for (var nodeId in hits) {
-            exceptionCountByAgent[agent.id] += hits[nodeId];
-        }
+        exceptionCountByAgent[agent.id] = hits;
         combineExceptions();
 
         updateExceptionDisplay();
@@ -234,7 +232,7 @@ define(function (require, exports, module) {
 
         exceptionHandle = AgentHandle.trackExceptions(100);
         $(exceptionHandle).on("data", function (ev, data) {
-            exceptionsReceived(data.agent, data.data.counts);
+            exceptionsReceived(data.agent, data.data);
         });
         $(exceptionHandle).on("agentDisconnected", function (ev, agent) {
             agentLeft(agent);

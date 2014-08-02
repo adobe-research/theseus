@@ -178,9 +178,19 @@ define(function (require, exports, module) {
     });
 
     var ExceptionsAggregateHandle = makeAggregateHandleConstructor({
-        _open: function () { return this._agent.trackExceptions() },
-        _free: function () { this._agent.untrackExceptions(this._rawHandle) },
-        _refresh: function () { return this._agent.exceptionDelta(this._rawHandle) },
+        _open: function () {
+            var d = new $.Deferred;
+            this._agent.trackLogs({ ids: [], exceptions: true }, function (handle) {
+                if (handle === undefined) {
+                    d.reject();
+                } else {
+                    d.resolve(handle);
+                }
+            }.bind(this));
+            return d.promise();
+        },
+        _free: function () { /* XXX TODO */ },
+        _refresh: function () { return this._agent.logCount(this._rawHandle) },
     });
 
     var ConsoleLogsAggregateHandle = makeAggregateHandleConstructor({
