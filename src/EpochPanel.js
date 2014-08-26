@@ -136,7 +136,7 @@ define(function (require, exports, module) {
 
     function consoleLogDom() {
         var $dom = $("<span class='epoch logs' />");
-        var $nameDom = $("<span class='name' />").text("console.log").appendTo($dom);
+        var $nameDom = $("<span class='name' />").text("console").appendTo($dom);
         $logCount = $("<span class='hits' />").appendTo($dom);
 
         $dom.on("click", function () {
