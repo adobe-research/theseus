@@ -10,7 +10,7 @@
 		"connect" : "2.3.4",
 		"mime" : "1.2.4",
 		"http-proxy" : "0.8.7",
-		"fondue" : "0.5.x"
+		"fondue" : "0.6.x"
 	},
 	"engines" : {
 		"brackets" : ">=0.38.0"
