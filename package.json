@@ -3,7 +3,7 @@
 	"title" : "Theseus for Brackets",
 	"description" : "Real-time & retroactive debugging for JavaScript in Chrome and Node.js",
 	"homepage" : "https://github.com/adobe-research/theseus",
-	"version" : "0.4.13",
+	"version" : "0.4.14",
 	"author" : "Tom Lieber <tom@alltom.com>",
 	"license" : "MIT",
 	"dependencies" : {
