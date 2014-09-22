@@ -76,7 +76,7 @@ If you come across a bug, [submit an issue on GitHub](https://github.com/adobe-r
 Contributing
 ------------
 
-[Get a sense of how the code is laid out](https://github.com/adobe-research/theseus/wiki/Theseus-Development) then start submitting pull requests!
+[Get a sense of how the code is laid out](https://github.com/adobe-research/theseus/wiki/Theseus-Development) then start submitting pull requests! Patches are welcome, and I'll even help you figure out how to do something that doesn't make sense to merge but still deserves to exist.
 
 Mailing List
 ------------
