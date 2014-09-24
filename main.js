@@ -87,6 +87,9 @@ define(function (require, exports, module) {
     var ID_THESEUS_WELCOME_SCREEN   = "brackets.theseus.welcome";
     var NAME_THESEUS_WELCOME_SCREEN = Strings.MENU_NAME_THESEUS_WELCOME_SCREEN;
 
+    var ID_THESEUS_TROUBLESHOOTING   = "brackets.theseus.troubleshooting";
+    var NAME_THESEUS_TROUBLESHOOTING = Strings.MENU_NAME_THESEUS_TROUBLESHOOTING;
+
     var ID_THESEUS_ENABLE = "brackets.theseus.enable";
     var NAME_THESEUS_ENABLE = Strings.MENU_NAME_THESEUS_ENABLE;
 
@@ -145,6 +148,10 @@ define(function (require, exports, module) {
 
     function _showWelcomeScreen() {
         Invitation.showInvitation();
+    }
+
+    function _showTroubleshooting() {
+        NativeApp.openURLInDefaultBrowser("https://github.com/adobe-research/theseus/wiki/Troubleshooting-Theseus");
     }
 
     function _debugBrackets() {
@@ -221,6 +228,12 @@ define(function (require, exports, module) {
         );
 
         CommandManager.register(
+            NAME_THESEUS_TROUBLESHOOTING,
+            ID_THESEUS_TROUBLESHOOTING,
+            _showTroubleshooting
+        );
+
+        CommandManager.register(
             NAME_THESEUS_ENABLE,
             ID_THESEUS_ENABLE,
             _toggleEnabled
@@ -249,6 +262,7 @@ define(function (require, exports, module) {
         var menu = Menus.getMenu(Menus.AppMenuBar.HELP_MENU);
         menu.addMenuDivider(Menus.LAST, null);
         menu.addMenuItem(ID_THESEUS_WELCOME_SCREEN, null, Menus.LAST, null);
+        menu.addMenuItem(ID_THESEUS_TROUBLESHOOTING, null, Menus.LAST, null);
 
         var fileMenu = Menus.getMenu(Menus.AppMenuBar.FILE_MENU);
         fileMenu.addMenuDivider(Menus.LAST, null);

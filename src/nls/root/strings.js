@@ -73,6 +73,7 @@ define({
     "MENU_MODE_PROXY_DISPLAYNAME"        : "Proxy to localhost:3000 (experimental)",
     
     "MENU_NAME_THESEUS_WELCOME_SCREEN"   : "Theseus Welcome Screen...",
+    "MENU_NAME_THESEUS_TROUBLESHOOTING"  : "Theseus Troubleshooting...",
     "MENU_NAME_THESEUS_ENABLE"           : "Enable Theseus",
     "MENU_NAME_THESEUS_DEBUG_BRACKETS"   : "Debug Brackets with Theseus",
     "MENU_NAME_THESEUS_RESET_TRACE"      : "Reset Theseus Trace Data (experimental)",
