@@ -95,7 +95,7 @@ Patches to any of these projects are welcome. I'll even help you figure out how 
 * [adobe-research/fondue](https://github.com/adobe-research/fondue): JavaScript instrumentation library. Rewrites JavaScript code so that when it runs, it saves a trace of everything that happened. Theseus uses fondue's API over WebSockets or Brackets' Live Development connection, depending on the context.
 * [alltom/fondue-middleware](https://github.com/alltom/fondue-middleware): a connect middleware that processes all JavaScript in .js and .html files with fondue
 
-### Source rewriting
+### JavaScript source rewriting
 
 * [alltom/esprima-selector](https://github.com/alltom/esprima-selector): ask whether a particular esprima node matches a CSS-like selector.
 * [alltom/falafel-helpers](https://github.com/alltom/falafel-helpers): decorate falafel nodes with some fancy helpers
