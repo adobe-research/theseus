@@ -73,15 +73,38 @@ First, there's [a whole wiki page about troubleshooting Theseus](https://github.
 
 If you come across a bug, [submit an issue on GitHub](https://github.com/adobe-research/theseus/issues). Include a list of steps we can follow to reproduce the problem, a description of what you saw that seemed broken, and a description of what you expected to see.
 
-Contributing
-------------
-
-[Get a sense of how the code is laid out](https://github.com/adobe-research/theseus/wiki/Theseus-Development) then start submitting pull requests! Patches are welcome, and I'll even help you figure out how to do something that doesn't make sense to merge but still deserves to exist.
-
 Mailing List
 ------------
 
 Announcements and discussion: https://groups.google.com/d/forum/theseus-discuss
+
+Contributing/Extending
+----------------------
+
+Theseus is a constellation of Node.js modules working together. For contributors, there's [a detailed description of how Theseus works](https://github.com/adobe-research/theseus/wiki/Theseus-Development), but below is a list of all the modules that you can use to create similar (or dissimilar!) projects.
+
+Patches to any of these projects are welcome. I'll even help you figure out how to do something that doesn't make sense to merge but still deserves to exist.
+
+### Theseus, the Brackets extension
+
+* [adobe-research/theseus](https://github.com/adobe-research/theseus): the Brackets extension and its UI (you are here)
+* [adobe-research/node-theseus](https://github.com/adobe-research/node-theseus): the command-line runner for debugging Node.js programs with Theseus
+
+### JavaScript trace collection
+
+* [adobe-research/fondue](https://github.com/adobe-research/fondue): JavaScript instrumentation library. Rewrites JavaScript code so that when it runs, it saves a trace of everything that happened. Theseus uses fondue's API over WebSockets or Brackets' Live Development connection, depending on the context.
+* [alltom/fondue-middleware](https://github.com/alltom/fondue-middleware): a connect middleware that processes all JavaScript in .js and .html files with fondue
+
+### Source rewriting
+
+* [alltom/esprima-selector](https://github.com/alltom/esprima-selector): ask whether a particular esprima node matches a CSS-like selector.
+* [alltom/falafel-helpers](https://github.com/alltom/falafel-helpers): decorate falafel nodes with some fancy helpers
+* [alltom/node-falafel-map](https://github.com/alltom/node-falafel-map): a fork of [substack's JavaScript-rewriting library](https://github.com/substack/node-falafel) that generates source maps
+
+### Prototypes
+
+* [alltom/fondue-profile](https://github.com/alltom/fondue-profile): a really simple instrumenting profiler built with fondue
+
 
 License
 -------
