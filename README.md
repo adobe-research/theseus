@@ -42,6 +42,8 @@ Start your program by running `node-theseus app.js` (instead of `node app.js` as
 
 (You install `node-theseus` with `npm install -g node-theseus`)
 
+![node-theseus download statistics](https://nodei.co/npm-dl/node-theseus.png)
+
 Usage: Debug JavaScript running in Chrome
 -----------------------------------------
 
