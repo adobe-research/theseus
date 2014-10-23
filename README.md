@@ -107,6 +107,18 @@ Patches to any of these projects are welcome. I'll even help you figure out how 
 
 * [alltom/fondue-profile](https://github.com/alltom/fondue-profile): a really simple instrumenting profiler built with fondue
 
+## Contributors
+
+* @alltom. Primary developer.
+* @nhynes. Automatic upgrades, bug-fixes.
+* @MarcelGerber. Made the UI translatable and added German translation.
+* @joelrbrandt. Added the menu item for enabling and disabling Theseus.
+* @larz0. Made Theseus match Brackets' visual style.
+* @jasonsanjose. Sprint 30 compatibility, Edge Code compatibility.
+* @benchuk. Redirect requests to files in `/public` to root.
+
+Also thanks to the whole Brackets team, and to @alltom's mentors, @rcmiller and @joelrbrandt!
+
 
 License
 -------
