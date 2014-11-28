@@ -321,11 +321,11 @@ define(function (require, exports, module) {
         // FileCallGraphPanel.init();
 
         // after a short delay, show 'Thank you!' popup if they haven't seen it
-        setTimeout(function () {
-            if (!isInsideTheseus()) {
-                Invitation.showInvitationIfNecessary();
-            }
-        }, 1000);
+        // setTimeout(function () {
+        //     if (!isInsideTheseus()) {
+        //         Invitation.showInvitationIfNecessary();
+        //     }
+        // }, 1000);
 
         $(LiveDevelopment).on("statusChange", function (e, status) {
             if (!_enabled) return;
