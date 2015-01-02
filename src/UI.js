@@ -520,6 +520,7 @@ define(function (require, exports, module) {
         _showBacktrace: function (invocationId) {
             this.$log.hide();
             this.$backtrace.show();
+            this.$dom.scrollTop(0);
             this.$backtrace.append(Strings.UI_BACKTRACE_LOADING);
             Agent.backtrace({ invocationId: invocationId, range: [0, 20] }, function (backtrace) {
                 this.$backtrace.empty();
