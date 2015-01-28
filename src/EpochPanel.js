@@ -27,7 +27,7 @@
 
 define(function (require, exports, module) {
     var AgentHandle  = require("./AgentHandle");
-    var PanelManager = brackets.getModule("view/PanelManager");
+    var WorkspaceManager = brackets.getModule("view/WorkspaceManager");
     var UI           = require("./UI");
 
     var $exports = $(exports);
@@ -158,9 +158,9 @@ define(function (require, exports, module) {
         return { container: $dom, count: $hitsDom };
     }
 
-    function _haveExceptionData() { return combinedExceptionCount > 0 }
-    function _haveConsoleLogsData() { return combinedConsoleLogsCount > 0 }
-    function _haveEventData() { return Object.keys(combinedHits).length > 0 }
+    function _haveExceptionData() { return combinedExceptionCount > 0; }
+    function _haveConsoleLogsData() { return combinedConsoleLogsCount > 0; }
+    function _haveEventData() { return Object.keys(combinedHits).length > 0; }
     function _haveData() {
         return _haveExceptionData() || _haveConsoleLogsData() || _haveEventData();
     }
@@ -223,7 +223,7 @@ define(function (require, exports, module) {
 
     function init() {
         $panel = $("<div id='theseus-epoch-panel' class='bottom-panel no-focus' />");
-        panel = PanelManager.createBottomPanel("theseus.epoch-panel", $panel, 20);
+        panel = WorkspaceManager.createBottomPanel("theseus.epoch-panel", $panel, 20);
 
         $("<span class='heading' />").text("Events:").appendTo($panel);
         $allEventsContainer = $("<span class='events' />").appendTo($panel);
