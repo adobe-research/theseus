@@ -32,7 +32,7 @@ define(function (require, exports, module) {
 
     var $exports = $(exports);
 
-    var panel; // PanelManager.Panel
+    var panel; // WorkspaceManager.Panel
     var $panel;
     var $exceptionsContainer, $exceptionCount,
         $logsContainer, $logCount,
