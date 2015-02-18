@@ -28,12 +28,12 @@
 define(function (require, exports, module) {
 	"use strict";
 
-	var EditorManager 		= brackets.getModule("editor/EditorManager");
-	var Inspector     		= brackets.getModule("LiveDevelopment/Inspector/Inspector");
-	var Main          		= require("../main");
-	var WorkspaceManager  = brackets.getModule("view/WorkspaceManager");
-	var Resizer       		= brackets.getModule("utils/Resizer");
-	var Strings       		= require("./strings");
+	var EditorManager    = brackets.getModule("editor/EditorManager");
+	var Inspector        = brackets.getModule("LiveDevelopment/Inspector/Inspector");
+	var Main             = require("../main");
+	var WorkspaceManager = brackets.getModule("view/WorkspaceManager");
+	var Resizer          = brackets.getModule("utils/Resizer");
+	var Strings          = require("./strings");
 
 	var $panel, $panelContent, $toolbar;
 	var _panel, _bracketsPanel;
